@@ -4,7 +4,7 @@
 - Table plus (to connect Postgres): https://tableplus.com/
 - Docker desktop: https://www.docker.com/
 ### Installation:
-- Install all and start items in the requirements
+- Install all items in the requirements
 - Start Docker
 - Run:
   ```
