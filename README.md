@@ -1,3 +1,5 @@
+### Tech stack
+- Nestjs + typeorm + postgres
 ### Requirements
 - Table plus (to connect Postgres): https://tableplus.com/
 - Docker desktop: https://www.docker.com/
