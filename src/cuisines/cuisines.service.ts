@@ -7,6 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class CuisinesService {
   constructor(
     @InjectRepository(Cuisine)
-    private usersRepository: Repository<Cuisine>,
+    private cuisinesRepository: Repository<Cuisine>,
   ) {}
 }

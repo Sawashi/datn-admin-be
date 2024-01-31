@@ -7,6 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
-    private usersRepository: Repository<Category>,
+    private categoriesRepository: Repository<Category>,
   ) {}
 }

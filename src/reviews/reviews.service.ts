@@ -7,6 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
-    private usersRepository: Repository<Review>,
+    private reviewRepository: Repository<Review>,
   ) {}
 }
