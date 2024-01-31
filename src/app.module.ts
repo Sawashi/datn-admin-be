@@ -4,6 +4,11 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { RecipesModule } from './recipes/recipes.module';
+import { CategoriesModule } from './categories/categories.module';
+import { CuisinesModule } from './cuisines/cuisines.module';
+import { ReportsModule } from './reports/reports.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -19,6 +24,11 @@ import { ConfigModule } from '@nestjs/config';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    RecipesModule,
+    CategoriesModule,
+    CuisinesModule,
+    ReportsModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
