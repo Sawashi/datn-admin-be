@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('Review')
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
