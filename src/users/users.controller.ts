@@ -1,7 +1,16 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
-
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -11,7 +20,10 @@ export class UsersController {
   async findAll(): Promise<User[]> {
     return await this.usersService.findall();
   }
-
+  @ApiOperation({
+    summary: 'Get user',
+    description: 'Get user by id',
+  })
   //get one user
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
