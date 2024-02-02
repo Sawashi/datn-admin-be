@@ -8,8 +8,26 @@ export class User {
   id: number;
   @ApiProperty()
   @Column()
-  name: string;
+  email: string;
   @ApiProperty()
   @Column()
-  email: string;
+  phoneNumber: string;
+  @ApiProperty()
+  @Column()
+  firstName: string;
+  @ApiProperty()
+  @Column()
+  lastName: string;
+  @ApiProperty()
+  @Column()
+  imgUrl: string;
+  @ApiProperty()
+  @Column()
+  gender: string;
+  @ApiProperty()
+  @Column()
+  description: string;
+  @ApiProperty()
+  @Column()
+  dateOfBirth: string;
 }
