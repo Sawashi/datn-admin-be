@@ -8,5 +8,7 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-  ) {}
+  ) {
+    categoriesRepository: categoriesRepository;
+  }
 }

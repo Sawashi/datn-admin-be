@@ -8,5 +8,7 @@ export class ReportsService {
   constructor(
     @InjectRepository(Report)
     private reportsRepository: Repository<Report>,
-  ) {}
+  ) {
+    reportsRepository: reportsRepository;
+  }
 }
