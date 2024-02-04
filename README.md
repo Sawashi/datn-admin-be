@@ -12,7 +12,9 @@
   yarn install
   yarn start
   ```
-- Start table plus, create a new connection by using the data in "docker-compose.yml" and then you're good to go
+- Start table plus, create a new PostgreSQL connection by clicking button "+" and fillout the form by using the data in "docker-compose.yml", click button "test" to check if it work then click "save"
+- Access the data in tables by clicking the connection you have added on home of table plus
+- You are good to go
 ### Extra info:
 - After running the be code, you can use postman to test the routes of api by using url localhost:3000/... (replace "..." with the actual route such, ex: localhost:3000/users)
 - The postgres is available at port 5432 but you must access it by using table plus or some software like that due to we not implement a UI on web at that port
