@@ -8,5 +8,7 @@ export class CuisinesService {
   constructor(
     @InjectRepository(Cuisine)
     private cuisinesRepository: Repository<Cuisine>,
-  ) {}
+  ) {
+    cuisinesRepository: cuisinesRepository;
+  }
 }
