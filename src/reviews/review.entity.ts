@@ -15,5 +15,11 @@ export class Review {
   content: string;
 
   @Column()
-  postedDate: string;
+  rating: number;
+
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  updatedAt: Date;
 }

@@ -10,7 +10,8 @@ import {
 import { ReviewsService } from './reviews.service';
 import { Review } from './review.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateReviewDTO } from './dto/create-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
 
 @ApiTags('reviews')
 @Controller('reviews')
@@ -36,18 +37,22 @@ export class ReviewsController {
     return review;
   }
 
+  @Get('dish/:dishId')
+  async findByDishId(@Param('dishId') dishId: number): Promise<Review[]> {
+    return await this.reviewsService.findByDishId(dishId);
+  }
+
   @Post()
-  async create(@Body() createReviewDTO: CreateReviewDTO): Promise<Review> {
-    console.log('createReviewDTO', createReviewDTO);
-    return await this.reviewsService.create(createReviewDTO);
+  async create(@Body() createReviewDto: CreateReviewDto): Promise<Review> {
+    return await this.reviewsService.create(createReviewDto);
   }
 
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @Body() review: Review,
+    @Body() updateReviewDto: UpdateReviewDto,
   ): Promise<Review> {
-    return this.reviewsService.update(id, review);
+    return this.reviewsService.update(id, updateReviewDto);
   }
 
   @Delete(':id')
