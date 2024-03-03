@@ -10,6 +10,7 @@ import {
 import { ReviewsService } from './reviews.service';
 import { Review } from './review.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateReviewDTO } from './dto/create-review.dto';
 
 @ApiTags('reviews')
 @Controller('reviews')
@@ -36,8 +37,9 @@ export class ReviewsController {
   }
 
   @Post()
-  async create(@Body() review: Review): Promise<Review> {
-    return await this.reviewsService.create(review);
+  async create(@Body() createReviewDTO: CreateReviewDTO): Promise<Review> {
+    console.log('createReviewDTO', createReviewDTO);
+    return await this.reviewsService.create(createReviewDTO);
   }
 
   @Put(':id')
