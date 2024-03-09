@@ -39,7 +39,7 @@ export class RecipesService {
       query += `AND cuisineId = '%${searchQuery.chef}%'`
     }
     
-    return await this.recipesRepository.raw(query);
+    return await this.recipesRepository.query(query);
   }
   
 
