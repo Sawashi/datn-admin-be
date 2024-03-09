@@ -6,14 +6,19 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ReportsService } from './reports.service';
 import { Report } from './report.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/users/user.entity';
 
 @ApiTags('reports')
 @Controller('reports')
+@UseGuards(AuthGuard())
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {
     reportsService: reportsService;
@@ -23,6 +28,12 @@ export class ReportsController {
   async findAll(): Promise<Report[]> {
     return await this.reportsService.findAll();
   }
+
+  @Get()
+  async getReportsForUser(@GetUser() user: User): Promise<Report[]> {
+    return await this.reportsService.getReportsForUser(user);
+  }
+
   @ApiOperation({
     summary: 'Get report',
     description: 'Get report by id',

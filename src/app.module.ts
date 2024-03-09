@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CuisinesModule } from './cuisines/cuisines.module';
 import { ReportsModule } from './reports/reports.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     CuisinesModule,
     ReportsModule,
     ReviewsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
