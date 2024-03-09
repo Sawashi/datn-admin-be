@@ -29,5 +29,11 @@ export class User {
   description: string;
   @ApiProperty()
   @Column()
-  dateOfBirth: string;
+  dateOfBirth: Date;
+
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  updatedAt: Date;
 }

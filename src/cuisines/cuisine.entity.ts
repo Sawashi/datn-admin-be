@@ -12,4 +12,10 @@ export class Cuisine {
   @ApiProperty()
   @Column()
   description: string;
+
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  updatedAt: Date;
 }
