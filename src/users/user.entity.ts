@@ -1,33 +1,55 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Report } from 'src/reports/report.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('User')
 export class User {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
+
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   email: string;
-  @ApiProperty()
+
+  @Column({ unique: true })
+  username: string;
+
   @Column()
+  password: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
   phoneNumber: string;
+
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   firstName: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   lastName: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   imgUrl: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   gender: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   description: string;
   @ApiProperty()
-  @Column()
-  dateOfBirth: string;
+  @Column({ nullable: true })
+  dateOfBirth: Date;
+
+  @Column({ nullable: true })
+  createdAt: Date;
+
+  @Column({ nullable: true })
+  updatedAt: Date;
+
+  @OneToMany(() => Report, (report) => report.sender, { eager: true })
+  sentReports: Report[];
+
+  @OneToMany(() => Report, (report) => report.recipient, { eager: true })
+  receivedReports: Report[];
 }

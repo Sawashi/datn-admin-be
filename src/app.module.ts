@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CuisinesModule } from './cuisines/cuisines.module';
 import { ReportsModule } from './reports/reports.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,19 +17,21 @@ import { ReviewsModule } from './reviews/reviews.module';
     UsersModule,
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as any,
-      host: process.env.PG_HOST,
-      port: parseInt(process.env.PG_PORT),
-      username: process.env.PG_USER,
-      password: process.env.PG_PASSWORD,
-      database: process.env.PG_DB,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      autoLoadEntities: true,
     }),
     RecipesModule,
     CategoriesModule,
     CuisinesModule,
     ReportsModule,
     ReviewsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
