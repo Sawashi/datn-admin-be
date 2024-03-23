@@ -17,17 +17,6 @@ export class User {
 
   @Column()
   password: string;
-
-  @ApiProperty()
-  @Column({ nullable: true })
-  phoneNumber: string;
-
-  @ApiProperty()
-  @Column({ nullable: true })
-  firstName: string;
-  @ApiProperty()
-  @Column({ nullable: true })
-  lastName: string;
   @ApiProperty()
   @Column({ nullable: true })
   imgUrl: string;
@@ -36,20 +25,18 @@ export class User {
   gender: string;
   @ApiProperty()
   @Column({ nullable: true })
-  description: string;
-  @ApiProperty()
+  dateOfBirth: string;
   @Column({ nullable: true })
-  dateOfBirth: Date;
-
+  createdAt: string;
   @Column({ nullable: true })
-  createdAt: Date;
-
+  updatedAt: string;
   @Column({ nullable: true })
-  updatedAt: Date;
+  status: string;
+  @Column({ nullable: true })
+  role: string;
 
   @OneToMany(() => Report, (report) => report.sender, { eager: true })
   sentReports: Report[];
-
   @OneToMany(() => Report, (report) => report.recipient, { eager: true })
   receivedReports: Report[];
 }
