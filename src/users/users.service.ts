@@ -38,4 +38,9 @@ export class UsersService {
   async delete(id: number): Promise<void> {
     await this.usersRepository.delete(id);
   }
+  // change user status
+  async changeStatus(id: number, status: string): Promise<User> {
+    await this.usersRepository.update(id, { status });
+    return await this.usersRepository.findOne({ where: { id } });
+  }
 }

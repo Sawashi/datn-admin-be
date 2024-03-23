@@ -48,6 +48,14 @@ export class UsersController {
   async update(@Param('id') id: number, @Body() user: User): Promise<User> {
     return this.usersService.update(id, user);
   }
+  //change user status
+  @Put(':id/status')
+  async changeStatus(
+    @Param('id') id: number,
+    @Body('status') status: string,
+  ): Promise<User> {
+    return this.usersService.changeStatus(id, status);
+  }
 
   //delete user
   @Delete(':id')
