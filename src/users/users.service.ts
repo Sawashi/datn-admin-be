@@ -38,4 +38,22 @@ export class UsersService {
   async delete(id: number): Promise<void> {
     await this.usersRepository.delete(id);
   }
+
+  // get user by email
+  async findUserByEmail(email: string): Promise<User> {
+    return await this.usersRepository.findOneBy({ email });
+  }
+
+  async findOrCreate(userData: Partial<User>): Promise<User> {
+    const existingUser = await this.usersRepository.findOne({
+      where: { googleId: userData.googleId },
+    });
+
+    if (existingUser) {
+      return existingUser;
+    }
+
+    const newUser = this.usersRepository.create(userData);
+    return this.usersRepository.save(newUser);
+  }
 }

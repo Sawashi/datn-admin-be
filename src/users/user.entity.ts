@@ -49,4 +49,7 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date = new Date();
+
+  @Column()
+  googleId: string;
 }

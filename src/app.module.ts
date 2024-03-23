@@ -10,6 +10,9 @@ import { CuisinesModule } from './cuisines/cuisines.module';
 import { ReportsModule } from './reports/reports.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from './auth/auth.module';
+import { GoogleStrategy } from './sso_auth/google.strategy';
+import { JwtStrategy } from './sso_auth/jwt.strategy';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -31,8 +34,12 @@ import { AuthModule } from './auth/auth.module';
     ReportsModule,
     ReviewsModule,
     AuthModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, GoogleStrategy, JwtStrategy],
 })
 export class AppModule {}
