@@ -11,6 +11,7 @@ import { ReportsModule } from './reports/reports.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { DishModule } from './dish/dish.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ScheduleModule } from './schedule/schedule.module';
     ReviewsModule,
     AuthModule,
     ScheduleModule,
+    DishModule,
   ],
   controllers: [AppController],
   providers: [AppService],
