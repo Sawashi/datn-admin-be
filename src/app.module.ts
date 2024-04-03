@@ -10,6 +10,7 @@ import { CuisinesModule } from './cuisines/cuisines.module';
 import { ReportsModule } from './reports/reports.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from './auth/auth.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AuthModule } from './auth/auth.module';
     ReportsModule,
     ReviewsModule,
     AuthModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
