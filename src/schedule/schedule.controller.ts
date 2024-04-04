@@ -13,7 +13,9 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('schedule')
 @Controller('schedule')
 export class ScheduleController {
-  constructor(private readonly scheduleService: ScheduleService) {}
+  constructor(private readonly scheduleService: ScheduleService) {
+    this.scheduleService = scheduleService;
+  }
   //get all schedule
   @Get()
   async findAll(): Promise<Schedule[]> {

@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -15,7 +14,9 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('dish')
 @Controller('dish')
 export class DishController {
-  constructor(private readonly dishService: DishService) {}
+  constructor(private readonly dishService: DishService) {
+    this.dishService = dishService;
+  }
   //get all dish
   @Get()
   async findAll(): Promise<Dish[]> {

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Report } from 'src/reports/report.entity';
+import { Schedule } from 'src/schedule/schedule.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('User')
@@ -7,14 +8,11 @@ export class User {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
-
   @ApiProperty()
   @Column({ nullable: true })
   email: string;
-
   @Column({ unique: true })
   username: string;
-
   @Column()
   password: string;
   @ApiProperty()
@@ -39,4 +37,6 @@ export class User {
   sentReports: Report[];
   @OneToMany(() => Report, (report) => report.recipient, { eager: true })
   receivedReports: Report[];
+  @OneToMany(() => Schedule, (schedule) => schedule.userId, { eager: true })
+  userSchedules: Schedule[];
 }
