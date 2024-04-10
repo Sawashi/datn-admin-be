@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/users/user.entity';
 
-@ApiTags('reports')
+@ApiTags('Reports')
 @Controller('reports')
 @UseGuards(AuthGuard())
 export class ReportsController {

@@ -12,6 +12,8 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { DishModule } from './dish/dish.module';
+import { TopicsModule } from './topics/topics.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { DishModule } from './dish/dish.module';
     AuthModule,
     ScheduleModule,
     DishModule,
+    TopicsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

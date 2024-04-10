@@ -11,8 +11,10 @@ export class User {
   @ApiProperty()
   @Column({ nullable: true })
   email: string;
+  @ApiProperty()
   @Column({ unique: true })
   username: string;
+  @ApiProperty()
   @Column()
   password: string;
   @ApiProperty()
@@ -24,12 +26,16 @@ export class User {
   @ApiProperty()
   @Column({ nullable: true })
   dateOfBirth: string;
+  @ApiProperty()
   @Column({ nullable: true })
   createdAt: string;
+  @ApiProperty()
   @Column({ nullable: true })
   updatedAt: string;
+  @ApiProperty()
   @Column({ nullable: true })
   status: string;
+  @ApiProperty()
   @Column({ nullable: true })
   role: string;
 
