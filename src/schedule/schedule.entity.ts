@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('Schedule')
@@ -5,18 +6,18 @@ export class Schedule {
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
-  @Column({ unique: true })
+  @Column()
   userId: number;
   @ApiProperty()
-  @Column({ unique: true })
+  @Column()
   title: string;
   @ApiProperty()
-  @Column({ unique: true })
+  @Column()
   status: string;
   @ApiProperty()
-  @Column({ unique: true })
+  @Column()
   startDate: string;
   @ApiProperty()
-  @Column({ unique: true })
+  @Column()
   dishes: string;
 }

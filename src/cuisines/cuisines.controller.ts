@@ -11,7 +11,7 @@ import { CuisinesService } from './cuisines.service';
 import { Cuisine } from './cuisine.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('cuisines')
+@ApiTags('Cuisines')
 @Controller('cuisines')
 export class CuisinesController {
   constructor(private readonly cuisinesService: CuisinesService) {
