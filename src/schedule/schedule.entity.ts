@@ -23,6 +23,6 @@ export class Schedule {
   @Column()
   dishes: string;
 
-  @ManyToOne(() => User, (user) => user.userSchedules, { eager: true })
+  @ManyToOne(() => User, (user) => user.schedules, { eager: true })
   user: User;
 }

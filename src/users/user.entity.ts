@@ -8,41 +8,53 @@ export class User {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
+
   @ApiProperty()
   @Column({ nullable: true })
   email: string;
+
   @ApiProperty()
   @Column({ unique: true })
   username: string;
+
   @ApiProperty()
   @Column()
   password: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   imgUrl: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   gender: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   dateOfBirth: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   createdAt: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   updatedAt: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   status: string;
+
   @ApiProperty()
   @Column({ nullable: true })
   role: string;
 
   @OneToMany(() => Report, (report) => report.sender, { eager: true })
   sentReports: Report[];
+
   @OneToMany(() => Report, (report) => report.recipient, { eager: true })
   receivedReports: Report[];
-  @OneToMany(() => Schedule, (schedule) => schedule.userId, { eager: true })
-  userSchedules: Schedule[];
+
+  @OneToMany(() => Schedule, (schedule) => schedule.user, { eager: true })
+  schedules: Schedule[]; // Changed property name from userSchedules to schedules
 }
