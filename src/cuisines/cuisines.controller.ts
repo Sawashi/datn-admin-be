@@ -38,7 +38,7 @@ export class CuisinesController {
     return cuisine;
   }
 
-  // Create user
+  // Create cuisine
   @Post()
   async create(@Body() cuisine: Cuisine): Promise<Cuisine> {
     return await this.cuisinesService.create(cuisine);
