@@ -21,6 +21,12 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true, // Allow credentials (e.g., cookies, authorization headers)
   });
+  app.enableCors({
+    origin: 'https://datn-admin-fe.vercel.app', // Allow requests from this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true, // Allow credentials (e.g., cookies, authorization headers)
+  });
   const config = new DocumentBuilder()
     .setTitle('Recipes API') // Set the title of the API
     .setDescription('Recipes API description') // Set the description of the API
