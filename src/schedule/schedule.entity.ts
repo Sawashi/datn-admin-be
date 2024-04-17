@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { User } from 'src/users/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -23,6 +24,7 @@ export class Schedule {
   @Column()
   dishes: string;
 
-  @ManyToOne(() => User, (user) => user.schedules, { eager: true })
+  @ManyToOne(() => User, (user) => user.schedules, { eager: false })
+  @Exclude({ toPlainOnly: true })
   user: User;
 }
