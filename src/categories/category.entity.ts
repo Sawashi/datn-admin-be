@@ -1,11 +1,26 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('Category')
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;
+  @ApiProperty()
   @Column()
-  categoryName: string;
+  name: string;
+  @ApiProperty()
   @Column()
-  description: string;
+  imgUrl: string;
+  @ApiProperty()
+  @CreateDateColumn({ nullable: true })
+  createdAt: Date;
+  @ApiProperty()
+  @UpdateDateColumn({ nullable: true })
+  updatedAt: Date;
 }

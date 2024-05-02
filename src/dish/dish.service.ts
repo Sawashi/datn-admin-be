@@ -16,24 +16,24 @@ export class DishService {
     return await this.dishRepository.find();
   }
 
-  // get one user
+  // get one dish
   async findOne(id: number): Promise<Dish> {
     return await this.dishRepository.findOne({ where: { id } });
   }
 
-  //create user
-  async create(user: Dish): Promise<Dish> {
-    const newUser = this.dishRepository.create(user);
-    return await this.dishRepository.save(newUser);
+  //create dish
+  async create(dish: Dish): Promise<Dish> {
+    const newdish = this.dishRepository.create(dish);
+    return await this.dishRepository.save(newdish);
   }
 
-  // update user
-  async update(id: number, user: Dish): Promise<Dish> {
-    await this.dishRepository.update(id, user);
+  // update dish
+  async update(id: number, dish: Dish): Promise<Dish> {
+    await this.dishRepository.update(id, dish);
     return await this.dishRepository.findOne({ where: { id } });
   }
 
-  // delete user
+  // delete dish
   async delete(id: number): Promise<void> {
     await this.dishRepository.delete(id);
   }
