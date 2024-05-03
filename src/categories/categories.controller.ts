@@ -10,6 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { Category } from './category.entity';
 import { CategoriesService } from './categories.service';
+import { CreateCategoryDto } from './dto/categories.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -35,7 +36,7 @@ export class CategoriesController {
 
   //create category
   @Post()
-  async create(@Body() category: Category): Promise<Category> {
+  async create(@Body() category: CreateCategoryDto): Promise<Category> {
     return await this.categoryService.create(category);
   }
 
