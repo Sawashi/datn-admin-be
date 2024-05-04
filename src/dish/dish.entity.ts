@@ -6,15 +6,15 @@ export class Dish {
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   cookingTime: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   dishName: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   imageUrl: string;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   rating: number;
 }
