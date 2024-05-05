@@ -17,6 +17,7 @@ import { MessagesModule } from './messages/messages.module';
 import { AllergiesModule } from './allergies/allergies.module';
 import { DietsModule } from './diets/diets.module';
 import { DislikedModule } from './disliked/disliked.module';
+import { PersonalizeModule } from './personalize/personalize.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { DislikedModule } from './disliked/disliked.module';
     AllergiesModule,
     DietsModule,
     DislikedModule,
+    PersonalizeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

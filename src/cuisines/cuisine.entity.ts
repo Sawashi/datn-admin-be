@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Personalize } from 'src/personalize/personalize.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity('Cuisine')
@@ -32,4 +34,7 @@ export class Cuisine {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToMany(() => Personalize, (personalize) => personalize.cuisines)
+  personalize: Personalize;
 }
