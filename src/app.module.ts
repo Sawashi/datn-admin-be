@@ -14,6 +14,9 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { DishModule } from './dish/dish.module';
 import { TopicsModule } from './topics/topics.module';
 import { MessagesModule } from './messages/messages.module';
+import { AllergiesModule } from './allergies/allergies.module';
+import { DietsModule } from './diets/diets.module';
+import { DislikedModule } from './disliked/disliked.module';
 
 @Module({
   imports: [
@@ -40,6 +43,9 @@ import { MessagesModule } from './messages/messages.module';
     DishModule,
     TopicsModule,
     MessagesModule,
+    AllergiesModule,
+    DietsModule,
+    DislikedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
