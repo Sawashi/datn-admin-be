@@ -18,6 +18,8 @@ export class PersonalizeService {
       relations: {
         user: true,
         allergies: true,
+        diets: true,
+        cuisines: true,
       },
     });
   }
