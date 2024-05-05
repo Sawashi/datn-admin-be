@@ -11,6 +11,7 @@ import {
   OneToOne,
   JoinColumn,
   JoinTable,
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity('Personalize')
@@ -35,8 +36,8 @@ export class Personalize {
   @JoinTable()
   diets: Diets[];
 
-  @ManyToMany(() => Allergies, (allergies) => allergies.personalize)
-  @JoinTable()
+  @ApiProperty()
+  @CreateDateColumn()
   createdAt: Date;
 
   @ApiProperty()
