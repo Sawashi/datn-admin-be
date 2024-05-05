@@ -43,4 +43,6 @@ export class Personalize {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  //
 }
