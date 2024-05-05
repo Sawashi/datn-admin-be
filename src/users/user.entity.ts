@@ -43,6 +43,10 @@ export class User {
 
   @ApiProperty()
   @Column({ nullable: true })
+  isNew: boolean;
+
+  @ApiProperty()
+  @Column({ nullable: true })
   status: string;
 
   @ApiProperty()
