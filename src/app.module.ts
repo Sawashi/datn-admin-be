@@ -14,6 +14,8 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { DishModule } from './dish/dish.module';
 import { TopicsModule } from './topics/topics.module';
 import { MessagesModule } from './messages/messages.module';
+import { IngredientModule } from './ingredient/ingredient.module';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { MessagesModule } from './messages/messages.module';
     DishModule,
     TopicsModule,
     MessagesModule,
+    IngredientModule,
+    NotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

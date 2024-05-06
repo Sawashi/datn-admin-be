@@ -14,7 +14,12 @@ export class UsersService {
 
   // get all users
   async findall(): Promise<User[]> {
-    return await this.usersRepository.find();
+    return await this.usersRepository.find({
+      relations: {
+        reviews: true,
+        notes: true,
+      },
+    });
   }
 
   // get one user
