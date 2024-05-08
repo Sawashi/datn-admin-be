@@ -2,14 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { Personalize } from './personalize.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { Allergies } from 'src/allergies/allergies.entity';
+import { Diets } from 'src/diets/diets.entity';
+import { Cuisine } from 'src/cuisines/cuisine.entity';
+import { UpdatePersonalizeDto } from './dto/update-personalize.dto';
 @Injectable()
 export class PersonalizeService {
   constructor(
     @InjectRepository(Personalize)
     private personalizeRepository: Repository<Personalize>,
+    @InjectRepository(Allergies)
+    private allergyRepository: Repository<Allergies>,
+    @InjectRepository(Diets)
+    private dietRepository: Repository<Diets>,
+    @InjectRepository(Cuisine)
+    private cuisineRepository: Repository<Cuisine>,
   ) {
     personalizeRepository: personalizeRepository;
+    allergyRepository: allergyRepository;
+    dietRepository: dietRepository;
+    cuisineRepository: cuisineRepository;
   }
 
   // get all Personalize
@@ -26,19 +38,68 @@ export class PersonalizeService {
 
   // get one Personalize
   async findOne(id: number): Promise<Personalize> {
-    return await this.personalizeRepository.findOne({ where: { id } });
+    return await this.personalizeRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+        allergies: true,
+        diets: true,
+        cuisines: true,
+      },
+    });
   }
 
   //create Personalize
   async create(personalize: Personalize): Promise<Personalize> {
-    const newPersonalize = this.personalizeRepository.create(personalize);
+    const { user, allergies, diets, cuisines } = personalize;
+    const allergyEntities = await this.allergyRepository.findByIds(allergies);
+    const dietEntities = await this.dietRepository.findByIds(diets);
+    const cuisineEntities = await this.cuisineRepository.findByIds(cuisines);
+
+    const newPersonalize = this.personalizeRepository.create({
+      user: user,
+      cuisines: cuisineEntities,
+      allergies: allergyEntities,
+      diets: dietEntities,
+    });
     return await this.personalizeRepository.save(newPersonalize);
   }
 
-  // update Personalize
-  async update(id: number, personalize: Personalize): Promise<Personalize> {
+  // replace Personalize
+  async replace(id: number, personalize: Personalize): Promise<Personalize> {
     await this.personalizeRepository.update(id, personalize);
     return await this.personalizeRepository.findOne({ where: { id } });
+  }
+
+  // update Personalize
+  async update(
+    id: number,
+    updatePersonalizeDto: UpdatePersonalizeDto,
+  ): Promise<Personalize> {
+    const personalize = await this.personalizeRepository.findOne({
+      where: { id },
+    });
+
+    if (!personalize) {
+      throw new Error('Personalize not found');
+    }
+
+    const { allergies, diets, cuisines } = updatePersonalizeDto;
+
+    if (allergies !== undefined) {
+      const allergyEntities = await this.allergyRepository.findByIds(allergies);
+      personalize.allergies = allergyEntities;
+    }
+    if (diets !== undefined) {
+      const dietEntities = await this.dietRepository.findByIds(diets);
+      personalize.diets = dietEntities;
+    }
+    if (cuisines !== undefined) {
+      const cuisineEntities = await this.cuisineRepository.findByIds(cuisines);
+      personalize.cuisines = cuisineEntities;
+    }
+
+    return this.personalizeRepository.save(personalize);
   }
 
   // delete Personalize

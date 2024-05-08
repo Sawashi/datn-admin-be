@@ -6,10 +6,12 @@ import {
   Param,
   Delete,
   Put,
+  Patch,
 } from '@nestjs/common';
 import { PersonalizeService } from './personalize.service';
 import { Personalize } from './personalize.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UpdatePersonalizeDto } from './dto/update-personalize.dto';
 
 @ApiTags('Personalize')
 @Controller('personalize')
@@ -21,7 +23,6 @@ export class PersonalizeController {
   // Get all Personalize
   @Get()
   async findAll(): Promise<Personalize[]> {
-    console.log('ccc');
     return await this.personalizeService.findAll();
   }
   @ApiOperation({
@@ -46,11 +47,19 @@ export class PersonalizeController {
 
   // Update Personalize
   @Put(':id')
-  async update(
+  async replace(
     @Param('id') id: number,
     @Body() personalize: Personalize,
   ): Promise<Personalize> {
-    return this.personalizeService.update(id, personalize);
+    return this.personalizeService.replace(id, personalize);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() personalizeDto: UpdatePersonalizeDto,
+  ) {
+    return this.personalizeService.update(id, personalizeDto);
   }
 
   // Delete Personalize
