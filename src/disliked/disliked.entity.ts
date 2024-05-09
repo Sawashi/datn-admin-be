@@ -1,27 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Personalize } from 'src/personalize/personalize.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
 } from 'typeorm';
 
-@Entity('Cuisine')
-export class Cuisine {
+@Entity('Disliked')
+export class Disliked {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
   @ApiProperty()
   @Column()
-  cuisineName: string;
-
-  @ApiProperty()
-  @Column()
-  description: string;
+  dislikedName: string;
 
   @ApiProperty()
   @Column()
@@ -34,7 +28,4 @@ export class Cuisine {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @ManyToMany(() => Personalize, (personalize) => personalize.cuisines)
-  personalize: Personalize;
 }

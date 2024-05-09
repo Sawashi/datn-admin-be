@@ -1,9 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Note } from 'src/notes/notes.entity';
+import { Personalize } from 'src/personalize/personalize.entity';
 import { Report } from 'src/reports/report.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Schedule } from 'src/schedule/schedule.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  OneToOne,
+} from 'typeorm';
 
 @Entity('User')
 export class User {
@@ -59,8 +66,11 @@ export class User {
 
   @OneToMany(() => Schedule, (schedule) => schedule.user, { eager: true })
   schedules: Schedule[]; // Changed property name from userSchedules to schedules
+
   @OneToMany(() => Note, (note) => note.user)
   notes: Note[];
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+  @OneToOne(() => Personalize, (personalize) => personalize.user)
+  personalize: Personalize;
 }

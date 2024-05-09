@@ -9,19 +9,15 @@ import {
   ManyToMany,
 } from 'typeorm';
 
-@Entity('Cuisine')
-export class Cuisine {
+@Entity('Diets')
+export class Diets {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
   @ApiProperty()
   @Column()
-  cuisineName: string;
-
-  @ApiProperty()
-  @Column()
-  description: string;
+  dietName: string;
 
   @ApiProperty()
   @Column()
@@ -35,6 +31,6 @@ export class Cuisine {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => Personalize, (personalize) => personalize.cuisines)
-  personalize: Personalize;
+  @ManyToMany(() => Personalize, (personalize) => personalize.diets)
+  personalize: Personalize[];
 }
