@@ -51,6 +51,7 @@ import { PersonalizeModule } from './personalize/personalize.module';
     AllergiesModule,
     DietsModule,
     DislikedModule,
+    PersonalizeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
