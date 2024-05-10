@@ -18,6 +18,8 @@ import { AllergiesModule } from './allergies/allergies.module';
 import { DietsModule } from './diets/diets.module';
 import { DislikedModule } from './disliked/disliked.module';
 import { PersonalizeModule } from './personalize/personalize.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CollectionModule } from './collections/collection.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { PersonalizeModule } from './personalize/personalize.module';
     DietsModule,
     DislikedModule,
     PersonalizeModule,
+    CloudinaryModule,
+    CollectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
