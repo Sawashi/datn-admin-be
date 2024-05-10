@@ -13,7 +13,13 @@ export class DishService {
   }
   // get all dish
   async findall(): Promise<Dish[]> {
-    return await this.dishRepository.find();
+    return await this.dishRepository.find({
+      relations: {
+        reviews: true,
+        notes: true,
+        ingredients: true,
+      },
+    });
   }
 
   // get one dish
