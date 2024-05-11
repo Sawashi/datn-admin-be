@@ -7,6 +7,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  UpdateDateColumn,
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity('Review')
@@ -23,11 +25,11 @@ export class Review {
   rating: number;
 
   @ApiProperty()
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
   @ApiProperty()
-  @Column({ nullable: true })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @ApiProperty()

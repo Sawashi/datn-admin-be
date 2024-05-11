@@ -10,6 +10,7 @@ import {
 import { Ingredient } from '../ingredient/ingredient.entity';
 import { Note } from 'src/notes/notes.entity';
 import { Review } from 'src/reviews/review.entity';
+import { Collection } from 'src/collections/collection.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -58,4 +59,7 @@ export class Dish {
     },
   })
   ingredients: Ingredient[];
+
+  @ManyToMany(() => Collection, (collection) => collection.dishes)
+  collections: Collection[];
 }

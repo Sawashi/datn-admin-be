@@ -5,17 +5,26 @@ import {
   Body,
   Param,
   Delete,
-  Put,
+  Patch,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { DishService } from './dish.service';
 import { Dish } from './dish.entity';
 import { ApiTags } from '@nestjs/swagger';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { DishDto } from './dto/dishDto.dto';
+import { DishPatchDto } from './dto/dishPatchDto.dto';
 @ApiTags('Dishes')
 @Controller('dish')
 export class DishController {
-  constructor(private readonly dishService: DishService) {
+  constructor(
+    private readonly dishService: DishService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {
     this.dishService = dishService;
+    cloudinaryService: cloudinaryService;
   }
   //get all dish
   @Get()
@@ -35,14 +44,30 @@ export class DishController {
 
   //create dish
   @Post()
-  async create(@Body() dish: Dish): Promise<Dish> {
-    return await this.dishService.create(dish);
+  @UseInterceptors(FileInterceptor('image')) // 'file' should match the field name in the form data
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dishDto: DishDto,
+  ): Promise<Dish> {
+    // Upload file to Cloudinary
+    const uploadedImage = await this.cloudinaryService.uploadImage(file);
+    return this.dishService.create(dishDto, uploadedImage.secure_url);
   }
 
   //update dish
-  @Put(':id')
-  async update(@Param('id') id: number, @Body() dish: Dish): Promise<Dish> {
-    return this.dishService.update(id, dish);
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('image')) // 'file' should match the field name in the form data
+  async update(
+    @Param('id')
+    id: number,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dishPatchDto: DishPatchDto,
+  ): Promise<Dish> {
+    if (file !== undefined) {
+      const uploadedImage = await this.cloudinaryService.uploadImage(file);
+      dishPatchDto.imageUrl = uploadedImage.secure_url;
+    }
+    return this.dishService.update(id, dishPatchDto);
   }
 
   //delete dish

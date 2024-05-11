@@ -17,7 +17,7 @@ import { CollectionDto } from './dto/collectionData.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @ApiTags('Collection')
-@Controller('collection')
+@Controller('collections')
 export class CollectionController {
   constructor(
     private readonly collectionService: CollectionService,
@@ -59,7 +59,6 @@ export class CollectionController {
 
     // Upload file to Cloudinary
     const uploadedImage = await this.cloudinaryService.uploadImage(file);
-    console.log('alo: ', uploadedImage);
 
     // Create collection with name and image URL
     const collection = new Collection();
