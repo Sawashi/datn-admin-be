@@ -60,7 +60,6 @@ export class DishService {
       cookingTime: dishDto.cookingTime,
       dishName: dishDto.dishName,
       imageUrl: imageUrl,
-      rating: 0,
       servings: dishDto.servings,
       calories: dishDto.calories,
       author: dishDto.author,
@@ -104,5 +103,20 @@ export class DishService {
   // delete dish
   async delete(id: number): Promise<void> {
     await this.dishRepository.delete(id);
+  }
+
+  // compute rating
+  async updateAverageRating(dishId: number): Promise<void> {
+    const dish = await this.findOne(dishId);
+    if (dish) {
+      const reviews = dish.reviews;
+      const totalRating = reviews.reduce(
+        (acc, review) => acc + review.rating,
+        0,
+      );
+      const averageRating = totalRating / reviews.length;
+      dish.rating = averageRating;
+      await this.dishRepository.save(dish);
+    }
   }
 }

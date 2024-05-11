@@ -27,7 +27,7 @@ export class Dish {
   @Column({ nullable: true })
   imageUrl: string;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ type: 'float', default: 0, nullable: true })
   rating: number;
   @ApiProperty()
   @Column({ nullable: true })

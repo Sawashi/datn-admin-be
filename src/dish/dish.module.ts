@@ -23,5 +23,6 @@ import { Collection } from 'src/collections/collection.entity';
   ],
   controllers: [DishController],
   providers: [DishService, CloudinaryService],
+  exports: [DishService],
 })
 export class DishModule {}

@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateReviewDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   content: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   rating: number;
 }
