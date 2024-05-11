@@ -6,6 +6,8 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Ingredient } from '../ingredient/ingredient.entity';
 import { Note } from 'src/notes/notes.entity';
@@ -62,4 +64,12 @@ export class Dish {
 
   @ManyToMany(() => Collection, (collection) => collection.dishes)
   collections: Collection[];
+
+  @ApiProperty()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty()
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
