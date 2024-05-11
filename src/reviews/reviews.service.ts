@@ -4,14 +4,21 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { DishService } from 'src/dish/dish.service';
+import { Dish } from 'src/dish/dish.entity';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
+    @InjectRepository(Dish)
+    private dishRepository: Repository<Dish>,
+    private readonly dishService: DishService,
   ) {
     reviewRepository: reviewRepository;
+    dishRepository: dishRepository;
+    dishService: dishService;
   }
 
   async findAll(): Promise<Review[]> {
@@ -42,23 +49,30 @@ export class ReviewsService {
       userId,
       rating,
       content,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     });
 
     if (!review) throw new Error('Review not created');
 
-    return await this.reviewRepository.save(review);
+    const newReview = await this.reviewRepository.save(review);
+    if (newReview) {
+      await this.dishService.updateAverageRating(newReview.dishId);
+    } else {
+      throw new Error('Review is not save');
+    }
+    return newReview;
   }
 
   async update(id: number, updateReviewDto: UpdateReviewDto): Promise<Review> {
-    const review = await this.reviewRepository.update(id, updateReviewDto);
+    const newReview = await this.reviewRepository.update(id, updateReviewDto);
+    if (!newReview) throw new Error('Review not found');
 
-    if (!review) throw new Error('Review not found');
-
-    return await this.reviewRepository.findOne({
-      where: { id },
-    });
+    const thisReview = await this.findOne(id);
+    if (thisReview) {
+      await this.dishService.updateAverageRating(thisReview.dishId);
+    } else {
+      throw new Error('Review not found');
+    }
+    return thisReview;
   }
 
   async delete(id: number): Promise<void> {

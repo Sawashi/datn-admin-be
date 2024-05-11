@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Collection } from 'src/collections/collection.entity';
 import { Note } from 'src/notes/notes.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
 import { Report } from 'src/reports/report.entity';
@@ -69,8 +70,15 @@ export class User {
 
   @OneToMany(() => Note, (note) => note.user)
   notes: Note[];
+
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
-  @OneToOne(() => Personalize, (personalize) => personalize.user)
+
+  @OneToOne(() => Personalize, (personalize) => personalize.user, {
+    eager: true,
+  })
   personalize: Personalize;
+
+  @OneToMany(() => Collection, (collection) => collection.user)
+  collections: Collection[];
 }

@@ -18,6 +18,7 @@ export class UsersService {
       relations: {
         reviews: true,
         notes: true,
+        collections: true,
       },
     });
   }

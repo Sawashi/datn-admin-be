@@ -1,13 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-// import { User } from 'src/users/user.entity';
+import { Dish } from 'src/dish/dish.entity';
+import { User } from 'src/users/user.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  // ManyToMany,
-  // ManyToOne,
+  ManyToMany,
+  ManyToOne,
+  JoinTable,
 } from 'typeorm';
 
 @Entity('Collection')
@@ -16,12 +18,16 @@ export class Collection {
   @ApiProperty()
   id: number;
 
-  // @ManyToOne(() => User, (user) => user.collections)
-  // user: User
+  @ManyToOne(() => User, (user) => user.collections)
+  user: User;
 
   @ApiProperty()
   @Column()
   collectionName: string;
+
+  @ManyToMany(() => Dish, (dish) => dish.collections)
+  @JoinTable()
+  dishes: Dish[];
 
   @ApiProperty()
   @Column()

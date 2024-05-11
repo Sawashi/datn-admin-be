@@ -14,7 +14,12 @@ export class CollectionService {
 
   // get all Collections
   async findAll(): Promise<Collection[]> {
-    return await this.collectionsRepository.find();
+    return await this.collectionsRepository.find({
+      relations: {
+        user: true,
+        dishes: true,
+      },
+    });
   }
 
   // get one Collection

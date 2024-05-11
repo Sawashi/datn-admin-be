@@ -6,10 +6,13 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Ingredient } from '../ingredient/ingredient.entity';
 import { Note } from 'src/notes/notes.entity';
 import { Review } from 'src/reviews/review.entity';
+import { Collection } from 'src/collections/collection.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -24,7 +27,7 @@ export class Dish {
   @Column({ nullable: true })
   imageUrl: string;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ type: 'float', default: 0, nullable: true })
   rating: number;
   @ApiProperty()
   @Column({ nullable: true })
@@ -58,4 +61,15 @@ export class Dish {
     },
   })
   ingredients: Ingredient[];
+
+  @ManyToMany(() => Collection, (collection) => collection.dishes)
+  collections: Collection[];
+
+  @ApiProperty()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty()
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
