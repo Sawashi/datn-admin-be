@@ -14,7 +14,11 @@ export class DietsService {
 
   // get all diets
   async findAll(): Promise<Diets[]> {
-    return await this.dietsRepository.find();
+    return await this.dietsRepository.find({
+      relations: {
+        dishes: true,
+      },
+    });
   }
 
   // get one Diets

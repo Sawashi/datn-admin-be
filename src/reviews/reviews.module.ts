@@ -9,6 +9,7 @@ import { Note } from 'src/notes/notes.entity';
 import { Ingredient } from 'src/ingredient/ingredient.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
+import { Diets } from 'src/diets/diets.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { Cuisine } from 'src/cuisines/cuisine.entity';
       Ingredient,
       Collection,
       Cuisine,
+      Diets,
     ]),
   ],
   providers: [ReviewsService, DishService],
