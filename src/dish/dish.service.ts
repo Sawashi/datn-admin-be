@@ -45,7 +45,6 @@ export class DishService {
         notes: true,
         ingredients: true,
         collections: true,
-        diets: true,
       },
     });
   }
