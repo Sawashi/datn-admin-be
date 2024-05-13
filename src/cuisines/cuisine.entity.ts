@@ -42,5 +42,5 @@ export class Cuisine {
   updatedAt: Date;
 
   @ManyToMany(() => Personalize, (personalize) => personalize.cuisines)
-  personalize: Personalize;
+  personalize: Personalize[];
 }
