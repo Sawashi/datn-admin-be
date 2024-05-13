@@ -8,6 +8,7 @@ import { Review } from 'src/reviews/review.entity';
 import { Ingredient } from 'src/ingredient/ingredient.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { DishPatchDto } from './dto/dishPatchDto.dto';
+import { Cuisine } from 'src/cuisines/cuisine.entity';
 
 @Injectable()
 export class DishService {
@@ -22,12 +23,15 @@ export class DishService {
     private ingredientRepository: Repository<Ingredient>,
     @InjectRepository(Collection)
     private collectionRepository: Repository<Collection>,
+    @InjectRepository(Cuisine)
+    private cuisineRepository: Repository<Cuisine>,
   ) {
     dishRepository: dishRepository;
     noteRepository: noteRepository;
     reviewRepository: reviewRepository;
     ingredientRepository: ingredientRepository;
     collectionRepository: collectionRepository;
+    cuisineRepository: cuisineRepository;
   }
   // get all dish
   async findall(): Promise<Dish[]> {
@@ -56,6 +60,8 @@ export class DishService {
 
   //create dish
   async create(dishDto: DishDto, imageUrl: string): Promise<Dish> {
+    const { ingredients, cuisines } = dishDto;
+
     const newDish = this.dishRepository.create({
       cookingTime: dishDto.cookingTime,
       dishName: dishDto.dishName,
@@ -65,6 +71,26 @@ export class DishService {
       author: dishDto.author,
       directions: dishDto.directions,
     });
+
+    if (ingredients) {
+      const ingredientEntites = await this.ingredientRepository.findByIds(
+        JSON.parse(ingredients),
+      );
+      if (ingredientEntites.length === JSON.parse(ingredients).length) {
+        newDish.ingredients = ingredientEntites;
+      } else {
+        throw new Error('Ingredients not found');
+      }
+    }
+
+    if (cuisines) {
+      const cuisineEntities = await this.cuisineRepository.findOne({
+        where: { id: cuisines },
+      });
+      if (cuisineEntities) {
+        newDish.cuisines = cuisineEntities;
+      }
+    }
     return await this.dishRepository.save(newDish);
   }
 
@@ -77,13 +103,13 @@ export class DishService {
     if (!dish) {
       throw new Error('Personalize not found');
     }
-    const { ingredients, collections, ...otherProps } = dishPatchDto; // Destructure ingredients and collections
+    const { ingredients, collections, cuisines, ...otherProps } = dishPatchDto; // Destructure ingredients and collections
 
     if (ingredients) {
       const ingredientEntites = await this.ingredientRepository.findByIds(
         JSON.parse(ingredients),
       );
-      if (ingredientEntites.length > 0) {
+      if (ingredientEntites.length === JSON.parse(ingredients).length) {
         dish.ingredients = ingredientEntites;
       }
     }
@@ -93,6 +119,14 @@ export class DishService {
       );
       if (collectionEntites.length > 0) {
         dish.collections = collectionEntites;
+      }
+    }
+    if (cuisines) {
+      const cuisineEntities = await this.cuisineRepository.findOne({
+        where: { id: cuisines },
+      });
+      if (cuisineEntities) {
+        dish.cuisines = cuisineEntities;
       }
     }
 

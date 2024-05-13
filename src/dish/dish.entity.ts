@@ -8,11 +8,14 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Ingredient } from '../ingredient/ingredient.entity';
 import { Note } from 'src/notes/notes.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Collection } from 'src/collections/collection.entity';
+import { Cuisine } from 'src/cuisines/cuisine.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -46,6 +49,9 @@ export class Dish {
   @OneToMany(() => Review, (review) => review.dish)
   reviews: Review[];
 
+  @ManyToMany(() => Collection, (collection) => collection.dishes)
+  collections: Collection[];
+
   @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes)
   @JoinTable({
     name: 'dish_ingredient',
@@ -62,8 +68,9 @@ export class Dish {
   })
   ingredients: Ingredient[];
 
-  @ManyToMany(() => Collection, (collection) => collection.dishes)
-  collections: Collection[];
+  @ManyToOne(() => Cuisine, (cuisine) => cuisine.dishes)
+  @JoinColumn()
+  cuisines: Cuisine;
 
   @ApiProperty()
   @CreateDateColumn()

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Dish } from 'src/dish/dish.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
 import {
   Entity,
@@ -7,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('Cuisine')
@@ -26,6 +28,10 @@ export class Cuisine {
   @ApiProperty()
   @Column()
   imgUrl: string;
+
+  @ApiProperty()
+  @OneToMany(() => Dish, (dish) => dish.cuisines)
+  dishes: Dish[];
 
   @ApiProperty()
   @CreateDateColumn()

@@ -9,6 +9,7 @@ import { Note } from 'src/notes/notes.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Ingredient } from 'src/ingredient/ingredient.entity';
 import { Collection } from 'src/collections/collection.entity';
+import { Cuisine } from 'src/cuisines/cuisine.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { Collection } from 'src/collections/collection.entity';
       Review,
       Ingredient,
       Collection,
+      Cuisine,
     ]),
   ],
   controllers: [DishController],

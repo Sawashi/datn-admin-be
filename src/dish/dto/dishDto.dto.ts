@@ -18,4 +18,10 @@ export class DishDto {
 
   @ApiProperty()
   directions: string;
+
+  @ApiProperty()
+  ingredients: string;
+
+  @ApiProperty()
+  cuisines: number;
 }
