@@ -16,6 +16,7 @@ import { Note } from 'src/notes/notes.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
+import { Diets } from 'src/diets/diets.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -71,6 +72,10 @@ export class Dish {
   @ManyToOne(() => Cuisine, (cuisine) => cuisine.dishes)
   @JoinColumn()
   cuisines: Cuisine;
+
+  @ManyToMany(() => Diets, (diet) => diet.dishes)
+  @JoinTable()
+  diets: Diets[];
 
   @ApiProperty()
   @CreateDateColumn()

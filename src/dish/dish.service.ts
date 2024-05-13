@@ -9,6 +9,7 @@ import { Ingredient } from 'src/ingredient/ingredient.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { DishPatchDto } from './dto/dishPatchDto.dto';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
+import { Diets } from 'src/diets/diets.entity';
 
 @Injectable()
 export class DishService {
@@ -25,6 +26,8 @@ export class DishService {
     private collectionRepository: Repository<Collection>,
     @InjectRepository(Cuisine)
     private cuisineRepository: Repository<Cuisine>,
+    @InjectRepository(Diets)
+    private dietRepository: Repository<Diets>,
   ) {
     dishRepository: dishRepository;
     noteRepository: noteRepository;
@@ -32,6 +35,7 @@ export class DishService {
     ingredientRepository: ingredientRepository;
     collectionRepository: collectionRepository;
     cuisineRepository: cuisineRepository;
+    dietRepository: dietRepository;
   }
   // get all dish
   async findall(): Promise<Dish[]> {
@@ -41,6 +45,7 @@ export class DishService {
         notes: true,
         ingredients: true,
         collections: true,
+        diets: true,
       },
     });
   }
@@ -103,7 +108,8 @@ export class DishService {
     if (!dish) {
       throw new Error('Personalize not found');
     }
-    const { ingredients, collections, cuisines, ...otherProps } = dishPatchDto; // Destructure ingredients and collections
+    const { ingredients, collections, cuisines, diets, ...otherProps } =
+      dishPatchDto; // Destructure ingredients and collections
 
     if (ingredients) {
       const ingredientEntites = await this.ingredientRepository.findByIds(
@@ -119,6 +125,14 @@ export class DishService {
       );
       if (collectionEntites.length > 0) {
         dish.collections = collectionEntites;
+      }
+    }
+    if (diets) {
+      const dietEntites = await this.dietRepository.findByIds(
+        JSON.parse(diets),
+      );
+      if (dietEntites.length === JSON.parse(diets).length) {
+        dish.diets = dietEntites;
       }
     }
     if (cuisines) {

@@ -45,4 +45,8 @@ export class DishPatchDto {
   @ApiProperty()
   @IsOptional()
   cuisines: number;
+
+  @ApiProperty()
+  @IsOptional()
+  diets: string;
 }
