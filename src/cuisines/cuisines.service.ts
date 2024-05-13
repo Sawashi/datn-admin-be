@@ -14,7 +14,11 @@ export class CuisinesService {
 
   // get all cuisines
   async findAll(): Promise<Cuisine[]> {
-    return await this.cuisinesRepository.find();
+    return await this.cuisinesRepository.find({
+      relations: {
+        dishes: true,
+      },
+    });
   }
 
   // get one cuisine
