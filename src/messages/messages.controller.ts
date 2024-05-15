@@ -6,15 +6,23 @@ import {
   Param,
   Delete,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { Message } from './message.entity';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 @ApiTags('Messages')
 @Controller('messages')
 export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {
+  constructor(
+    private readonly messagesService: MessagesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {
     this.messagesService = messagesService;
+    cloudinaryService: cloudinaryService;
   }
 
   //get all messages
@@ -45,8 +53,16 @@ export class MessagesController {
 
   //create messages
   @Post()
-  async create(@Body() messages: Message): Promise<Message> {
-    return await this.messagesService.create(messages);
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() message: Message,
+  ): Promise<Message> {
+    if (file) {
+      const uploadedImage = await this.cloudinaryService.uploadImage(file);
+      message.imageUrl = uploadedImage.secure_url;
+    }
+    return await this.messagesService.create(message);
   }
 
   //update messages

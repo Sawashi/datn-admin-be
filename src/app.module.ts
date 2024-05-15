@@ -22,6 +22,7 @@ import { DislikedModule } from './disliked/disliked.module';
 import { PersonalizeModule } from './personalize/personalize.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CollectionModule } from './collections/collection.module';
+import { OpenaiModule } from './openAI/openai.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { CollectionModule } from './collections/collection.module';
     PersonalizeModule,
     CloudinaryModule,
     CollectionModule,
+    OpenaiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
