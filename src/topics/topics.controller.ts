@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   Delete,
-  Put,
+  Patch,
 } from '@nestjs/common';
 import { TopicsService } from './topics.service';
 import { Topic } from './topic.entity';
@@ -33,6 +33,11 @@ export class TopicsController {
     type: Topic,
     isArray: false,
   })
+  @Get('date-filter')
+  async getTopicByDateRanges() {
+    return this.topicsService.getTopicByDateRanges();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Topic> {
     const topics = await this.topicsService.findOne(id);
@@ -50,7 +55,7 @@ export class TopicsController {
   }
 
   //update topics
-  @Put(':id')
+  @Patch(':id')
   async update(@Param('id') id: number, @Body() topics: Topic): Promise<Topic> {
     return this.topicsService.update(id, topics);
   }
