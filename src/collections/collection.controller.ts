@@ -46,6 +46,27 @@ export class CollectionController {
     }
     return collection;
   }
+  @ApiOperation({
+    summary: 'Get Collections by User ID',
+    description: 'Get Collections by user ID',
+  })
+  @Get('/user/:userId')
+  async findByUserId(@Param('userId') userId: number): Promise<Collection[]> {
+    return await this.collectionService.findByUserId(userId);
+  }
+
+  // check if a dish is in the user's collection
+  @Get('user/:userId/dish/:dishId')
+  async isDishInCollection(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ): Promise<{ exists: boolean }> {
+    const isInCollection = await this.collectionService.isDishInCollection(
+      userId,
+      dishId,
+    );
+    return { exists: isInCollection };
+  }
 
   // Create Collection
   @Post()
