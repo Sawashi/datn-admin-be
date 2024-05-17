@@ -19,13 +19,22 @@ export class UsersService {
         reviews: true,
         notes: true,
         collections: true,
+        records: true,
       },
     });
   }
 
   // get one user
   async findOne(id: number): Promise<User> {
-    return await this.usersRepository.findOne({ where: { id } });
+    return await this.usersRepository.findOne({
+      where: { id },
+      relations: {
+        reviews: true,
+        notes: true,
+        collections: true,
+        records: true,
+      },
+    });
   }
 
   //create user

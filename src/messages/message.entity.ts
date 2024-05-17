@@ -9,15 +9,15 @@ export class Message {
 
   @ApiProperty()
   @Column()
-  role: string;
-
-  @ApiProperty()
-  @Column()
   content: string;
 
   @ApiProperty()
   @Column({ nullable: true })
   imageUrl: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  response: string;
 
   @ManyToOne(() => Topic, (topic) => topic.messageList, { eager: false })
   @Exclude({ toPlainOnly: true })
