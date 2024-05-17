@@ -10,6 +10,7 @@ import {
 import { TopicsService } from './topics.service';
 import { Topic } from './topic.entity';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Message } from 'src/messages/message.entity';
 @ApiTags('Topics')
 @Controller('topics')
 export class TopicsController {
@@ -45,6 +46,16 @@ export class TopicsController {
       throw new Error('Topic not found');
     } else {
       return topics;
+    }
+  }
+
+  @Get(':id/messages')
+  async findMessagesByTopicId(@Param('id') id: number): Promise<Message[]> {
+    const topics = await this.topicsService.findOne(id);
+    if (!topics) {
+      throw new Error('Topic not found');
+    } else {
+      return topics.messageList;
     }
   }
 

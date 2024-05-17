@@ -33,6 +33,7 @@ async function bootstrap() {
   logger.log(`Application is running on PORT: ${process.env.PORT || 3000}`);
 
   await app.listen(process.env.PORT || 3000);
+  // await app.listen(process.env.PORT || 3000, process.env.HOST || '10.90.0.31');
 }
 
 bootstrap();

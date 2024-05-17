@@ -14,7 +14,12 @@ export class TopicsService {
   }
   // get all topics
   async findall(): Promise<Topic[]> {
-    return await this.topicsRepository.find({ where: { isActive: true } });
+    return await this.topicsRepository.find({
+      where: { isActive: true },
+      order: {
+        createDate: 'DESC',
+      },
+    });
   }
 
   // get one topic
@@ -49,6 +54,9 @@ export class TopicsService {
         createDate: Between(startOfDay(today), endOfDay(today)),
         isActive: true,
       },
+      order: {
+        createDate: 'DESC',
+      },
     });
 
     const yesterdayTopic = await this.topicsRepository.find({
@@ -66,9 +74,9 @@ export class TopicsService {
     });
 
     return {
-      today: todayTopic,
-      yesterday: yesterdayTopic,
-      previous7Days: previous7DaysTopic,
+      Today: todayTopic,
+      Yesterday: yesterdayTopic,
+      'Previous 7 Days': previous7DaysTopic,
     };
   }
 }

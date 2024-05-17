@@ -10,6 +10,7 @@ import {
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Record } from 'src/record/record.entity';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -34,6 +35,17 @@ export class UsersController {
       throw new Error('User not found');
     } else {
       return user;
+    }
+  }
+
+  //get record user
+  @Get(':id/records')
+  async findRecordByUserId(@Param('id') id: number): Promise<Record[]> {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new Error('Topic not found');
+    } else {
+      return user.records;
     }
   }
 

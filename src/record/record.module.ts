@@ -1,0 +1,18 @@
+import { Module } from '@nestjs/common';
+import { RecordService } from './record.service';
+import { RecordController } from './record.controller';
+import { Record } from './record.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Diets } from 'src/diets/diets.entity';
+import { Cuisine } from 'src/cuisines/cuisine.entity';
+import { Allergies } from 'src/allergies/allergies.entity';
+import { User } from 'src/users/user.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Record, User, Diets, Cuisine, Allergies]),
+  ],
+  providers: [RecordService],
+  controllers: [RecordController],
+})
+export class RecordModule {}
