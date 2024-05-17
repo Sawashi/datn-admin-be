@@ -6,10 +6,13 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { CuisinesService } from './cuisines.service';
 import { Cuisine } from './cuisine.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Cuisines')
 @Controller('cuisines')
@@ -38,10 +41,17 @@ export class CuisinesController {
     return cuisine;
   }
 
-  // Create cuisine
   @Post()
-  async create(@Body() cuisine: Cuisine): Promise<Cuisine> {
-    return await this.cuisinesService.create(cuisine);
+  @ApiOperation({
+    summary: 'Create cuisine',
+    description: 'Create a new cuisine with an image file',
+  })
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @Body() cuisine: Cuisine,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<Cuisine> {
+    return await this.cuisinesService.create(cuisine, image);
   }
 
   // Update cuisine
