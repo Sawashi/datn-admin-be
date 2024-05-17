@@ -27,6 +27,24 @@ export class CollectionService {
     return await this.collectionsRepository.findOne({ where: { id } });
   }
 
+  // get collections by userId
+  async findByUserId(userId: number): Promise<Collection[]> {
+    return await this.collectionsRepository.find({
+      where: { user: { id: userId } },
+      relations: {
+        user: true,
+        dishes: true,
+      },
+    });
+  }
+  //  check if a dish is in the user's collection
+  async isDishInCollection(userId: number, dishId: number): Promise<boolean> {
+    const userCollection = await this.collectionsRepository.findOne({
+      where: { user: { id: userId }, dishes: { id: dishId } },
+    });
+    return !!userCollection;
+  }
+
   //create Collection
   async create(collection: Collection): Promise<Collection> {
     console.log(collection);
