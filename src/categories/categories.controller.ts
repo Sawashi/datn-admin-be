@@ -6,20 +6,27 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Category } from './category.entity';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/categories.dto';
+import { Role } from 'src/auth/role.enum';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('Categories')
 @Controller('categories')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CategoriesController {
   constructor(private readonly categoryService: CategoriesService) {
     this.categoryService = categoryService;
   }
   //get all category
   @Get()
+  @Roles(Role.Admin, Role.User)
   async findAll(): Promise<Category[]> {
     return await this.categoryService.findall();
   }
