@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -16,6 +17,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
+import { GetUser } from 'src/auth/get-user.decorator';
 @ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -34,10 +36,18 @@ export class UsersController {
     summary: 'Get user',
     description: 'Get user by id',
   })
-  //get one user
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(
+    @Param('id') id: number,
+    @GetUser() loginUser: User,
+  ): Promise<User> {
     const user = await this.usersService.findOne(id);
+    if (
+      loginUser.role === Role.User &&
+      loginUser.id.toString() !== id.toString()
+    ) {
+      throw new ForbiddenException();
+    }
     if (!user) {
       throw new Error('User not found');
     } else {
