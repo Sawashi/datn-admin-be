@@ -20,13 +20,13 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @ApiTags('Categories')
 @Controller('categories')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class CategoriesController {
   constructor(private readonly categoryService: CategoriesService) {
     this.categoryService = categoryService;
   }
   //get all category
   @Get()
-  @Roles(Role.Admin, Role.User)
   async findAll(): Promise<Category[]> {
     return await this.categoryService.findall();
   }

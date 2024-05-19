@@ -12,13 +12,17 @@ import {
 import { ReportsService } from './reports.service';
 import { Report } from './report.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/users/user.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Reports')
 @Controller('reports')
-@UseGuards(AuthGuard())
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {
     reportsService: reportsService;
