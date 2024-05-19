@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { Collection } from './collection.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CollectionDto } from './dto/collectionData.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -23,6 +23,7 @@ import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Collection')
 @Controller('collections')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin, Role.User)
 export class CollectionController {

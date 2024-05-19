@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { Message } from './message.entity';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { Roles } from 'src/auth/roles.decorator';
@@ -21,6 +21,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
 @ApiTags('Messages')
 @Controller('messages')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin, Role.User)
 export class MessagesController {

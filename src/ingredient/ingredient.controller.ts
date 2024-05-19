@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { IngredientService } from './ingredient.service';
 import { Ingredient } from './ingredient.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
@@ -18,6 +18,7 @@ import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Ingredients')
 @Controller('ingredient')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin, Role.User)
 export class IngredientController {

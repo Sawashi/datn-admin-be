@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { Review } from './review.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { Roles } from 'src/auth/roles.decorator';
@@ -20,6 +20,7 @@ import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Reviews')
 @Controller('reviews')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin, Role.User)
 export class ReviewsController {

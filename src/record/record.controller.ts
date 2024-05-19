@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { Record } from './record.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RecordCreateDto } from './dto/record-create.dto';
 import { RecordUpdateDto } from './dto/record-update.dto';
 import { Roles } from 'src/auth/roles.decorator';
@@ -20,6 +20,7 @@ import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Record')
 @Controller('record')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin, Role.User)
 export class RecordController {

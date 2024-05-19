@@ -11,7 +11,7 @@ import {
 
 import { ReportsService } from './reports.service';
 import { Report } from './report.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/users/user.entity';
 import { Roles } from 'src/auth/roles.decorator';
@@ -21,6 +21,7 @@ import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Reports')
 @Controller('reports')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.Admin, Role.User)
 export class ReportsController {
