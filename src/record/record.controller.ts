@@ -6,15 +6,22 @@ import {
   Param,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { Record } from './record.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RecordCreateDto } from './dto/record-create.dto';
 import { RecordUpdateDto } from './dto/record-update.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Record')
 @Controller('record')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class RecordController {
   constructor(private readonly recordService: RecordService) {
     recordService: recordService;

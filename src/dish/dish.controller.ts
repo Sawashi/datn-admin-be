@@ -8,6 +8,7 @@ import {
   Patch,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { DishService } from './dish.service';
 import { Dish } from './dish.entity';
@@ -16,8 +17,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { DishDto } from './dto/dishDto.dto';
 import { DishPatchDto } from './dto/dishPatchDto.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 @ApiTags('Dishes')
 @Controller('dish')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class DishController {
   constructor(
     private readonly dishService: DishService,
