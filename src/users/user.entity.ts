@@ -60,6 +60,10 @@ export class User {
   @Column({ nullable: true })
   role: string;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  isLogin: boolean;
+
   @OneToMany(() => Report, (report) => report.sender, { eager: true })
   sentReports: Report[];
 

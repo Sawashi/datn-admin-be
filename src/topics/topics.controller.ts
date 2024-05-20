@@ -6,13 +6,21 @@ import {
   Param,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { TopicsService } from './topics.service';
 import { Topic } from './topic.entity';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Message } from 'src/messages/message.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 @ApiTags('Topics')
 @Controller('topics')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT')
+@Roles(Role.Admin, Role.User)
 export class TopicsController {
   constructor(private readonly topicsService: TopicsService) {
     this.topicsService = topicsService;

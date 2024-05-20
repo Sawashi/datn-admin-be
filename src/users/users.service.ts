@@ -44,6 +44,8 @@ export class UsersService {
   //create user
   async create(user: User): Promise<User> {
     const newUser = this.usersRepository.create(user);
+    newUser.role = 'user';
+
     return await this.usersRepository.save(newUser);
   }
 
