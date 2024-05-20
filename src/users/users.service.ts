@@ -32,7 +32,11 @@ export class UsersService {
         reviews: true,
         notes: true,
         collections: true,
-        records: true,
+        records: {
+          diets: true,
+          allergies: true,
+          cuisines: true,
+        },
       },
     });
   }

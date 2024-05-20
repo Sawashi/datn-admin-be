@@ -47,8 +47,8 @@ export class TopicsService {
   async getTopicByDateRanges() {
     const today = new Date();
     const yesterday = subDays(today, 1);
+    const twoDaysAgo = subDays(today, 2);
     const sevenDaysAgo = subDays(today, 7);
-
     const todayTopic = await this.topicsRepository.find({
       where: {
         createDate: Between(startOfDay(today), endOfDay(today)),
@@ -68,7 +68,14 @@ export class TopicsService {
 
     const previous7DaysTopic = await this.topicsRepository.find({
       where: {
-        createDate: LessThanOrEqual(startOfDay(sevenDaysAgo)),
+        createDate: Between(startOfDay(sevenDaysAgo), endOfDay(twoDaysAgo)),
+        isActive: true,
+      },
+    });
+
+    const previous30DaysTopic = await this.topicsRepository.find({
+      where: {
+        createDate: LessThanOrEqual(endOfDay(sevenDaysAgo)),
         isActive: true,
       },
     });
@@ -77,6 +84,7 @@ export class TopicsService {
       Today: todayTopic,
       Yesterday: yesterdayTopic,
       'Previous 7 Days': previous7DaysTopic,
+      'Previous 30 Days': previous30DaysTopic,
     };
   }
 }
