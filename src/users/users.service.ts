@@ -32,6 +32,7 @@ export class UsersService {
         reviews: true,
         notes: true,
         collections: true,
+        topics: true,
         records: {
           diets: true,
           allergies: true,

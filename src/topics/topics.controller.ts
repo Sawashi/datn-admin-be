@@ -16,6 +16,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
+import { TopicUpdateDto } from './dto/topic-update.dto';
 @ApiTags('Topics')
 @Controller('topics')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,9 +43,14 @@ export class TopicsController {
     type: Topic,
     isArray: false,
   })
-  @Get('date-filter')
-  async getTopicByDateRanges() {
-    return this.topicsService.getTopicByDateRanges();
+  @Get('user/:id')
+  async getTopicByUserId(@Param('id') id: number) {
+    return this.topicsService.getTopicByUserId(id);
+  }
+
+  @Get('user/:id/date-filter')
+  async getTopicByDateRanges(@Param('id') id: number) {
+    return this.topicsService.getTopicByDateRanges(id);
   }
 
   @Get(':id')
@@ -75,8 +81,11 @@ export class TopicsController {
 
   //update topics
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() topics: Topic): Promise<Topic> {
-    return this.topicsService.update(id, topics);
+  async update(
+    @Param('id') id: number,
+    @Body() topicUpdateDto: TopicUpdateDto,
+  ): Promise<Topic> {
+    return this.topicsService.update(id, topicUpdateDto);
   }
 
   //delete topics

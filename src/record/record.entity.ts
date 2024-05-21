@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Allergies } from 'src/allergies/allergies.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
+import { Topic } from 'src/topics/topic.entity';
 import { User } from 'src/users/user.entity';
 import {
   Entity,
@@ -13,6 +14,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   Column,
+  OneToOne,
 } from 'typeorm';
 
 @Entity('Record')
@@ -52,6 +54,9 @@ export class Record {
   @ManyToMany(() => Diets, (diets) => diets.records)
   @JoinTable()
   diets: Diets[];
+
+  @OneToOne(() => Topic, (topic) => topic.record)
+  topic: Topic;
 
   @ApiProperty()
   @CreateDateColumn()
