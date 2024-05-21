@@ -30,6 +30,11 @@ export class RecordUpdateDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsNumber()
+  topicId: number;
+
+  @ApiProperty()
+  @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   allergies?: number[];

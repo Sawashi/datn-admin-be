@@ -6,6 +6,7 @@ import { Record } from 'src/record/record.entity';
 import { Report } from 'src/reports/report.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Schedule } from 'src/schedule/schedule.entity';
+import { Topic } from 'src/topics/topic.entity';
 import {
   Column,
   Entity,
@@ -86,6 +87,9 @@ export class User {
 
   @OneToMany(() => Collection, (collection) => collection.user)
   collections: Collection[];
+
+  @OneToMany(() => Topic, (topic) => topic.user)
+  topics: Topic[];
 
   @OneToMany(() => Record, (record) => record.user)
   records: Record[];
