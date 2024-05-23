@@ -9,7 +9,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,7 +27,7 @@ export class Topic {
   @OneToMany(() => Message, (message) => message.topicBelong, { eager: true })
   messageList: Message[];
 
-  @OneToOne(() => Record, (record) => record.topic)
+  @ManyToOne(() => Record, (record) => record.topics, { eager: true })
   @JoinColumn()
   record: Record;
 

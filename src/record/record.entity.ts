@@ -14,7 +14,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   Column,
-  OneToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('Record')
@@ -55,8 +55,8 @@ export class Record {
   @JoinTable()
   diets: Diets[];
 
-  @OneToOne(() => Topic, (topic) => topic.record)
-  topic: Topic;
+  @OneToMany(() => Topic, (topic) => topic.record)
+  topics: Topic[];
 
   @ApiProperty()
   @CreateDateColumn()
