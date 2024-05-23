@@ -29,7 +29,16 @@ export class TopicsService {
 
   // get one topic
   async findOne(id: number): Promise<Topic> {
-    return await this.topicsRepository.findOne({ where: { id } });
+    return await this.topicsRepository.findOne({
+      where: { id },
+      relations: {
+        record: {
+          diets: true,
+          allergies: true,
+          cuisines: true,
+        },
+      },
+    });
   }
 
   //create topic
@@ -60,7 +69,20 @@ export class TopicsService {
       }
     }
     Object.assign(topic, otherProps);
-    return this.topicsRepository.save(topic);
+    await this.topicsRepository.save(topic);
+
+    const updatedTopic = await this.topicsRepository.findOne({
+      where: { id },
+      relations: {
+        record: {
+          diets: true,
+          allergies: true,
+          cuisines: true,
+        },
+      },
+    });
+
+    return updatedTopic;
   }
 
   // delete topic
@@ -78,7 +100,11 @@ export class TopicsService {
         createDate: 'DESC',
       },
       relations: {
-        record: true,
+        record: {
+          diets: true,
+          allergies: true,
+          cuisines: true,
+        },
       },
     });
   }
