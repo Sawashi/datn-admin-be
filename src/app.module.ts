@@ -25,6 +25,7 @@ import { CollectionModule } from './collections/collection.module';
 import { OpenaiModule } from './openAI/openai.module';
 import { LoggingMiddleware } from './middleware/logger.middleware';
 import { RecordModule } from './record/record.module';
+import { MealplanModule } from './mealplan/mealplan.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { RecordModule } from './record/record.module';
     CollectionModule,
     OpenaiModule,
     RecordModule,
+    MealplanModule,
   ],
   controllers: [AppController],
   providers: [AppService],
