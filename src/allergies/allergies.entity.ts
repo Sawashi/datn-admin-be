@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Personalize } from 'src/personalize/personalize.entity';
+import { Record } from 'src/record/record.entity';
 import {
   Entity,
   Column,
@@ -33,4 +34,7 @@ export class Allergies {
 
   @ManyToMany(() => Personalize, (personalize) => personalize.allergies)
   personalize: Personalize[];
+
+  @ManyToMany(() => Record, (record) => record.allergies)
+  records: Record[];
 }

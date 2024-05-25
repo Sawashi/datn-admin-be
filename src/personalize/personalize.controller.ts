@@ -7,14 +7,22 @@ import {
   Delete,
   Put,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { PersonalizeService } from './personalize.service';
 import { Personalize } from './personalize.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdatePersonalizeDto } from './dto/update-personalize.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Personalize')
 @Controller('personalize')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class PersonalizeController {
   constructor(private readonly personalizeService: PersonalizeService) {
     personalizeService: personalizeService;

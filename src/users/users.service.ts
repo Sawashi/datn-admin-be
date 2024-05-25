@@ -19,18 +19,34 @@ export class UsersService {
         reviews: true,
         notes: true,
         collections: true,
+        records: true,
       },
     });
   }
 
   // get one user
   async findOne(id: number): Promise<User> {
-    return await this.usersRepository.findOne({ where: { id } });
+    return await this.usersRepository.findOne({
+      where: { id },
+      relations: {
+        reviews: true,
+        notes: true,
+        collections: true,
+        topics: true,
+        records: {
+          diets: true,
+          allergies: true,
+          cuisines: true,
+        },
+      },
+    });
   }
 
   //create user
   async create(user: User): Promise<User> {
     const newUser = this.usersRepository.create(user);
+    newUser.role = 'user';
+
     return await this.usersRepository.save(newUser);
   }
 

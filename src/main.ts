@@ -7,28 +7,38 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-// Define the bootstrap function
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new TransformInterceptor());
   app.enableCors({
-    origin: ['https://datn-admin-fe.vercel.app', 'http://localhost:3000'], // Allow requests from these origins
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
-    credentials: true, // Allow credentials (e.g., cookies, authorization headers)
+    origin: ['https://datn-admin-fe.vercel.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   const config = new DocumentBuilder()
-    .setTitle('Recipes API') // Set the title of the API
-    .setDescription('Recipes API description') // Set the description of the API
-    .setVersion('0.1') // Set the version of the API
-    .build(); // Build the document
+    .setTitle('Recipes API')
+    .setDescription('Recipes API description')
+    .setVersion('0.1')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'JWT',
+    )
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
-
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   logger.log(`Application is running on PORT: ${process.env.PORT || 3000}`);
 

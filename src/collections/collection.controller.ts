@@ -8,16 +8,24 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { Collection } from './collection.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CollectionDto } from './dto/collectionData.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Collection')
 @Controller('collections')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class CollectionController {
   constructor(
     private readonly collectionService: CollectionService,
@@ -45,6 +53,27 @@ export class CollectionController {
       throw new Error('Collection not found');
     }
     return collection;
+  }
+  @ApiOperation({
+    summary: 'Get Collections by User ID',
+    description: 'Get Collections by user ID',
+  })
+  @Get('/user/:userId')
+  async findByUserId(@Param('userId') userId: number): Promise<Collection[]> {
+    return await this.collectionService.findByUserId(userId);
+  }
+
+  // check if a dish is in the user's collection
+  @Get('user/:userId/dish/:dishId')
+  async isDishInCollection(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ): Promise<{ exists: boolean }> {
+    const isInCollection = await this.collectionService.isDishInCollection(
+      userId,
+      dishId,
+    );
+    return { exists: isInCollection };
   }
 
   // Create Collection

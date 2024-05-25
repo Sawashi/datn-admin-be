@@ -1,5 +1,6 @@
 import { MealplanModule } from './mealplan/mealplan.module';
-import { Module } from '@nestjs/common';
+
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -24,6 +25,8 @@ import { PersonalizeModule } from './personalize/personalize.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CollectionModule } from './collections/collection.module';
 import { OpenaiModule } from './openAI/openai.module';
+import { LoggingMiddleware } from './middleware/logger.middleware';
+import { RecordModule } from './record/record.module';
 
 @Module({
   imports: [
@@ -60,8 +63,13 @@ import { OpenaiModule } from './openAI/openai.module';
     CollectionModule,
     OpenaiModule,
     MealplanModule,
+    RecordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}
