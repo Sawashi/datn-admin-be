@@ -1,3 +1,4 @@
+import { MealplanModule } from './mealplan/mealplan.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -58,6 +59,7 @@ import { OpenaiModule } from './openAI/openai.module';
     CloudinaryModule,
     CollectionModule,
     OpenaiModule,
+    MealplanModule,
   ],
   controllers: [AppController],
   providers: [AppService],
