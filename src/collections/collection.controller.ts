@@ -6,16 +6,30 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
   BadRequestException,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { Collection } from './collection.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CollectionService } from './collection.service';
+import { Collection } from './collection.entity';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CollectionDto } from './dto/collectionData.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 
 @ApiTags('Collection')
 @Controller('collections')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class CollectionController {
   constructor(
     private readonly collectionService: CollectionService,

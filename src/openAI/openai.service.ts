@@ -2,13 +2,10 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 @Injectable()
 export class OpenaiService {
-  private readonly apiKey: string = process.env.OPENAI_KEY; // Thay thế bằng API key của bạn
+  private readonly apiKey: string = process.env.OPENAI_KEY;
 
   constructor(private readonly httpService: HttpService) {
     httpService: httpService;
@@ -21,8 +18,8 @@ export class OpenaiService {
       'Content-Type': 'application/json',
     };
     const data = {
-      model: 'gpt-3.5-turbo-0125', // Sử dụng mô hình gpt-3.5-turbo
-      messages: [{ role: 'user', content: prompt }], // Định dạng mới của API chat
+      model: 'gpt-3.5-turbo-0125',
+      messages: [{ role: 'user', content: prompt }],
       max_tokens: 200,
     };
 
@@ -30,7 +27,7 @@ export class OpenaiService {
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(url, data, { headers }),
       );
-      return response.data.choices[0].message.content; // Trả về đoạn văn bản do OpenAI tạo ra
+      return response.data.choices; // Trả về đoạn văn bản do OpenAI tạo ra
     } catch (error) {
       throw new HttpException(
         'Error calling OpenAI API',

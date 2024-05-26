@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Collection } from 'src/collections/collection.entity';
+
+import { MealPlan } from 'src/mealplan/mealplan.entity';
 import { Note } from 'src/notes/notes.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
 import { Record } from 'src/record/record.entity';
 import { Report } from 'src/reports/report.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Schedule } from 'src/schedule/schedule.entity';
+import { Topic } from 'src/topics/topic.entity';
 import {
   Column,
   Entity,
@@ -60,6 +63,10 @@ export class User {
   @Column({ nullable: true })
   role: string;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  isLogin: boolean;
+
   @OneToMany(() => Report, (report) => report.sender, { eager: true })
   sentReports: Report[];
 
@@ -80,8 +87,14 @@ export class User {
   })
   personalize: Personalize;
 
+  @OneToOne(() => MealPlan, (mealPlan) => mealPlan.user)
+  mealPlan: MealPlan;
+
   @OneToMany(() => Collection, (collection) => collection.user)
   collections: Collection[];
+
+  @OneToMany(() => Topic, (topic) => topic.user)
+  topics: Topic[];
 
   @OneToMany(() => Record, (record) => record.user)
   records: Record[];

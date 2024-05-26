@@ -18,6 +18,9 @@ import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { DishIngredient } from './dish_ingredient.entity';
+import { MealPlan } from 'src/mealplan/mealplan.entity';
+import { MealplanDish } from './dish_mealplan.entity';
+
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -64,9 +67,15 @@ export class Dish {
   @JoinColumn()
   cuisines: Cuisine;
 
+  @OneToMany(() => MealplanDish, (mealplanDish) => mealplanDish.dish)
+  mealplanDishes: MealplanDish[];
+
   @ManyToMany(() => Diets, (diet) => diet.dishes)
   @JoinTable()
   diets: Diets[];
+
+  @ManyToMany(() => MealPlan, (mealPlan) => mealPlan.dishes)
+  mealPlans: MealPlan[];
 
   @ApiProperty()
   @CreateDateColumn()

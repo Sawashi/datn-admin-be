@@ -1,9 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Message } from 'src/messages/message.entity';
+import { Record } from 'src/record/record.entity';
+import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -13,9 +17,8 @@ export class Topic {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
-  @Column()
-  userId: number;
+  @ManyToOne(() => User, (user) => user.topics)
+  user: User;
 
   @ApiProperty()
   @Column()
@@ -23,6 +26,10 @@ export class Topic {
 
   @OneToMany(() => Message, (message) => message.topicBelong, { eager: true })
   messageList: Message[];
+
+  @ManyToOne(() => Record, (record) => record.topics, { eager: true })
+  @JoinColumn()
+  record: Record;
 
   @ApiProperty()
   @Column({ default: true })
