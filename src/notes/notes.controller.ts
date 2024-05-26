@@ -30,6 +30,14 @@ export class NotesController {
   async findAll(): Promise<Note[]> {
     return await this.notesService.findall();
   }
+  @Get('/user/:userId/dish/:dishId')
+  async findByUserId(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ): Promise<Note[]> {
+    return await this.notesService.findAllByUserIdAndDish(userId, dishId);
+  }
+
   //get one note
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Note> {
@@ -42,9 +50,18 @@ export class NotesController {
   }
 
   //create note
+  // @Post()
+  // async create(@Body() note: Note): Promise<Note> {
+  //   return await this.notesService.create(note);
+  // }
   @Post()
-  async create(@Body() note: Note): Promise<Note> {
-    return await this.notesService.create(note);
+  async create(
+    @Body('noteTitle') noteTitle: string,
+    @Body('noteContent') noteContent: string,
+    @Body('dishId') dishId: number,
+    @Body('userId') userId: number,
+  ): Promise<Note> {
+    return this.notesService.create(noteTitle, noteContent, dishId, userId);
   }
 
   //update note

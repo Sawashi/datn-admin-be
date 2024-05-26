@@ -6,14 +6,12 @@ import {
   Param,
   Delete,
   Put,
-  UseInterceptors,
-  UploadedFile,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { Collection } from './collection.entity';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CollectionDto } from './dto/collectionData.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { Roles } from 'src/auth/roles.decorator';
@@ -76,24 +74,18 @@ export class CollectionController {
     return { exists: isInCollection };
   }
 
-  // Create Collection
   @Post()
-  @UseInterceptors(FileInterceptor('file')) // 'file' should match the field name in the form data
-  async create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() collectionDto: CollectionDto,
-  ) {
-    const { name } = collectionDto;
-    console.log(collectionDto);
-
-    // Upload file to Cloudinary
-    const uploadedImage = await this.cloudinaryService.uploadImage(file);
-
-    // Create collection with name and image URL
+  async create(@Body() collectionDto: CollectionDto) {
+    const { userId, name, description } = collectionDto;
     const collection = new Collection();
     collection.collectionName = name;
-    collection.imgUrl = uploadedImage.secure_url;
-    return this.collectionService.create(collection);
+    collection.userId = userId;
+    collection.collectionDcrpt = description;
+    try {
+      return await this.collectionService.create(collection);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   // Update Collection
@@ -114,5 +106,41 @@ export class CollectionController {
       throw new Error('User not found');
     }
     return this.collectionService.delete(id);
+  }
+  // Check if collection name exists for a user
+  @Get('/exists/:userId/:name')
+  async isCollectionNameExists(
+    @Param('userId') userId: number,
+    @Param('name') name: string,
+  ): Promise<{ exists: boolean }> {
+    const exists = await this.collectionService.isCollectionNameExists(
+      userId,
+      name,
+    );
+    return { exists };
+  }
+
+  @Post('user/:userId/dishes/:dishId')
+  async addDishToCollections(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+    @Body('collectionIds') collectionIds: number[],
+  ) {
+    await this.collectionService.addDishToCollections(
+      userId,
+      dishId,
+      collectionIds,
+    );
+  }
+  @Get('user/:userId/dishes/:dishId')
+  async getCollectionsWithDishFlag(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ) {
+    const collections = await this.collectionService.getCollectionsWithDishFlag(
+      userId,
+      dishId,
+    );
+    return collections;
   }
 }

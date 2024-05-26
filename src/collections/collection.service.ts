@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Collection } from './collection.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { Dish } from '../dish/dish.entity';
+import { CollectionWithDishFlagDto } from './dto/collectionWithDishFlag.dto';
 @Injectable()
 export class CollectionService {
   constructor(
     @InjectRepository(Collection)
     private collectionsRepository: Repository<Collection>,
+    @InjectRepository(Dish)
+    private dishesRepository: Repository<Dish>,
   ) {
     collectionsRepository: collectionsRepository;
+    dishesRepository: dishesRepository;
   }
 
   // get all Collections
@@ -44,10 +48,24 @@ export class CollectionService {
     });
     return !!userCollection;
   }
+  async isCollectionNameExists(
+    userId: number,
+    collectionName: string,
+  ): Promise<boolean> {
+    const collection = await this.collectionsRepository.findOne({
+      where: { userId, collectionName },
+    });
+    return !!collection;
+  }
 
-  //create Collection
   async create(collection: Collection): Promise<Collection> {
-    console.log(collection);
+    const exists = await this.isCollectionNameExists(
+      collection.userId,
+      collection.collectionName,
+    );
+    if (exists) {
+      throw new Error('Collection already exists.');
+    }
     const newCollection = this.collectionsRepository.create(collection);
     return await this.collectionsRepository.save(newCollection);
   }
@@ -61,5 +79,44 @@ export class CollectionService {
   // delete Collection
   async delete(id: number): Promise<void> {
     await this.collectionsRepository.delete(id);
+  }
+
+  async addDishToCollections(
+    userId: number,
+    dishId: number,
+    collectionIds: number[],
+  ): Promise<void> {
+    const dish = await this.dishesRepository.findOne({ where: { id: dishId } });
+    if (!dish) {
+      throw new Error('Dish not found');
+    }
+
+    const collections = await this.collectionsRepository.find({
+      where: { id: In(collectionIds), userId },
+      relations: ['dishes'],
+    });
+
+    for (const collection of collections) {
+      if (!collection.dishes.some((d) => d.id === dish.id)) {
+        collection.dishes.push(dish);
+        await this.collectionsRepository.save(collection);
+      }
+    }
+  }
+
+  async getCollectionsWithDishFlag(
+    userId: number,
+    dishId: number,
+  ): Promise<CollectionWithDishFlagDto[]> {
+    const collections = await this.collectionsRepository.find({
+      where: { userId },
+      relations: ['dishes'],
+    });
+
+    return collections.map((collection) => ({
+      id: collection.id,
+      collectionName: collection.collectionName,
+      hasDish: collection.dishes.some((dish) => dish.id === dishId),
+    }));
   }
 }

@@ -26,12 +26,39 @@ export class NotesService {
     return await this.noteRepository.findOne({ where: { id } });
   }
 
-  //create note
-  async create(note: Note): Promise<Note> {
-    const newnote = this.noteRepository.create(note);
-    return await this.noteRepository.save(newnote);
+  // get notes by userId
+  async findAllByUserIdAndDish(
+    userId: number,
+    dishId: number,
+  ): Promise<Note[]> {
+    return await this.noteRepository.find({
+      where: { user: { id: userId }, dish: { id: dishId } },
+      relations: {
+        user: true,
+        dish: true,
+      },
+    });
   }
 
+  //create note
+  // async create(note: Note): Promise<Note> {
+  //   const newnote = this.noteRepository.create(note);
+  //   return await this.noteRepository.save(newnote);
+  // }
+  async create(
+    noteTitle: string,
+    noteContent: string,
+    dishId: number,
+    userId: number,
+  ): Promise<Note> {
+    const note = this.noteRepository.create({
+      noteTitle,
+      noteContent,
+      dishId,
+      userId,
+    });
+    return this.noteRepository.save(note);
+  }
   // update note
   async update(id: number, note: Note): Promise<Note> {
     await this.noteRepository.update(id, note);
