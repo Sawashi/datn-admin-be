@@ -124,4 +124,15 @@ export class CollectionController {
       collectionIds,
     );
   }
+  @Get('user/:userId/dishes/:dishId')
+  async getCollectionsWithDishFlag(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ) {
+    const collections = await this.collectionService.getCollectionsWithDishFlag(
+      userId,
+      dishId,
+    );
+    return collections;
+  }
 }

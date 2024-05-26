@@ -1,27 +1,43 @@
 import { ApiProperty } from '@nestjs/swagger';
-
+import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
 export class DishDto {
   @ApiProperty()
-  cookingTime: string;
-
-  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   dishName: string;
 
   @ApiProperty()
-  servings: number;
+  @IsString()
+  @IsOptional()
+  cookingTime?: string;
 
   @ApiProperty()
-  calories: number;
+  @IsNumber()
+  @IsOptional()
+  servings?: number;
 
   @ApiProperty()
-  author: string;
+  @IsNumber()
+  @IsOptional()
+  calories?: number;
 
   @ApiProperty()
-  directions: string;
+  @IsString()
+  @IsOptional()
+  author?: string;
 
   @ApiProperty()
-  ingredients: string;
+  @IsString()
+  @IsOptional()
+  directions?: string;
 
   @ApiProperty()
-  cuisines: number;
+  @IsString()
+  @IsOptional()
+  ingredients?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  cuisines?: number;
 }

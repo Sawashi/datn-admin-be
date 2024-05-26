@@ -3,6 +3,7 @@ import { Collection } from './collection.entity';
 import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dish } from '../dish/dish.entity';
+import { CollectionWithDishFlagDto } from './dto/collectionWithDishFlag.dto';
 @Injectable()
 export class CollectionService {
   constructor(
@@ -101,5 +102,21 @@ export class CollectionService {
         await this.collectionsRepository.save(collection);
       }
     }
+  }
+
+  async getCollectionsWithDishFlag(
+    userId: number,
+    dishId: number,
+  ): Promise<CollectionWithDishFlagDto[]> {
+    const collections = await this.collectionsRepository.find({
+      where: { userId },
+      relations: ['dishes'],
+    });
+
+    return collections.map((collection) => ({
+      id: collection.id,
+      collectionName: collection.collectionName,
+      hasDish: collection.dishes.some((dish) => dish.id === dishId),
+    }));
   }
 }

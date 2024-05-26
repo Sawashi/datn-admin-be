@@ -11,12 +11,13 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { Ingredient } from '../ingredient/ingredient.entity';
+
 import { Note } from 'src/notes/notes.entity';
 import { Review } from 'src/reviews/review.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
+import { DishIngredient } from './dish_ingredient.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -53,21 +54,11 @@ export class Dish {
   @ManyToMany(() => Collection, (collection) => collection.dishes)
   collections: Collection[];
 
-  @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes)
-  @JoinTable({
-    name: 'dish_ingredient',
-    joinColumn: {
-      name: 'dish_id',
-      referencedColumnName: 'id',
-      foreignKeyConstraintName: 'dish_ingredient_dish_id',
-    },
-    inverseJoinColumn: {
-      name: 'ingredient_id',
-      referencedColumnName: 'id',
-      foreignKeyConstraintName: 'dish_ingredient_ingredient_id',
-    },
-  })
-  ingredients: Ingredient[];
+  @OneToMany(
+    () => DishIngredient,
+    (dishIngredient: DishIngredient) => dishIngredient.dish,
+  )
+  dishToIngredients: Array<DishIngredient>;
 
   @ManyToOne(() => Cuisine, (cuisine) => cuisine.dishes)
   @JoinColumn()
