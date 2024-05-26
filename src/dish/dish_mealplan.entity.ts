@@ -18,6 +18,6 @@ export class MealplanDish {
   @Column()
   dishId: number;
 
-  @Column()
+  @Column({ nullable: true })
   planDate: Date;
 }

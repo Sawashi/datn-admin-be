@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MealplanDish } from 'src/dish/dish_mealplan.entity';
-import { Between, Repository } from 'typeorm';
+import { Between, IsNull, Repository } from 'typeorm';
 import { MealPlan } from './mealplan.entity';
 import { User } from 'src/users/user.entity';
 
@@ -42,6 +42,16 @@ export class MealplanService {
       },
     });
 
+    const unscheduledDishes = await this.mealplanDishRepository.find({
+      relations: ['dish'],
+      where: {
+        mealPlan: {
+          user_id: userId,
+        },
+        planDate: IsNull(),
+      },
+    });
+
     const daysOfWeek = [
       'Sunday',
       'Monday',
@@ -59,15 +69,30 @@ export class MealplanService {
       groupedDishes[dayOfWeek].dishes.push(dish);
     });
 
+    groupedDishes.push({ day: 'Unscheduled', dishes: unscheduledDishes });
+
     return groupedDishes.filter((group) => group.dishes.length > 0);
   }
-  async addDishToMealPlan(mealPlanId: number, dishId: number, planDate: Date) {
+
+  async addDishToMealPlan(mealPlanId: number, dishId: number) {
     const newDish = await this.mealplanDishRepository.create({
       mealPlanId: mealPlanId,
       dishId: dishId,
-      planDate: planDate,
     });
     return await this.mealplanDishRepository.save(newDish);
+  }
+
+  async updatePlanDate(mealPlanId: number, dishId: number, planDate: Date) {
+    const mealplanDish = await this.mealplanDishRepository.findOne({
+      where: { mealPlanId: mealPlanId, dishId: dishId },
+    });
+
+    if (!mealplanDish) {
+      throw new Error('MealplanDish not found');
+    }
+
+    mealplanDish.planDate = planDate;
+    return await this.mealplanDishRepository.save(mealplanDish);
   }
 
   async deleteDishFromMealPlan(dishId: number, mealPlanId: number) {

@@ -1,7 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MealplanService } from './mealplan.service';
-import { AddDishToMealPlanDto } from 'src/dish/dto/disMealplanDto';
+import {
+  AddDishToMealPlanDto,
+  UpdateDishToMealPlanDto,
+} from 'src/dish/dto/disMealplanDto';
 import { DeleteDishFromMealPlanDto } from './dto/deleteDishMealPlanDto';
 
 @ApiTags('mealplan')
@@ -17,9 +28,15 @@ export class MealplanController {
   }
   @Post()
   async addDishtoMealPlan(@Body() addDishToMealPlanDto: AddDishToMealPlanDto) {
-    const { mealPlanId, dishId, planDate } = addDishToMealPlanDto;
+    const { mealPlanId, dishId } = addDishToMealPlanDto;
 
-    return await this.mealPlanService.addDishToMealPlan(
+    return await this.mealPlanService.addDishToMealPlan(mealPlanId, dishId);
+  }
+
+  @Patch('update-plan-date')
+  async updatePlanDate(@Body() updatePlanDateDto: UpdateDishToMealPlanDto) {
+    const { mealPlanId, dishId, planDate } = updatePlanDateDto;
+    return await this.mealPlanService.updatePlanDate(
       mealPlanId,
       dishId,
       new Date(planDate),
