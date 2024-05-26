@@ -17,6 +17,7 @@ import { Diets } from 'src/diets/diets.entity';
     TypeOrmModule.forFeature([
       Dish,
       DishIngredient,
+
       Note,
       Review,
       Ingredient,

@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   Delete,
-  Patch,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
@@ -55,7 +55,7 @@ export class ReviewsController {
     return await this.reviewsService.create(createReviewDto);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: number,
     @Body() updateReviewDto: UpdateReviewDto,

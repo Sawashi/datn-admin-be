@@ -1,3 +1,5 @@
+import { MealplanModule } from './mealplan/mealplan.module';
+
 import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -25,7 +27,6 @@ import { CollectionModule } from './collections/collection.module';
 import { OpenaiModule } from './openAI/openai.module';
 import { LoggingMiddleware } from './middleware/logger.middleware';
 import { RecordModule } from './record/record.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -60,6 +61,7 @@ import { RecordModule } from './record/record.module';
     CloudinaryModule,
     CollectionModule,
     OpenaiModule,
+    MealplanModule,
     RecordModule,
   ],
   controllers: [AppController],

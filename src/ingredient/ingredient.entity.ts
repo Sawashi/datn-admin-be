@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Dish } from 'src/dish/dish.entity';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { DishIngredient } from 'src/dish/dish_ingredient.entity';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('Ingredient')
 export class Ingredient {
@@ -12,7 +12,9 @@ export class Ingredient {
   @ApiProperty()
   @Column({ nullable: true })
   description: string;
-
-  @ManyToMany(() => Dish, (dish) => dish.ingredients)
-  dishes: Dish[];
+  @OneToMany(
+    () => DishIngredient,
+    (dishIngredient: DishIngredient) => dishIngredient.dish,
+  )
+  dishToIngredients: Array<DishIngredient>;
 }
