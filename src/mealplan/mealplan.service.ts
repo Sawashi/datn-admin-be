@@ -31,4 +31,20 @@ export class MealplanService {
       },
     });
   }
+  async addDishToMealPlan(mealPlanId: number, dishId: number, planDate: Date) {
+    const newDish = await this.mealplanDishRepository.create({
+      mealPlanId: mealPlanId,
+      dishId: dishId,
+      planDate: planDate,
+    });
+    return await this.mealplanDishRepository.save(newDish);
+  }
+
+  async deleteDishFromMealPlan(dishId: number) {
+    const deleteMealPlan = await this.mealplanDishRepository.findOne({
+      where: { dishId },
+    });
+
+    return await this.mealplanDishRepository.delete(deleteMealPlan.id);
+  }
 }
