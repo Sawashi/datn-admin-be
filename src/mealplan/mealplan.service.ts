@@ -71,7 +71,7 @@ export class MealplanService {
 
     groupedDishes.push({ day: 'Unscheduled', dishes: unscheduledDishes });
 
-    return groupedDishes.filter((group) => group.dishes.length > 0);
+    return groupedDishes;
   }
 
   async getDishesWithPlanDateByUserIdForToday(
