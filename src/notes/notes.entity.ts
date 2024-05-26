@@ -13,7 +13,11 @@ export class Note {
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column()
+  noteTitle: string;
+
+  @ApiProperty()
+  @Column()
   noteContent: string;
 
   @ApiProperty()

@@ -27,7 +27,6 @@ import { CollectionModule } from './collections/collection.module';
 import { OpenaiModule } from './openAI/openai.module';
 import { LoggingMiddleware } from './middleware/logger.middleware';
 import { RecordModule } from './record/record.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
