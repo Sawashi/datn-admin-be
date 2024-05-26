@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MealplanService } from './mealplan.service';
 import { AddDishToMealPlanDto } from 'src/dish/dto/disMealplanDto';
+import { DeleteDishFromMealPlanDto } from './dto/deleteDishMealPlanDto';
 
 @ApiTags('mealplan')
 @Controller('mealplan')
@@ -26,7 +27,14 @@ export class MealplanController {
   }
 
   @Delete()
-  async deleteDishFromMealPlan(@Body('dishId') dishId: number) {
-    return await this.mealPlanService.deleteDishFromMealPlan(dishId);
+  async deleteDishFromMealPlan(
+    @Body() deleteDishMealPlanDto: DeleteDishFromMealPlanDto,
+  ) {
+    const { dishId, mealPlanId } = deleteDishMealPlanDto;
+
+    return await this.mealPlanService.deleteDishFromMealPlan(
+      dishId,
+      mealPlanId,
+    );
   }
 }

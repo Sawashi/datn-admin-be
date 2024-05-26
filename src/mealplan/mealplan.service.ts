@@ -70,11 +70,16 @@ export class MealplanService {
     return await this.mealplanDishRepository.save(newDish);
   }
 
-  async deleteDishFromMealPlan(dishId: number) {
+  async deleteDishFromMealPlan(dishId: number, mealPlanId: number) {
     const deleteMealPlan = await this.mealplanDishRepository.findOne({
-      where: { dishId },
+      where: { dishId: dishId, mealPlanId: mealPlanId },
     });
 
-    return await this.mealplanDishRepository.delete(deleteMealPlan.id);
+    if (deleteMealPlan) {
+      await this.mealplanDishRepository.delete(deleteMealPlan.id);
+      return { success: true, message: 'Dish deleted from meal plan' };
+    } else {
+      return { success: false, message: 'Dish not found in meal plan' };
+    }
   }
 }
