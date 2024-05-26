@@ -20,14 +20,19 @@ export class OpenaiService {
     const data = {
       model: 'gpt-3.5-turbo-0125',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 200,
+      max_tokens: 300,
     };
 
     try {
       const response: AxiosResponse<any> = await firstValueFrom(
         this.httpService.post(url, data, { headers }),
       );
-      return response.data.choices; // Trả về đoạn văn bản do OpenAI tạo ra
+      if (response.data) {
+        console.log(response.data);
+        const responseMessage = response.data.choices[0].message.content;
+        console.log(responseMessage);
+        return responseMessage;
+      }
     } catch (error) {
       throw new HttpException(
         'Error calling OpenAI API',

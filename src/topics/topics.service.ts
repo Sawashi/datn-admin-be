@@ -114,6 +114,7 @@ export class TopicsService {
     const yesterday = subDays(today, 1);
     const twoDaysAgo = subDays(today, 2);
     const sevenDaysAgo = subDays(today, 7);
+    const eightDaysAgo = subDays(today, 8);
     const todayTopic = await this.topicsRepository.find({
       where: {
         user: { id: id },
@@ -144,7 +145,7 @@ export class TopicsService {
     const previous30DaysTopic = await this.topicsRepository.find({
       where: {
         user: { id: id },
-        createDate: LessThanOrEqual(endOfDay(sevenDaysAgo)),
+        createDate: LessThanOrEqual(endOfDay(eightDaysAgo)),
         isActive: true,
       },
     });
