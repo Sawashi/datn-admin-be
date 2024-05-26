@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MealplanService } from './mealplan.service';
@@ -22,9 +23,28 @@ export class MealplanController {
     this.mealPlanService = mealPlanService;
   }
 
-  @Get(':userId/dishes')
-  async getDishesWithPlanDateByUserId(@Param('userId') userId: number) {
-    return await this.mealPlanService.getDishesWithPlanDateByUserId(userId);
+  @Get(':userId')
+  async getDishesWithPlanDateByUserId(
+    @Param('userId') userId: number,
+    @Query('weekOffset') weekOffset: string,
+  ) {
+    const weekOffsetNumber = parseInt(weekOffset, 10) || 0;
+    return await this.mealPlanService.getDishesWithPlanDateByUserId(
+      userId,
+      weekOffsetNumber,
+    );
+  }
+
+  @Get(':userId/today')
+  async getDishesWithPlanDateByUserIdForToday(
+    @Param('userId') userId: number,
+    @Query('dayOffset') dayOffset: string,
+  ) {
+    const dayOffsetNumber = parseInt(dayOffset, 10) || 0;
+    return await this.mealPlanService.getDishesWithPlanDateByUserIdForToday(
+      userId,
+      dayOffsetNumber,
+    );
   }
   @Post()
   async addDishtoMealPlan(@Body() addDishToMealPlanDto: AddDishToMealPlanDto) {

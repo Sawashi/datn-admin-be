@@ -21,10 +21,10 @@ export class MealplanService {
     userRepository;
   }
 
-  async getDishesWithPlanDateByUserId(userId: number) {
+  async getDishesWithPlanDateByUserId(userId: number, weekOffset: number = 0) {
     const today = new Date();
     const startOfWeek = new Date(
-      today.setDate(today.getDate() - today.getDay()),
+      today.setDate(today.getDate() - today.getDay() + weekOffset * 7),
     );
     startOfWeek.setHours(0, 0, 0, 0);
 
@@ -72,6 +72,44 @@ export class MealplanService {
     groupedDishes.push({ day: 'Unscheduled', dishes: unscheduledDishes });
 
     return groupedDishes.filter((group) => group.dishes.length > 0);
+  }
+
+  async getDishesWithPlanDateByUserIdForToday(
+    userId: number,
+    dayOffset: number = 0,
+  ) {
+    const today = new Date();
+    const targetDate = new Date(today.setDate(today.getDate() + dayOffset * 7));
+    targetDate.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(targetDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const dishes = await this.mealplanDishRepository.find({
+      relations: ['dish'],
+      where: {
+        mealPlan: {
+          user_id: userId,
+        },
+        planDate: Between(targetDate, endOfDay),
+      },
+    });
+
+    const unscheduledDishes = await this.mealplanDishRepository.find({
+      relations: ['dish'],
+      where: {
+        mealPlan: {
+          user_id: userId,
+        },
+        planDate: IsNull(),
+      },
+    });
+
+    return {
+      day: targetDate.toDateString(),
+      dishes: dishes,
+      unscheduledDishes: unscheduledDishes,
+    };
   }
 
   async addDishToMealPlan(mealPlanId: number, dishId: number) {
