@@ -121,6 +121,13 @@ export class MealplanService {
     return await this.mealplanDishRepository.save(newDish);
   }
 
+  async addMealPlanForUser(userId: number) {
+    const newMealPlan = await this.mealPlanRepository.create({
+      user_id: userId,
+    });
+    return await this.mealPlanRepository.save(newMealPlan);
+  }
+
   async updatePlanDate(mealPlanId: number, dishId: number, planDate: Date) {
     const mealplanDish = await this.mealplanDishRepository.findOne({
       where: { mealPlanId: mealPlanId, dishId: dishId },
@@ -145,5 +152,12 @@ export class MealplanService {
     } else {
       return { success: false, message: 'Dish not found in meal plan' };
     }
+  }
+  //  check if a dish is in the user's mealplan
+  async isDishInMealPlan(dishId: number, mealplanId: number): Promise<boolean> {
+    const userMealplan = await this.mealplanDishRepository.findOne({
+      where: { mealPlan: { id: mealplanId }, dish: { id: dishId } },
+    });
+    return !!userMealplan;
   }
 }
