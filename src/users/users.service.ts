@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { Collection } from 'src/collections/collection.entity';
+import { Topic } from 'src/topics/topic.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Collection)
+    private collectionsRepository: Repository<Collection>,
+    @InjectRepository(Topic)
+    private topicsRepository: Repository<Topic>,
   ) {
     usersRepository: usersRepository;
+    collectionsRepository: collectionsRepository;
+    topicsRepository: topicsRepository;
   }
 
   // get all users
@@ -47,7 +59,46 @@ export class UsersService {
     const newUser = this.usersRepository.create(user);
     newUser.role = 'user';
 
-    return await this.usersRepository.save(newUser);
+    try {
+      const savedUser = await this.usersRepository.save(newUser);
+
+      // Create topic default for new user
+      const colAllPersonal = this.collectionsRepository.create({
+        collectionName: 'All Personal Recipes',
+        user: savedUser,
+      });
+      const colBreakfast = this.collectionsRepository.create({
+        collectionName: 'Breakfasts',
+        user: savedUser,
+      });
+      const colDinner = this.collectionsRepository.create({
+        collectionName: 'Dinners',
+        user: savedUser,
+      });
+      const colDessert = this.collectionsRepository.create({
+        collectionName: 'Desserts',
+        user: savedUser,
+      });
+
+      await this.collectionsRepository.save(colAllPersonal);
+      await this.collectionsRepository.save(colBreakfast);
+      await this.collectionsRepository.save(colDinner);
+      await this.collectionsRepository.save(colDessert);
+      savedUser.collections = [
+        colAllPersonal,
+        colBreakfast,
+        colDinner,
+        colDessert,
+      ];
+      return savedUser;
+    } catch (error) {
+      if (error.code === '23505') {
+        // Unique constraint violation
+        throw new ConflictException('Username already exists');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   // update user
