@@ -7,17 +7,25 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { MealplanService } from './mealplan.service';
 import {
   AddDishToMealPlanDto,
   UpdateDishToMealPlanDto,
 } from 'src/dish/dto/disMealplanDto';
 import { DeleteDishFromMealPlanDto } from './dto/deleteDishMealPlanDto';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/role.enum';
 
 @ApiTags('mealplan')
 @Controller('mealplan')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.User)
 export class MealplanController {
   constructor(private readonly mealPlanService: MealplanService) {
     this.mealPlanService = mealPlanService;
