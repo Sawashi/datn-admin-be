@@ -58,15 +58,20 @@ export class CollectionService {
     return !!collection;
   }
 
-  async create(collection: Collection): Promise<Collection> {
-    const exists = await this.isCollectionNameExists(
-      collection.userId,
-      collection.collectionName,
-    );
+  async create(
+    userId: number,
+    collectionName: string,
+    collectionDcrpt: string,
+  ): Promise<Collection> {
+    const exists = await this.isCollectionNameExists(userId, collectionName);
     if (exists) {
       throw new Error('Collection already exists.');
     }
-    const newCollection = this.collectionsRepository.create(collection);
+    const newCollection = this.collectionsRepository.create({
+      userId,
+      collectionName,
+      collectionDcrpt,
+    });
     return await this.collectionsRepository.save(newCollection);
   }
 

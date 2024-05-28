@@ -66,23 +66,19 @@ export class CollectionController {
   async isDishInCollection(
     @Param('userId') userId: number,
     @Param('dishId') dishId: number,
-  ): Promise<{ exists: boolean }> {
+  ): Promise<{ isInCollection: boolean }> {
     const isInCollection = await this.collectionService.isDishInCollection(
       userId,
       dishId,
     );
-    return { exists: isInCollection };
+    return { isInCollection };
   }
 
   @Post()
   async create(@Body() collectionDto: CollectionDto) {
     const { userId, name, description } = collectionDto;
-    const collection = new Collection();
-    collection.collectionName = name;
-    collection.userId = userId;
-    collection.collectionDcrpt = description;
     try {
-      return await this.collectionService.create(collection);
+      return await this.collectionService.create(userId, name, description);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
