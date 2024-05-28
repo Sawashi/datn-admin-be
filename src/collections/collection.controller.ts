@@ -77,12 +77,8 @@ export class CollectionController {
   @Post()
   async create(@Body() collectionDto: CollectionDto) {
     const { userId, name, description } = collectionDto;
-    const collection = new Collection();
-    collection.collectionName = name;
-    collection.userId = userId;
-    collection.collectionDcrpt = description;
     try {
-      return await this.collectionService.create(collection);
+      return await this.collectionService.create(userId, name, description);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

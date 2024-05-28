@@ -85,4 +85,17 @@ export class ReviewsService {
   async deleteMany(ids: number[]): Promise<void> {
     await this.reviewRepository.delete(ids);
   }
+  // get review by userId
+  async findReviewByUserIdAndDish(
+    userId: number,
+    dishId: number,
+  ): Promise<Review[]> {
+    return await this.reviewRepository.find({
+      where: { user: { id: userId }, dish: { id: dishId } },
+      relations: {
+        user: true,
+        dish: true,
+      },
+    });
+  }
 }

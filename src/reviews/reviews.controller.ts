@@ -76,4 +76,12 @@ export class ReviewsController {
   async deleteAll(@Param('ids') ids: number[]): Promise<void> {
     return this.reviewsService.deleteMany(ids);
   }
+
+  @Get('/user/:userId/dish/:dishId')
+  async findByUserId(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ): Promise<Review[]> {
+    return await this.reviewsService.findReviewByUserIdAndDish(userId, dishId);
+  }
 }
