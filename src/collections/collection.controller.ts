@@ -66,12 +66,12 @@ export class CollectionController {
   async isDishInCollection(
     @Param('userId') userId: number,
     @Param('dishId') dishId: number,
-  ): Promise<{ exists: boolean }> {
+  ): Promise<{ isInCollection: boolean }> {
     const isInCollection = await this.collectionService.isDishInCollection(
       userId,
       dishId,
     );
-    return { exists: isInCollection };
+    return { isInCollection };
   }
 
   @Post()

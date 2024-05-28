@@ -98,12 +98,12 @@ export class MealplanController {
   async isDishInMealPlan(
     @Param('dishId') dishId: number,
     @Param('mealPlanId') mealPlanId: number,
-  ): Promise<{ exists: boolean }> {
+  ): Promise<{ isInMealPlan: boolean }> {
     console.log(dishId);
     const isInMealPlan = await this.mealPlanService.isDishInMealPlan(
       dishId,
       mealPlanId,
     );
-    return { exists: isInMealPlan };
+    return { isInMealPlan };
   }
 }
