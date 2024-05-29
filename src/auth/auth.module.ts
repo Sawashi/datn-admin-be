@@ -7,6 +7,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { User } from 'src/users/user.entity';
 import * as dotenv from 'dotenv';
+import { UsersService } from 'src/users/users.service';
+import { Collection } from 'src/collections/collection.entity';
+import { Topic } from 'src/topics/topic.entity';
 
 dotenv.config();
 
@@ -19,9 +22,9 @@ dotenv.config();
         expiresIn: 3600,
       },
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Collection, Topic]),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, UsersService],
   controllers: [AuthController],
   exports: [JwtStrategy, PassportModule],
 })

@@ -11,15 +11,18 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private authRepository: Repository<User>,
     private jwtService: JwtService,
+    private userService: UsersService,
   ) {
     authRepository: authRepository;
     jwtService: jwtService;
+    userService: userService;
   }
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
@@ -28,16 +31,15 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = this.authRepository.create({
-      username,
-      password: hashedPassword,
-    });
+    const user = new User();
+    user.username = username;
+    user.password = hashedPassword;
 
     try {
-      await this.authRepository.save(user);
+      await this.userService.create(user);
     } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('Username already exists');
+      if (error instanceof ConflictException) {
+        throw error;
       } else {
         throw new InternalServerErrorException();
       }
