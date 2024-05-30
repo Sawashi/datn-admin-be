@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -42,6 +43,14 @@ export class MealplanController {
       userId,
       weekOffsetNumber,
     );
+  }
+
+  @Get('user/:userId')
+  async getMealplanIdByUserId(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<{ mealplanId: number }> {
+    const mealplanId = await this.mealPlanService.getMealplanIdByUserId(userId);
+    return { mealplanId };
   }
 
   @Get(':userId/today')

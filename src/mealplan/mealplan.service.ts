@@ -21,6 +21,18 @@ export class MealplanService {
     userRepository;
   }
 
+  async getMealplanIdByUserId(userId: number): Promise<number> {
+    const mealPlan = await this.mealPlanRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!mealPlan) {
+      throw new Error('Meal Plan not found for the given user');
+    }
+
+    return mealPlan.id;
+  }
+
   async getDishesWithPlanDateByUserId(userId: number, weekOffset: number = 0) {
     const today = new Date();
     const startOfWeek = new Date(
