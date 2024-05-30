@@ -66,9 +66,13 @@ export class MealplanController {
   }
   @Post()
   async addDishtoMealPlan(@Body() addDishToMealPlanDto: AddDishToMealPlanDto) {
-    const { mealPlanId, dishId } = addDishToMealPlanDto;
+    const { mealPlanId, dishId, planDate } = addDishToMealPlanDto;
 
-    return await this.mealPlanService.addDishToMealPlan(mealPlanId, dishId);
+    return await this.mealPlanService.addDishToMealPlan(
+      mealPlanId,
+      dishId,
+      planDate,
+    );
   }
 
   @Post('user-mealplan')

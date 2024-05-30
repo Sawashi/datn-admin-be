@@ -125,10 +125,11 @@ export class MealplanService {
     };
   }
 
-  async addDishToMealPlan(mealPlanId: number, dishId: number) {
+  async addDishToMealPlan(mealPlanId: number, dishId: number, planDate: Date) {
     const newDish = await this.mealplanDishRepository.create({
       mealPlanId: mealPlanId,
       dishId: dishId,
+      planDate: planDate,
     });
     return await this.mealplanDishRepository.save(newDish);
   }

@@ -6,6 +6,8 @@ export class AddDishToMealPlanDto {
 
   @IsInt()
   dishId: number;
+
+  planDate: Date;
 }
 
 export class UpdateDishToMealPlanDto {
