@@ -5,6 +5,7 @@ import { Repository, Between, LessThanOrEqual } from 'typeorm';
 import { subDays, startOfDay, endOfDay } from 'date-fns';
 import { TopicUpdateDto } from './dto/topic-update.dto';
 import { Record } from 'src/record/record.entity';
+import { Message } from 'src/messages/message.entity';
 
 @Injectable()
 export class TopicsService {
@@ -13,9 +14,12 @@ export class TopicsService {
     private topicsRepository: Repository<Topic>,
     @InjectRepository(Record)
     private recordRepository: Repository<Record>,
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
   ) {
     topicsRepository: topicsRepository;
     recordRepository: recordRepository;
+    messageRepository: messageRepository;
   }
   // get all topics
   async findall(): Promise<Topic[]> {
@@ -156,5 +160,29 @@ export class TopicsService {
       'Previous 7 Days': previous7DaysTopic,
       'Previous 30 Days': previous30DaysTopic,
     };
+  }
+
+  async deleteAllMessage(id: number): Promise<void> {
+    // Tìm kiếm chủ đề theo ID
+
+    const topic = await this.topicsRepository.findOne({
+      where: { id },
+    });
+
+    if (!topic) {
+      throw new Error('Topic not found!');
+    }
+
+    // Lấy danh sách tin nhắn trong chủ đề
+    const messages = topic.messageList;
+
+    // Xóa tất cả các tin nhắn
+    await this.messageRepository.remove(messages);
+
+    topic.title = 'New suggestion';
+    topic.record = null;
+    topic.createDate = new Date();
+    topic.updateDate = new Date();
+    await this.topicsRepository.save(topic);
   }
 }

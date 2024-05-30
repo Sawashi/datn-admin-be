@@ -98,4 +98,9 @@ export class TopicsController {
     }
     return this.topicsService.delete(id);
   }
+
+  @Delete(':id/messages')
+  async deleteAllMessagesInTopic(@Param('id') id: number): Promise<void> {
+    return this.topicsService.deleteAllMessage(id);
+  }
 }
