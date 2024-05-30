@@ -19,7 +19,7 @@ export class Diets {
 
   @ApiProperty()
   @Column()
-  dietName: string;
+  name: string;
 
   @ApiProperty()
   @Column()

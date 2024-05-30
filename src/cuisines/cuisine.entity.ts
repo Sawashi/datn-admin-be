@@ -20,7 +20,7 @@ export class Cuisine {
 
   @ApiProperty()
   @Column()
-  cuisineName: string;
+  name: string;
 
   @ApiProperty()
   @Column()
