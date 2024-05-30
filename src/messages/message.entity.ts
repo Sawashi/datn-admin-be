@@ -9,6 +9,10 @@ export class Message {
 
   @ApiProperty()
   @Column()
+  header: string;
+
+  @ApiProperty()
+  @Column()
   content: string;
 
   @ApiProperty()

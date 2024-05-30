@@ -84,6 +84,17 @@ export class UsersService {
       await this.collectionsRepository.save(colBreakfast);
       await this.collectionsRepository.save(colDinner);
       await this.collectionsRepository.save(colDessert);
+
+      // Create first topic for user
+      const newTopic = this.topicsRepository.create({
+        title: 'New suggestion',
+        user: savedUser,
+      });
+
+      await this.topicsRepository.save(newTopic);
+
+      savedUser.topics = [newTopic];
+
       savedUser.collections = [
         colAllPersonal,
         colBreakfast,
