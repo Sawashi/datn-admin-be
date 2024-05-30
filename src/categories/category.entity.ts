@@ -15,7 +15,9 @@ export class Category {
   @Column()
   name: string;
   @ApiProperty()
-  @Column()
+  @Column({
+    nullable: true,
+  })
   route: string;
   @ApiProperty()
   @Column()
