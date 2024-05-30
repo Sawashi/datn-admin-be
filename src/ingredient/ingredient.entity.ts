@@ -11,6 +11,9 @@ export class Ingredient {
   ingredientName: string;
   @ApiProperty()
   @Column({ nullable: true })
+  imageUrl: string;
+  @ApiProperty()
+  @Column({ nullable: true })
   description: string;
   @OneToMany(
     () => DishIngredient,
