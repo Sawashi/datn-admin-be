@@ -27,6 +27,7 @@ export class CategoriesService {
     const category = new Category();
     category.name = createCategoryDto.name;
     category.imgUrl = createCategoryDto.imgUrl;
+    category.route = createCategoryDto.route;
     category.createdAt = new Date(); // Set createdAt manually
     category.updatedAt = new Date(); // Set updatedAt manually
 
