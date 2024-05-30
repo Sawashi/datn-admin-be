@@ -268,4 +268,14 @@ export class DishService {
       await this.dishRepository.save(dish);
     }
   }
+
+  // get dish by search text
+  async findDishBySearchText(searchText: string): Promise<Dish[]> {
+    return await this.dishRepository
+      .createQueryBuilder('dish')
+      .where('dish.dishName like :searchText', {
+        searchText: `%${searchText}%`,
+      })
+      .getMany();
+  }
 }

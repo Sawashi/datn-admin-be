@@ -15,6 +15,11 @@ export class Category {
   @Column()
   name: string;
   @ApiProperty()
+  @Column({
+    nullable: true,
+  })
+  route: string;
+  @ApiProperty()
   @Column()
   imgUrl: string;
   @ApiProperty()

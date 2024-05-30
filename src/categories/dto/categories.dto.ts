@@ -6,4 +6,7 @@ export class CreateCategoryDto {
 
   @ApiProperty()
   imgUrl: string;
+
+  @ApiProperty()
+  route: string;
 }
