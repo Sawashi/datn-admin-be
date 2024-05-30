@@ -12,6 +12,7 @@ export class OpenaiService {
   }
 
   async callOpenAI(prompt: string): Promise<string> {
+    console.log(this.apiKey);
     const url = 'https://api.openai.com/v1/chat/completions';
     const headers = {
       Authorization: `Bearer ${this.apiKey}`,
