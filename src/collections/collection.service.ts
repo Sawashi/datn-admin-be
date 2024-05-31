@@ -109,6 +109,37 @@ export class CollectionService {
     }
   }
 
+  // add dish to collection has name is "All saved dishs"
+  async addDishByCollectionName(
+    userId: number,
+    dishId: number,
+    collectionName: string,
+  ): Promise<void> {
+    const dish = await this.dishesRepository.findOne({ where: { id: dishId } });
+    if (!dish) {
+      throw new Error('Dish not found');
+    }
+
+    const allSavedDishsCollection = await this.collectionsRepository.findOne({
+      where: { userId, collectionName: collectionName },
+      relations: ['dishes'],
+    });
+
+    if (!allSavedDishsCollection) {
+      const newCollection = this.collectionsRepository.create({
+        userId,
+        collectionName: collectionName,
+      });
+      newCollection.dishes = [dish];
+      await this.collectionsRepository.save(newCollection);
+    } else {
+      if (!allSavedDishsCollection.dishes.some((d) => d.id === dish.id)) {
+        allSavedDishsCollection.dishes.push(dish);
+        await this.collectionsRepository.save(allSavedDishsCollection);
+      }
+    }
+  }
+
   async getCollectionsWithDishFlag(
     userId: number,
     dishId: number,

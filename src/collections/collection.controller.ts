@@ -128,6 +128,20 @@ export class CollectionController {
       collectionIds,
     );
   }
+
+  @Post('addByName/user/:userId/dish/:dishId')
+  async addDishByCollectionName(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+    @Body('collectionName') collectionName: string,
+  ) {
+    await this.collectionService.addDishByCollectionName(
+      userId,
+      dishId,
+      collectionName,
+    );
+  }
+
   @Get('user/:userId/dishes/:dishId')
   async getCollectionsWithDishFlag(
     @Param('userId') userId: number,
