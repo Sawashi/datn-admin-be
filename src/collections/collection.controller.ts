@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { Collection } from './collection.entity';
@@ -133,7 +134,8 @@ export class CollectionController {
   async addDishByCollectionName(
     @Param('userId') userId: number,
     @Param('dishId') dishId: number,
-    @Body('collectionName') collectionName: string,
+    // @Body('collectionName') collectionName: string,
+    @Query('collectionName') collectionName: string,
   ) {
     await this.collectionService.addDishByCollectionName(
       userId,
