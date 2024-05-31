@@ -109,35 +109,35 @@ export class CollectionService {
     }
   }
 
-  // add dish to collection has name is "All saved dishs"
   async addDishByCollectionName(
     userId: number,
     dishId: number,
     collectionName: string,
   ): Promise<void> {
+    // Check if the dish exists
     const dish = await this.dishesRepository.findOne({ where: { id: dishId } });
     if (!dish) {
       throw new Error('Dish not found');
     }
 
+    // Check if the collection exists
     const allSavedDishsCollection = await this.collectionsRepository.findOne({
       where: { userId, collectionName: collectionName },
       relations: ['dishes'],
     });
 
     if (!allSavedDishsCollection) {
-      const newCollection = this.collectionsRepository.create({
-        userId,
-        collectionName: collectionName,
-      });
-      newCollection.dishes = [dish];
-      await this.collectionsRepository.save(newCollection);
-    } else {
-      if (!allSavedDishsCollection.dishes.some((d) => d.id === dish.id)) {
-        allSavedDishsCollection.dishes.push(dish);
-        await this.collectionsRepository.save(allSavedDishsCollection);
-      }
+      throw new Error('Collection not found');
     }
+
+    // Check if the dish is already in the collection
+    if (allSavedDishsCollection.dishes.some((d) => d.id === dish.id)) {
+      throw new Error('Dish already exists in the collection');
+    }
+
+    // Add the dish to the collection
+    allSavedDishsCollection.dishes.push(dish);
+    await this.collectionsRepository.save(allSavedDishsCollection);
   }
 
   async getCollectionsWithDishFlag(
