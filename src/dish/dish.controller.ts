@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { DishService } from './dish.service';
 import { Dish } from './dish.entity';
@@ -90,8 +91,11 @@ export class DishController {
   }
 
   // get dish by search text
-  @Get('search/:text')
-  async search(@Param('text') text: string): Promise<Dish[]> {
-    return this.dishService.findDishBySearchText(text);
+  @Get('search')
+  async search(
+    @Query('text') text?: string,
+    @Query('sort') sort?: 'asc' | 'desc',
+  ): Promise<Dish[]> {
+    return this.dishService.findDishBySearchText(text, sort);
   }
 }

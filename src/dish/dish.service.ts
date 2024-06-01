@@ -269,13 +269,27 @@ export class DishService {
     }
   }
 
-  // get dish by search text
-  async findDishBySearchText(searchText: string): Promise<Dish[]> {
-    return await this.dishRepository
+  async findDishBySearchText(
+    searchText?: string,
+    sort?: 'asc' | 'desc',
+  ): Promise<Dish[]> {
+    if (!searchText) {
+      return await this.findall();
+    }
+
+    const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
       .where('dish.dishName like :searchText', {
         searchText: `%${searchText}%`,
-      })
-      .getMany();
+      });
+
+    if (sort) {
+      queryBuilder.orderBy(
+        'dish.createdAt',
+        sort.toUpperCase() as 'ASC' | 'DESC',
+      );
+    }
+
+    return await queryBuilder.getMany();
   }
 }
