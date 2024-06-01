@@ -27,7 +27,7 @@ export class Dish {
   id: number;
   @ApiProperty()
   @Column({ nullable: true })
-  cookingTime: string;
+  cookingTime: number;
   @ApiProperty()
   @Column({ nullable: true })
   dishName: string;
