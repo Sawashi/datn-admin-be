@@ -192,7 +192,7 @@ export class DishService {
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
       .where('dish.dishName like :searchText', {
-        searchText: `%${searchText}%`,
+        searchText: `%${searchText ?? ''}%`,
       });
 
     if (cookingTime) {
