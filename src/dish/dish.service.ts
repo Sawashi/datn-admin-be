@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dish } from './dish.entity';
@@ -164,91 +164,6 @@ export class DishService {
     Object.assign(dish, otherProps);
     return await this.dishRepository.save(dish);
   }
-  // //create dish
-  // async create(dishDto: DishDto, imageUrl: string): Promise<Dish> {
-  //   const { ingredients, cuisines } = dishDto;
-
-  //   const newDish = this.dishRepository.create({
-  //     cookingTime: dishDto.cookingTime,
-  //     dishName: dishDto.dishName,
-  //     imageUrl: imageUrl,
-  //     servings: dishDto.servings,
-  //     calories: dishDto.calories,
-  //     author: dishDto.author,
-  //     directions: dishDto.directions,
-  //   });
-
-  //   if (ingredients) {
-  //     const ingredientEntites = await this.ingredientRepository.findByIds(
-  //       JSON.parse(ingredients),
-  //     );
-  //     if (ingredientEntites.length === JSON.parse(ingredients).length) {
-  //       newDish.dishToIngredients = ingredientEntites;
-  //     } else {
-  //       throw new Error('Ingredients not found');
-  //     }
-  //   }
-
-  //   if (cuisines) {
-  //     const cuisineEntities = await this.cuisineRepository.findOne({
-  //       where: { id: cuisines },
-  //     });
-  //     if (cuisineEntities) {
-  //       newDish.cuisines = cuisineEntities;
-  //     }
-  //   }
-  //   return await this.dishRepository.save(newDish);
-  // }
-
-  // // update dish
-  // async update(id: number, dishPatchDto: DishPatchDto): Promise<Dish> {
-  //   const dish = await this.dishRepository.findOne({
-  //     where: { id },
-  //   });
-
-  //   if (!dish) {
-  //     throw new Error('Personalize not found');
-  //   }
-  //   const { ingredients, collections, cuisines, diets, ...otherProps } =
-  //     dishPatchDto; // Destructure ingredients and collections
-
-  //   if (ingredients) {
-  //     const ingredientEntites = await this.ingredientRepository.findByIds(
-  //       JSON.parse(ingredients),
-  //     );
-  //     if (ingredientEntites.length === JSON.parse(ingredients).length) {
-  //       dish.dishToIngredients = ingredientEntites;
-  //     }
-  //   }
-  //   if (collections) {
-  //     const collectionEntites = await this.collectionRepository.findByIds(
-  //       JSON.parse(collections),
-  //     );
-  //     if (collectionEntites.length > 0) {
-  //       dish.collections = collectionEntites;
-  //     }
-  //   }
-  //   if (diets) {
-  //     const dietEntites = await this.dietRepository.findByIds(
-  //       JSON.parse(diets),
-  //     );
-  //     if (dietEntites.length === JSON.parse(diets).length) {
-  //       dish.diets = dietEntites;
-  //     }
-  //   }
-  //   if (cuisines) {
-  //     const cuisineEntities = await this.cuisineRepository.findOne({
-  //       where: { id: cuisines },
-  //     });
-  //     if (cuisineEntities) {
-  //       dish.cuisines = cuisineEntities;
-  //     }
-  //   }
-
-  //   Object.assign(dish, otherProps);
-  //   return await this.dishRepository.save(dish);
-  // }
-
   // delete dish
   async delete(id: number): Promise<void> {
     await this.dishRepository.delete(id);
@@ -305,4 +220,49 @@ export class DishService {
 
     return await queryBuilder.getMany();
   }
+
+  async findRelatedDishes(id: number): Promise<Dish[]> {
+    const dish = await this.dishRepository.findOne({
+      where: { id },
+    });
+    if (!dish) {
+      throw new NotFoundException('Dish not found');
+    }
+    const inputDishName = dish.dishName.toLowerCase();
+    const inputKeywords = inputDishName.split(' ');
+
+    const dishes = await this.dishRepository.find();
+    const relatedDishes = dishes.filter((d) => {
+      const dishName = d.dishName.toLowerCase();
+      return (
+        inputKeywords.some((keyword) => dishName.includes(keyword)) &&
+        d.id !== dish.id
+      );
+    });
+
+    return relatedDishes;
+  }
+
+  // async findRelatedDishes(dto: GetRelatedDishesDto): Promise<OutputDishDto[]> {
+  //   const dish = await this.dishRepository.findOne(dto.dishId);
+  //   if (!dish) {
+  //     throw new NotFoundException('Dish not found');
+  //   }
+
+  //   const inputDishName = dish.dishName.toLowerCase();
+  //   const inputKeywords = inputDishName.split(' ');
+
+  //   const dishes = await this.dishRepository.find();
+  //   const relatedDishes = dishes.filter(d => {
+  //     const dishName = d.dishName.toLowerCase();
+  //     return inputKeywords.some(keyword => dishName.includes(keyword)) &&
+  //            d.id !== dish.id;
+  //   });
+
+  //   return relatedDishes.map(d => ({
+  //     id: d.id,
+  //     dishName: d.dishName,
+  //     imageUrl: d.imageUrl,
+  //   }));
+  // }
 }

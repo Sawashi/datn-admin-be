@@ -3,6 +3,7 @@ import { Report } from './report.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
+import { CreateReportDto } from './dto/createReportDto.dto';
 
 @Injectable()
 export class ReportsService {
@@ -20,7 +21,7 @@ export class ReportsService {
   async getReportsForUser(user: User): Promise<Report[]> {
     return await this.reportsRepository.find({
       where: {
-        sender: user,
+        userId: user.id,
       },
     });
   }
@@ -30,8 +31,30 @@ export class ReportsService {
   }
 
   //create report
-  async create(report: Report): Promise<Report> {
-    const newReport = this.reportsRepository.create(report);
+  // async create(report: Report): Promise<Report> {
+  //   const newReport = this.reportsRepository.create(report);
+  //   return await this.reportsRepository.save(newReport);
+  // }
+
+  async isUserReported(userId: number, dishId: number): Promise<boolean> {
+    const userCollection = await this.reportsRepository.findOne({
+      where: { user: { id: userId }, dish: { id: dishId } },
+    });
+    return !!userCollection;
+  }
+
+  async create(reportDto: CreateReportDto): Promise<Report> {
+    const { userId, content, status, dishId } = reportDto;
+    const exists = await this.isUserReported(userId, dishId);
+    if (exists) {
+      throw new Error('Report sent');
+    }
+    const newReport = this.reportsRepository.create({
+      userId,
+      content,
+      status,
+      dishId,
+    });
     return await this.reportsRepository.save(newReport);
   }
 

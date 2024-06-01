@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { ReportsService } from './reports.service';
@@ -18,7 +19,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
-
+import { CreateReportDto } from './dto/createReportDto.dto';
 @ApiTags('Reports')
 @Controller('reports')
 @ApiBearerAuth('JWT')
@@ -55,8 +56,12 @@ export class ReportsController {
 
   // Create report
   @Post()
-  async create(@Body() report: Report): Promise<Report> {
-    return await this.reportsService.create(report);
+  async create(@Body() reportCreateDto: CreateReportDto) {
+    try {
+      return await this.reportsService.create(reportCreateDto);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   // Update report

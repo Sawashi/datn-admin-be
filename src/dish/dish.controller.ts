@@ -104,4 +104,17 @@ export class DishController {
     }
     return this.dishService.delete(id);
   }
+
+  // get dish by search text
+  @Get('search/:text')
+  async search(@Param('text') text: string): Promise<Dish[]> {
+    return this.dishService.findDishBySearchText(text);
+  }
+
+  @Get('related/:dishId')
+  async getRelatedDishesByName(
+    @Param('dishId') dishId: number,
+  ): Promise<Dish[]> {
+    return this.dishService.findRelatedDishes(dishId);
+  }
 }
