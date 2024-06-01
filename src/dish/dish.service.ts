@@ -292,4 +292,17 @@ export class DishService {
 
     return await queryBuilder.getMany();
   }
+
+  async findByCreated(sort: 'asc' | 'desc' = 'asc'): Promise<Dish[]> {
+    const queryBuilder = this.dishRepository.createQueryBuilder('dish');
+
+    if (sort) {
+      queryBuilder.orderBy(
+        'dish.createdAt',
+        sort.toUpperCase() as 'ASC' | 'DESC',
+      );
+    }
+
+    return await queryBuilder.getMany();
+  }
 }
