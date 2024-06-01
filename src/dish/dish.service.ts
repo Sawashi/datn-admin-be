@@ -189,10 +189,6 @@ export class DishService {
     sort: 'asc' | 'desc' = 'asc',
     cookingTime?: string,
   ): Promise<Dish[]> {
-    if (!searchText) {
-      return await this.findall();
-    }
-
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
       .where('dish.dishName like :searchText', {
@@ -200,12 +196,9 @@ export class DishService {
       });
 
     if (cookingTime) {
-      queryBuilder.andWhere(
-        'CAST(dish.cookingTime AS UNSIGNED) <= :cookingTime',
-        {
-          cookingTime: parseInt(cookingTime),
-        },
-      );
+      queryBuilder.andWhere('dish.cookingTime <= :cookingTime', {
+        cookingTime: parseInt(cookingTime),
+      });
     }
 
     if (sort) {
