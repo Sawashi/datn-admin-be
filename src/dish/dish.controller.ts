@@ -91,9 +91,9 @@ export class DishController {
   }
 
   // get dish by search text
-  @Get('search')
+  @Get('search/:text')
   async search(
-    @Query('text') text?: string,
+    @Param('text') text: string,
     @Query('sort') sort?: 'asc' | 'desc',
   ): Promise<Dish[]> {
     return this.dishService.findDishBySearchText(text, sort);

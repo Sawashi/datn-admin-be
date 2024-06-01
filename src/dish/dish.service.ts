@@ -271,7 +271,7 @@ export class DishService {
 
   async findDishBySearchText(
     searchText?: string,
-    sort?: 'asc' | 'desc',
+    sort: 'asc' | 'desc' = 'asc',
   ): Promise<Dish[]> {
     if (!searchText) {
       return await this.findall();
