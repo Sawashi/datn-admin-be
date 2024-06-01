@@ -187,6 +187,7 @@ export class DishService {
   async findDishBySearchText(
     searchText?: string,
     sort: 'asc' | 'desc' = 'asc',
+    cookingTime?: string,
   ): Promise<Dish[]> {
     if (!searchText) {
       return await this.findall();
@@ -198,6 +199,12 @@ export class DishService {
         searchText: `%${searchText}%`,
       });
 
+    if (parseInt(cookingTime) !== undefined) {
+      queryBuilder.andWhere('dish.cookingTime <= :cookingTime', {
+        cookingTime: cookingTime,
+      });
+    }
+
     if (sort) {
       queryBuilder.orderBy(
         'dish.createdAt',
@@ -208,7 +215,10 @@ export class DishService {
     return await queryBuilder.getMany();
   }
 
-  async findByCreated(sort: 'asc' | 'desc' = 'asc'): Promise<Dish[]> {
+  async findByCreated(
+    sort: 'asc' | 'desc' = 'asc',
+    limit?: number, // Add the limit parameter
+  ): Promise<Dish[]> {
     const queryBuilder = this.dishRepository.createQueryBuilder('dish');
 
     if (sort) {
@@ -216,6 +226,10 @@ export class DishService {
         'dish.createdAt',
         sort.toUpperCase() as 'ASC' | 'DESC',
       );
+    }
+
+    if (limit !== undefined) {
+      queryBuilder.limit(limit); // Limit the number of results
     }
 
     return await queryBuilder.getMany();
