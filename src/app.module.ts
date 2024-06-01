@@ -28,6 +28,7 @@ import { OpenaiModule } from './openAI/openai.module';
 import { LoggingMiddleware } from './middleware/logger.middleware';
 import { RecordModule } from './record/record.module';
 import { TaboosModule } from './taboos/taboos.module';
+import { GoogleGeminiModule } from './google-gemini/google-gemini.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -65,6 +66,7 @@ import { TaboosModule } from './taboos/taboos.module';
     MealplanModule,
     RecordModule,
     TaboosModule,
+    GoogleGeminiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
