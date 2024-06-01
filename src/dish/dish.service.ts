@@ -199,9 +199,9 @@ export class DishService {
         searchText: `%${searchText}%`,
       });
 
-    if (parseInt(cookingTime) !== undefined) {
+    if (!isNaN(parseInt(cookingTime))) {
       queryBuilder.andWhere('dish.cookingTime <= :cookingTime', {
-        cookingTime: cookingTime,
+        cookingTime: parseInt(cookingTime),
       });
     }
 
