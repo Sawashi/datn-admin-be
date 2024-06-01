@@ -8,12 +8,15 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { Topic } from 'src/topics/topic.entity';
+import { MealPlan } from 'src/mealplan/mealplan.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(MealPlan)
+    private mealplanRepository: Repository<MealPlan>,
     @InjectRepository(Collection)
     private collectionsRepository: Repository<Collection>,
     @InjectRepository(Topic)
@@ -22,6 +25,7 @@ export class UsersService {
     usersRepository: usersRepository;
     collectionsRepository: collectionsRepository;
     topicsRepository: topicsRepository;
+    mealplanRepository: mealplanRepository;
   }
 
   // get all users
@@ -101,6 +105,15 @@ export class UsersService {
         colDinner,
         colDessert,
       ];
+
+      //console.log('>>>', savedUser);
+
+      const mealPlan = this.mealplanRepository.create({
+        user_id: savedUser?.id,
+      });
+
+      await this.mealplanRepository.save(mealPlan);
+      savedUser.mealPlan = mealPlan;
       return savedUser;
     } catch (error) {
       if (error.code === '23505') {
