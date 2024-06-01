@@ -91,7 +91,7 @@ export class MealplanService {
     dayOffset: number = 0,
   ) {
     const today = new Date();
-    const targetDate = new Date(today.setDate(today.getDate() + dayOffset * 7));
+    const targetDate = new Date(today.setDate(today.getDate() + dayOffset));
     targetDate.setHours(0, 0, 0, 0);
 
     const endOfDay = new Date(targetDate);
