@@ -94,4 +94,11 @@ export class DishController {
   async search(@Param('text') text: string): Promise<Dish[]> {
     return this.dishService.findDishBySearchText(text);
   }
+
+  @Get('related/:dishId')
+  async getRelatedDishesByName(
+    @Param('dishId') dishId: number,
+  ): Promise<Dish[]> {
+    return this.dishService.findRelatedDishes(dishId);
+  }
 }
