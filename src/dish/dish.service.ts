@@ -199,10 +199,13 @@ export class DishService {
         searchText: `%${searchText}%`,
       });
 
-    if (!isNaN(parseInt(cookingTime))) {
-      queryBuilder.andWhere('dish.cookingTime <= :cookingTime', {
-        cookingTime: parseInt(cookingTime),
-      });
+    if (cookingTime) {
+      queryBuilder.andWhere(
+        'CAST(dish.cookingTime AS UNSIGNED) <= :cookingTime',
+        {
+          cookingTime: parseInt(cookingTime),
+        },
+      );
     }
 
     if (sort) {
