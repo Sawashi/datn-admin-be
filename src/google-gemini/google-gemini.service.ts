@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Dish } from 'src/dish/dish.entity';
 import { Repository } from 'typeorm';
 import { FilteredResult } from './filtered.entity';
-
+import { RecipeGenerated } from './recipesg.entity';
 @Injectable()
 class SimplifiedFilterResult {
   id: number;
@@ -91,5 +91,70 @@ export class GoogleGeminiService {
       }
     }
     return { existedInDatabase: false, dishList: [] };
+  }
+  //api generate recipe from ingredients and name of the dish
+  async createRecipes(
+    name: string,
+    ingredients: string,
+  ): Promise<RecipeGenerated> {
+    const prefix =
+      'Question: Read the ingredients and name below, generate the recipe relate to the ingredients and name:\n';
+    const note = 'Note: Must analyze the ingredients to generate the recipe\n';
+    const queryName = 'Name: ' + name + '\n';
+    const queryIngredients = 'Ingredients: ' + ingredients + '\n';
+    const suffix = 'Format of the answer:';
+    const format =
+      '{ingredients: <ingredient>, recipeDetails: <recipeDetails>, note: <note>}';
+    const query =
+      prefix + note + queryName + queryIngredients + suffix + format;
+    let attempt = 0;
+    const MAX_RETRIES = 5;
+    while (attempt < MAX_RETRIES) {
+      try {
+        const response = await this.runGemini(query);
+        const parsedResponse: RecipeGenerated = JSON.parse(response);
+        if (
+          typeof parsedResponse.ingredients !== 'string' ||
+          typeof parsedResponse.recipeDetails !== 'string' ||
+          typeof parsedResponse.note !== 'string'
+        ) {
+          throw new Error('Validation failed');
+        }
+        return parsedResponse;
+      } catch (error) {
+        attempt++;
+        console.error(`Failed to parse response on attempt ${attempt}:`, error);
+
+        if (attempt >= MAX_RETRIES) {
+          return { ingredients: '', recipeDetails: '', note: '' };
+        }
+      }
+    }
+    return { ingredients: '', recipeDetails: '', note: '' };
+  }
+  //api translate text to a different language
+  async translate(text: string, language: string): Promise<string> {
+    const prefix = 'Question: Translate the text below to the language:\n';
+    const queryText = 'Text: ' + text + '\n';
+    const queryLanguage = 'Language: ' + language + '\n';
+    const suffix = 'Format of the answer:';
+    const format = '<translated text>';
+    const query = prefix + queryText + queryLanguage + suffix + format;
+    let attempt = 0;
+    const MAX_RETRIES = 5;
+    while (attempt < MAX_RETRIES) {
+      try {
+        const response = await this.runGemini(query);
+        return response;
+      } catch (error) {
+        attempt++;
+        console.error(`Failed to parse response on attempt ${attempt}:`, error);
+
+        if (attempt >= MAX_RETRIES) {
+          return '';
+        }
+      }
+    }
+    return '';
   }
 }
