@@ -119,4 +119,10 @@ export class MealplanController {
     );
     return { isInMealPlan };
   }
+
+  @Delete('user/:userId')
+  async deleteAllByUser(@Param('userId', ParseIntPipe) userId: number) {
+    const result = await this.mealPlanService.deleteAllByUser(userId);
+    return result;
+  }
 }

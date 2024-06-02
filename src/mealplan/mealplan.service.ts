@@ -167,6 +167,29 @@ export class MealplanService {
       return { success: false, message: 'Dish not found in meal plan' };
     }
   }
+
+  async deleteAllByUser(userId: number) {
+    const mealPlans = await this.mealPlanRepository.find({
+      where: { user_id: userId },
+      relations: ['mealplanDishes'],
+    });
+
+    if (mealPlans.length === 0) {
+      throw new Error('No meal plans found for the given user');
+    }
+
+    for (const mealPlan of mealPlans) {
+      await this.mealplanDishRepository.delete({
+        mealPlanId: mealPlan.id,
+      });
+    }
+
+    return {
+      success: true,
+      message: 'All meal plans and associated dishes deleted for the user',
+    };
+  }
+
   //  check if a dish is in the user's mealplan
   async isDishInMealPlan(dishId: number, mealplanId: number): Promise<boolean> {
     const userMealplan = await this.mealplanDishRepository.findOne({
