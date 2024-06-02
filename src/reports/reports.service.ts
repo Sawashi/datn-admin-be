@@ -30,12 +30,6 @@ export class ReportsService {
     return await this.reportsRepository.findOne({ where: { id } });
   }
 
-  //create report
-  // async create(report: Report): Promise<Report> {
-  //   const newReport = this.reportsRepository.create(report);
-  //   return await this.reportsRepository.save(newReport);
-  // }
-
   async isUserReported(userId: number, dishId: number): Promise<boolean> {
     const userCollection = await this.reportsRepository.findOne({
       where: { user: { id: userId }, dish: { id: dishId } },
@@ -67,5 +61,15 @@ export class ReportsService {
   // delete report
   async delete(id: number): Promise<void> {
     await this.reportsRepository.delete(id);
+  }
+
+  // get review by userId
+  async findReportByUserIdAndDish(
+    userId: number,
+    dishId: number,
+  ): Promise<Report[]> {
+    return await this.reportsRepository.find({
+      where: { user: { id: userId }, dish: { id: dishId } },
+    });
   }
 }
