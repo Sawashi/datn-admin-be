@@ -5,10 +5,10 @@ import { Column, Entity } from 'typeorm';
 export class RecipeGenerated {
   @ApiProperty()
   @Column()
-  ingredient: string;
+  ingredients: string;
   @ApiProperty()
   @Column()
-  recipeGenerated: string;
+  recipeDetails: string;
   @ApiProperty()
   @Column()
   note: string;
