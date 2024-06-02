@@ -90,7 +90,7 @@ export class MealplanController {
     return await this.mealPlanService.updatePlanDate(
       mealPlanId,
       dishId,
-      new Date(planDate),
+      planDate,
     );
   }
 

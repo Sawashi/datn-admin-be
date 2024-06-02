@@ -151,6 +151,7 @@ export class MealplanService {
     }
 
     mealplanDish.planDate = planDate;
+
     return await this.mealplanDishRepository.save(mealplanDish);
   }
 
