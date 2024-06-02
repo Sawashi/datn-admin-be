@@ -35,7 +35,7 @@ export class ReportsController {
     return await this.reportsService.findAll();
   }
 
-  @Get()
+  @Get('/user')
   async getReportsForUser(@GetUser() user: User): Promise<Report[]> {
     return await this.reportsService.getReportsForUser(user);
   }
@@ -81,5 +81,13 @@ export class ReportsController {
       throw new Error('Report not found');
     }
     return this.reportsService.delete(id);
+  }
+
+  @Get('/user/:userId/dish/:dishId')
+  async findByUserId(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+  ): Promise<Report[]> {
+    return await this.reportsService.findReportByUserIdAndDish(userId, dishId);
   }
 }
