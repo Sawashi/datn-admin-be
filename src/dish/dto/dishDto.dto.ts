@@ -4,7 +4,7 @@ export class DishDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  cookingTime?: string;
+  cookingTime?: number;
 
   @ApiProperty()
   @IsString()

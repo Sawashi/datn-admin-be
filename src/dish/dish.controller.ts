@@ -40,6 +40,25 @@ export class DishController {
   async findAll(): Promise<Dish[]> {
     return await this.dishService.findall();
   }
+
+  @Get('latest')
+  async getLatest(
+    @Query('sort') sort?: 'asc' | 'desc',
+    @Query('limit') limit?: number,
+  ): Promise<Dish[]> {
+    return this.dishService.findByCreated(sort, limit);
+  }
+
+  // get dish by search text
+  @Get('search')
+  async search(
+    @Query('text') text: string,
+    @Query('sort') sort?: 'asc' | 'desc',
+    @Query('cookingTime') cookingTime?: string,
+  ): Promise<Dish[]> {
+    return this.dishService.findDishBySearchText(text, sort, cookingTime);
+  }
+
   //get one dish
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Dish> {
@@ -90,12 +109,10 @@ export class DishController {
     return this.dishService.delete(id);
   }
 
-  // get dish by search text
-  @Get('search')
-  async search(
-    @Query('text') text?: string,
-    @Query('sort') sort?: 'asc' | 'desc',
+  @Get('related/:dishId')
+  async getRelatedDishesByName(
+    @Param('dishId') dishId: number,
   ): Promise<Dish[]> {
-    return this.dishService.findDishBySearchText(text, sort);
+    return this.dishService.findRelatedDishes(dishId);
   }
 }

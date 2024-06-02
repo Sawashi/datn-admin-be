@@ -67,11 +67,8 @@ export class User {
   @Column({ nullable: true })
   isLogin: boolean;
 
-  @OneToMany(() => Report, (report) => report.sender, { eager: true })
-  sentReports: Report[];
-
-  @OneToMany(() => Report, (report) => report.recipient, { eager: true })
-  receivedReports: Report[];
+  @OneToMany(() => Report, (report) => report.user)
+  reports: Report[];
 
   @OneToMany(() => Schedule, (schedule) => schedule.user, { eager: true })
   schedules: Schedule[]; // Changed property name from userSchedules to schedules
