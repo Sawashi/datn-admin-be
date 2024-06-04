@@ -188,9 +188,13 @@ export class DishService {
     searchText?: string,
     sort: 'asc' | 'desc' = 'asc',
     cookingTime?: string,
+    numIngredients?: number,
+    // cuisineIds?: number[],
+    // dietIds?: number[],
   ): Promise<Dish[]> {
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
+      .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .where('dish.dishName like :searchText', {
         searchText: `%${searchText ?? ''}%`,
       });
@@ -199,6 +203,12 @@ export class DishService {
       queryBuilder.andWhere('dish.cookingTime <= :cookingTime', {
         cookingTime: parseInt(cookingTime),
       });
+    }
+
+    if (numIngredients) {
+      queryBuilder
+        .groupBy('dish.id')
+        .having('COUNT(ingredient.id) >= :numIngredients', { numIngredients });
     }
 
     if (sort) {
