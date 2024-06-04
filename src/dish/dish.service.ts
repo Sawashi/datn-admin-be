@@ -206,9 +206,9 @@ export class DishService {
     }
 
     if (numIngredients) {
-      queryBuilder
-        .groupBy('dish.id')
-        .having('COUNT(ingredient.id) >= :numIngredients', { numIngredients });
+      queryBuilder.andWhere('SIZE(dish_ingredient) >= :numIngredients', {
+        numIngredients,
+      });
     }
 
     if (sort) {
