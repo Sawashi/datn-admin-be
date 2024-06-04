@@ -67,6 +67,10 @@ export class User {
   @Column({ nullable: true })
   isLogin: boolean;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  notificationToken: string;
+
   @OneToMany(() => Report, (report) => report.user)
   reports: Report[];
 
