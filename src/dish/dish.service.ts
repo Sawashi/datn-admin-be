@@ -11,6 +11,7 @@ import { DishPatchDto } from './dto/dishPatchDto.dto';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { DishIngredient } from './dish_ingredient.entity';
+import { PaginationDto } from './dto/pagination.dto';
 
 @Injectable()
 export class DishService {
@@ -38,9 +39,12 @@ export class DishService {
     cuisineRepository: cuisineRepository;
     dietRepository: dietRepository;
   }
-  // get all dish
-  async findall(): Promise<Dish[]> {
-    return await this.dishRepository.find({
+
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<{ data: Dish[]; count: number }> {
+    const { page, limit } = paginationDto;
+    const [data, count] = await this.dishRepository.findAndCount({
       relations: {
         reviews: true,
         notes: true,
@@ -49,7 +53,15 @@ export class DishService {
           ingredient: true,
         },
       },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    if (data.length === 0 && page > 1) {
+      return { data: [], count };
+    }
+
+    return { data, count };
   }
 
   // get one dish
