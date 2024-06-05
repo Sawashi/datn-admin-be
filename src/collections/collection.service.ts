@@ -155,4 +155,29 @@ export class CollectionService {
       hasDish: collection.dishes.some((dish) => dish.id === dishId),
     }));
   }
+
+  async getDishesFromCollection(collectionId: number): Promise<Dish[]> {
+    const collection = await this.collectionsRepository.findOne({
+      where: { id: collectionId },
+      relations: ['dishes'],
+    });
+
+    return collection.dishes;
+  }
+
+  // delete Collection
+  async removeDishFromCollection(
+    collectionId: number,
+    dishId: number,
+  ): Promise<void> {
+    const collection = await this.collectionsRepository.findOne({
+      where: { id: collectionId },
+      relations: ['dishes'],
+    });
+    if (!collection) return;
+    collection.dishes = collection.dishes.filter((dish) => {
+      return dish.id != dishId;
+    });
+    await this.collectionsRepository.save(collection);
+  }
 }

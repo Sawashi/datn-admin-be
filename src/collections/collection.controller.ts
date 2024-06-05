@@ -153,4 +153,22 @@ export class CollectionController {
     );
     return collections;
   }
+
+  @Get(':collectionId/dishes')
+  async getDishesFromCollection(@Param('collectionId') collectionId: number) {
+    const dishes =
+      await this.collectionService.getDishesFromCollection(collectionId);
+    return dishes;
+  }
+
+  @Delete(':collectionId/removeDish/:dishId')
+  async removeDishFromCollection(
+    @Param('collectionId') collectionId: number,
+    @Param('dishId') dishId: number,
+  ) {
+    return this.collectionService.removeDishFromCollection(
+      collectionId,
+      dishId,
+    );
+  }
 }
