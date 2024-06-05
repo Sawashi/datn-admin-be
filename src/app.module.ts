@@ -29,6 +29,7 @@ import { LoggingMiddleware } from './middleware/logger.middleware';
 import { RecordModule } from './record/record.module';
 import { TaboosModule } from './taboos/taboos.module';
 import { GoogleGeminiModule } from './google-gemini/google-gemini.module';
+import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -67,6 +68,7 @@ import { GoogleGeminiModule } from './google-gemini/google-gemini.module';
     RecordModule,
     TaboosModule,
     GoogleGeminiModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
