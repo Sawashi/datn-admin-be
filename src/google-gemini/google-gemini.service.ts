@@ -9,6 +9,10 @@ import { RecipeGenerated } from './recipesg.entity';
 class SimplifiedFilterResult {
   id: number;
 }
+class SimplifiedGuessImage {
+  name: string;
+  ingredients: string;
+}
 export class GoogleGeminiService {
   constructor(
     @InjectRepository(Dish)
@@ -104,7 +108,7 @@ export class GoogleGeminiService {
     const queryIngredients = 'Ingredients: ' + ingredients + '\n';
     const suffix = 'Format of the answer:';
     const format =
-      '{ingredients: <ingredient>, recipeDetails: <recipeDetails>, note: <note>}';
+      '{"ingredients": "<ingredient>", "recipeDetails": "<recipeDetails>", "note": "<note>"}';
     const query =
       prefix + note + queryName + queryIngredients + suffix + format;
     let attempt = 0;
@@ -116,7 +120,8 @@ export class GoogleGeminiService {
         if (
           typeof parsedResponse.ingredients !== 'string' ||
           typeof parsedResponse.recipeDetails !== 'string' ||
-          typeof parsedResponse.note !== 'string'
+          (parsedResponse.note !== null &&
+            typeof parsedResponse.note !== 'string')
         ) {
           throw new Error('Validation failed');
         }
@@ -156,5 +161,54 @@ export class GoogleGeminiService {
       }
     }
     return '';
+  }
+
+  // API generateRecipeFromImage
+  async generateRecipeFromImage(
+    image: Express.Multer.File,
+  ): Promise<RecipeGenerated> {
+    const prefix =
+      'Question: Read the image below, guess the name and ingredient of that dish :\n';
+    const suffix =
+      'Format of the answer:\n{"name": "<name of the dish>", "ingredients": "<ingredients>"}\n' +
+      'Note: "Don\'t use an array for ingredients, just use a string with commas to separate the ingredients. ' +
+      'Make sure both name and ingredients are enclosed in double quotes if they contain spaces, e.g., "beef, chicken, pork".';
+    // Convert the image to base64
+    console.log('image', image);
+    const base64Image = image.buffer.toString('base64');
+
+    const queryImage = `Image: ${base64Image}\n`;
+    const query = `${prefix}${queryImage}${suffix}`;
+
+    const MAX_RETRIES = 5;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        const response = await this.runGemini(query);
+        const parsedResponse: SimplifiedGuessImage = JSON.parse(response);
+        // Validate the parsed response
+        if (
+          typeof parsedResponse.ingredients !== 'string' ||
+          typeof parsedResponse.name !== 'string'
+        ) {
+          throw new Error('Validation failed');
+        }
+        const result: RecipeGenerated = await this.createRecipes(
+          parsedResponse.name,
+          parsedResponse.ingredients,
+        );
+        return result;
+      } catch (error) {
+        console.error(
+          `Failed to parse response on attempt ${attempt + 1}:`,
+          error,
+        );
+
+        if (attempt >= MAX_RETRIES - 1) {
+          return { ingredients: '', recipeDetails: '', note: '' };
+        }
+      }
+    }
+
+    return { ingredients: '', recipeDetails: '', note: '' };
   }
 }
