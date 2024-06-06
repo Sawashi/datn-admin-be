@@ -1,8 +1,21 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { GoogleGeminiService } from './google-gemini.service';
 import { FilteredResult } from './filtered.entity'; // Ensure the class name is correctly imported
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RecipeGenerated } from './recipesg.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 // DTO for the request body
 class FindDto {
@@ -51,5 +64,29 @@ export class GoogleGeminiController {
   @Post('translate')
   async translate(@Body() dataIn: translateTextDto): Promise<string> {
     return this.googleGeminiService.translate(dataIn.text, dataIn.language);
+  }
+  //API "generate recipe from image" input is image then return the generated recipe (RecipeGenerated)
+  @Post('generate-recipe-from-image')
+  @ApiOperation({ summary: 'Generate recipe from image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Image file',
+    type: 'multipart/form-data',
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('image'))
+  async generateRecipeFromImage(
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<RecipeGenerated> {
+    return this.googleGeminiService.generateRecipeFromImage(image);
   }
 }
