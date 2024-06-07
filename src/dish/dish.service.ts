@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Dish } from './dish.entity';
 import { DishDto } from './dto/dishDto.dto';
 import { Note } from 'src/notes/notes.entity';
@@ -80,7 +80,7 @@ export class DishService {
   }
 
   async create(dishDto: DishDto, imageUrl: string): Promise<Dish> {
-    const { ingredients, cuisines } = dishDto;
+    const { ingredients, cuisines, diets } = dishDto;
 
     const newDish = this.dishRepository.create({
       cookingTime: dishDto.cookingTime,
@@ -116,6 +116,16 @@ export class DishService {
       });
       if (cuisineEntities) {
         newDish.cuisines = cuisineEntities;
+      }
+    }
+
+    if (diets) {
+      const dietEntities = await this.dietRepository.find({
+        where: { id: In(diets) },
+      });
+
+      if (dietEntities) {
+        newDish.diets = dietEntities;
       }
     }
 
@@ -200,13 +210,21 @@ export class DishService {
     searchText?: string,
     sort: 'asc' | 'desc' = 'asc',
     cookingTime?: string,
-    numIngredients?: number,
-    // cuisineIds?: number[],
-    // dietIds?: number[],
+    ingredientIds?: number[],
+    cuisineIds?: number[],
+    dietIds?: number[],
   ): Promise<Dish[]> {
+    const parseIngredientIds = ingredientIds?.map((id) =>
+      parseInt(id.toString()),
+    );
+    const parseCuisineIds = cuisineIds?.map((id) => parseInt(id.toString()));
+    const parseDietsIds = dietIds?.map((id) => parseInt(id.toString()));
+
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
+      .leftJoinAndSelect('dish.diets', 'dish_diets_diets')
+      .leftJoinAndSelect('dish.cuisines', 'cuisine')
       .where('dish.dishName like :searchText', {
         searchText: `%${searchText ?? ''}%`,
       });
@@ -217,12 +235,25 @@ export class DishService {
       });
     }
 
-    if (numIngredients) {
-      queryBuilder
-        .groupBy('dish.id')
-        .having('COUNT(dish_ingredient.dish_id) >= :numIngredients', {
-          numIngredients: numIngredients,
-        });
+    if (parseIngredientIds) {
+      queryBuilder.andWhere(
+        'dish_ingredient.ingredient_id IN (:...ingredientIds)',
+        {
+          ingredientIds: parseIngredientIds,
+        },
+      );
+    }
+
+    if (cuisineIds && cuisineIds.length > 0) {
+      queryBuilder.andWhere('dish.cuisinesId IN (:...cuisineIds)', {
+        cuisineIds: parseCuisineIds,
+      });
+    }
+
+    if (parseDietsIds) {
+      queryBuilder.andWhere('dish_diets_diets.id IN (:...dietIds)', {
+        dietIds: parseDietsIds,
+      });
     }
 
     if (sort) {

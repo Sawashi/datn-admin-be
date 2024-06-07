@@ -61,8 +61,18 @@ export class DishController {
     @Query('text') text: string,
     @Query('sort') sort?: 'asc' | 'desc',
     @Query('cookingTime') cookingTime?: string,
+    @Query('ingredientIds') ingredientIds?: number[],
+    @Query('cuisineIds') cuisineIds?: number[],
+    @Query('dietIds') dietIds?: number[],
   ): Promise<Dish[]> {
-    return this.dishService.findDishBySearchText(text, sort, cookingTime);
+    return this.dishService.findDishBySearchText(
+      text,
+      sort,
+      cookingTime,
+      ingredientIds,
+      cuisineIds,
+      dietIds,
+    );
   }
 
   //get one dish
