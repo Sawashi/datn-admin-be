@@ -350,7 +350,7 @@ export class DishService {
       .createQueryBuilder('dish')
       .leftJoin('dish.diets', 'diet')
       .groupBy('dish.id')
-      .having('COUNT(diet.id) > :dietCount', { dietCount: dietCount })
+      .having('COUNT(diet.id) >= :dietCount', { dietCount: dietCount })
       .select('dish');
 
     const dishes = await queryBuilder.getMany();
@@ -380,7 +380,7 @@ export class DishService {
       .createQueryBuilder('dish')
       .leftJoin('dish.dishToIngredients', 'ingredient')
       .groupBy('dish.id')
-      .having('COUNT(ingredient.id) < :ingredientCount', {
+      .having('COUNT(ingredient.id) <= :ingredientCount', {
         ingredientCount: ingredientCount,
       })
       .select('dish');
