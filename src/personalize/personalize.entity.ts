@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Allergies } from 'src/allergies/allergies.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
+import { DislikedIngredients } from 'src/disliked-ingredient/disliked-ingredient.entity';
 import { User } from 'src/users/user.entity';
 import {
   Entity,
@@ -35,6 +36,13 @@ export class Personalize {
   @ManyToMany(() => Diets, (diets) => diets.personalize)
   @JoinTable()
   diets: Diets[];
+
+  @ManyToMany(
+    () => DislikedIngredients,
+    (dislikedIngredients) => dislikedIngredients.personalize,
+  )
+  @JoinTable()
+  dislikedIngredients: DislikedIngredients[];
 
   @ApiProperty()
   @CreateDateColumn()

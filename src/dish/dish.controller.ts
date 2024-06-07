@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { DishService } from './dish.service';
 import { Dish } from './dish.entity';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { DishDto } from './dto/dishDto.dto';
@@ -22,6 +22,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
+import { PaginationDto } from './dto/pagination.dto';
 @ApiTags('Dishes')
 @Controller('dish')
 @ApiBearerAuth('JWT')
@@ -37,8 +38,13 @@ export class DishController {
   }
   //get all dish
   @Get()
-  async findAll(): Promise<Dish[]> {
-    return await this.dishService.findall();
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async findAll(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<{ data: Dish[]; count: number }> {
+    const { page = 1, limit = 10 } = paginationDto;
+    return await this.dishService.findAll({ page, limit });
   }
 
   @Get('latest')
