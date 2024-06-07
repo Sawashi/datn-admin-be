@@ -214,15 +214,21 @@ export class DishService {
     searchText?: string,
     sort: 'asc' | 'desc' = 'asc',
     cookingTime?: string,
-    ingredientIds?: number[],
-    cuisineIds?: number[],
-    dietIds?: number[],
+    ingredientIds?: number[] | number,
+    cuisineIds?: number[] | number,
+    dietIds?: number[] | number,
   ): Promise<Dish[]> {
-    const parseIngredientIds = ingredientIds?.map((id) =>
-      parseInt(id.toString()),
-    );
-    const parseCuisineIds = cuisineIds?.map((id) => parseInt(id.toString()));
-    const parseDietsIds = dietIds?.map((id) => parseInt(id.toString()));
+    if (typeof ingredientIds === 'number') {
+      ingredientIds = [ingredientIds];
+    }
+
+    if (typeof cuisineIds === 'number') {
+      cuisineIds = [cuisineIds];
+    }
+
+    if (typeof dietIds === 'number') {
+      dietIds = [dietIds];
+    }
 
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
@@ -239,24 +245,24 @@ export class DishService {
       });
     }
 
-    if (parseIngredientIds) {
+    if (ingredientIds && ingredientIds.length > 0) {
       queryBuilder.andWhere(
         'dish_ingredient.ingredient_id IN (:...ingredientIds)',
         {
-          ingredientIds: parseIngredientIds,
+          ingredientIds: ingredientIds,
         },
       );
     }
 
     if (cuisineIds && cuisineIds.length > 0) {
       queryBuilder.andWhere('dish.cuisinesId IN (:...cuisineIds)', {
-        cuisineIds: parseCuisineIds,
+        cuisineIds: cuisineIds,
       });
     }
 
-    if (parseDietsIds) {
+    if (dietIds && dietIds.length > 0) {
       queryBuilder.andWhere('dish_diets_diets.id IN (:...dietIds)', {
-        dietIds: parseDietsIds,
+        dietIds: dietIds,
       });
     }
 
