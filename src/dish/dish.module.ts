@@ -11,13 +11,14 @@ import { Ingredient } from 'src/ingredient/ingredient.entity';
 import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
+import { Personalize } from 'src/personalize/personalize.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Dish,
       DishIngredient,
-
+      Personalize,
       Note,
       Review,
       Ingredient,

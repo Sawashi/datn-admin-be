@@ -12,6 +12,7 @@ import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { DishIngredient } from './dish_ingredient.entity';
 import { PaginationDto } from './dto/pagination.dto';
+import { Personalize } from 'src/personalize/personalize.entity';
 
 @Injectable()
 export class DishService {
@@ -30,6 +31,8 @@ export class DishService {
     private cuisineRepository: Repository<Cuisine>,
     @InjectRepository(Diets)
     private dietRepository: Repository<Diets>,
+    @InjectRepository(Personalize)
+    private personalizeRepository: Repository<Personalize>,
   ) {
     dishRepository: dishRepository;
     noteRepository: noteRepository;
@@ -38,6 +41,7 @@ export class DishService {
     collectionRepository: collectionRepository;
     cuisineRepository: cuisineRepository;
     dietRepository: dietRepository;
+    personalizeRepository: personalizeRepository;
   }
 
   async findAll(
@@ -306,6 +310,84 @@ export class DishService {
     });
 
     return relatedDishes;
+  }
+
+  async recommendDishes(userId: number): Promise<Dish[]> {
+    const queryBuilder = this.personalizeRepository
+      .createQueryBuilder('personalize')
+      .where('personalize.user_id = :userId', { userId })
+      .leftJoinAndSelect('personalize.cuisines', 'cuisine')
+      .leftJoinAndSelect('cuisine.dishes', 'dish')
+      .leftJoinAndSelect('personalize.diets', 'diet')
+      .leftJoinAndSelect('diet.dishes', 'dietDish');
+    const response = await queryBuilder.getOne();
+
+    const dishesCuisine = response.cuisines
+      .map((cuisine) => cuisine.dishes)
+      .flat();
+    const dishesDiet = response.diets.map((diet) => diet.dishes).flat();
+
+    const recommendedDishes = [...dishesCuisine, ...dishesDiet].reduce(
+      (accumulator, currentDish) => {
+        const existingDishIndex = accumulator.findIndex(
+          (dish) => dish.id === currentDish.id,
+        );
+
+        if (existingDishIndex === -1) {
+          accumulator.push(currentDish);
+        }
+
+        return accumulator;
+      },
+      [],
+    );
+
+    return recommendedDishes;
+  }
+
+  async getHealthyDishes(dietCount: number): Promise<Dish[]> {
+    const queryBuilder = this.dishRepository
+      .createQueryBuilder('dish')
+      .leftJoin('dish.diets', 'diet')
+      .groupBy('dish.id')
+      .having('COUNT(diet.id) > :dietCount', { dietCount: dietCount })
+      .select('dish');
+
+    const dishes = await queryBuilder.getMany();
+
+    return dishes;
+  }
+
+  async getHealthyDishesV2(dietNames: string[] | string): Promise<Dish[]> {
+    if (typeof dietNames === 'string') {
+      dietNames = [dietNames];
+    }
+
+    const queryBuilder = this.dishRepository
+      .createQueryBuilder('dish')
+      .leftJoin('dish.diets', 'diet')
+      .where('diet.name IN (:...dishNames)', {
+        dishNames: dietNames,
+      });
+
+    const dishes = await queryBuilder.getMany();
+
+    return dishes;
+  }
+
+  async getQuicklyDishes(ingredientCount: number): Promise<Dish[]> {
+    const queryBuilder = this.dishRepository
+      .createQueryBuilder('dish')
+      .leftJoin('dish.dishToIngredients', 'ingredient')
+      .groupBy('dish.id')
+      .having('COUNT(ingredient.id) < :ingredientCount', {
+        ingredientCount: ingredientCount,
+      })
+      .select('dish');
+
+    const dishes = await queryBuilder.getMany();
+
+    return dishes;
   }
 
   // async findRelatedDishes(dto: GetRelatedDishesDto): Promise<OutputDishDto[]> {
