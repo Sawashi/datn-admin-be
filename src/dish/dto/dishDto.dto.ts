@@ -40,4 +40,8 @@ export class DishDto {
   //@IsNumber()
   @IsOptional()
   cuisines?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  diets?: number[];
 }

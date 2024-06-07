@@ -10,6 +10,7 @@ import {
   UploadedFile,
   UseGuards,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { DishService } from './dish.service';
 import { Dish } from './dish.entity';
@@ -23,6 +24,8 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
 import { PaginationDto } from './dto/pagination.dto';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/users/user.entity';
 @ApiTags('Dishes')
 @Controller('dish')
 @ApiBearerAuth('JWT')
@@ -61,8 +64,45 @@ export class DishController {
     @Query('text') text: string,
     @Query('sort') sort?: 'asc' | 'desc',
     @Query('cookingTime') cookingTime?: string,
+    @Query('ingredientIds') ingredientIds?: number[],
+    @Query('cuisineIds') cuisineIds?: number[],
+    @Query('dietIds') dietIds?: number[],
   ): Promise<Dish[]> {
-    return this.dishService.findDishBySearchText(text, sort, cookingTime);
+    return this.dishService.findDishBySearchText(
+      text,
+      sort,
+      cookingTime,
+      ingredientIds,
+      cuisineIds,
+      dietIds,
+    );
+  }
+
+  @Get('recommend')
+  async recommend(@GetUser() loginUser: User): Promise<Dish[]> {
+    if (!loginUser.id) {
+      throw new NotFoundException('User not found');
+    }
+    return this.dishService.recommendDishes(loginUser.id);
+  }
+
+  @Get('healthy')
+  async healthy(@Query('dietCount') dietCount: number): Promise<Dish[]> {
+    return this.dishService.getHealthyDishes(dietCount);
+  }
+
+  @Get('healthy-v2')
+  async healthyV2(
+    @Query('dietName') dietNames: string[] | string,
+  ): Promise<Dish[]> {
+    return this.dishService.getHealthyDishesV2(dietNames);
+  }
+
+  @Get('quickly')
+  async quickly(
+    @Query('ingredientCount') ingredientCount: number,
+  ): Promise<Dish[]> {
+    return this.dishService.getQuicklyDishes(ingredientCount);
   }
 
   //get one dish
