@@ -141,7 +141,7 @@ export class MealplanService {
     return await this.mealPlanRepository.save(newMealPlan);
   }
 
-  async updatePlanDate(mealPlanId: number, dishId: number, planDate: Date) {
+  async updatePlanDate(mealPlanId: number, dishId: number, planDate: Date[]) {
     const mealplanDish = await this.mealplanDishRepository.findOne({
       where: { mealPlanId: mealPlanId, dishId: dishId },
     });
@@ -149,8 +149,11 @@ export class MealplanService {
     if (!mealplanDish) {
       throw new Error('MealplanDish not found');
     }
+    await this.mealPlanRepository.delete(mealplanDish?.id);
 
-    mealplanDish.planDate = planDate;
+    planDate?.map(async (item) => {
+      await this.addDishToMealPlan(mealPlanId, dishId, item);
+    });
 
     return await this.mealplanDishRepository.save(mealplanDish);
   }

@@ -17,5 +17,5 @@ export class UpdateDishToMealPlanDto {
   @IsInt()
   dishId: number;
 
-  planDate: Date;
+  planDate: Date[];
 }
