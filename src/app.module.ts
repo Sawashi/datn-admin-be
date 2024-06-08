@@ -30,7 +30,7 @@ import { RecordModule } from './record/record.module';
 import { TaboosModule } from './taboos/taboos.module';
 import { GoogleGeminiModule } from './google-gemini/google-gemini.module';
 import { NotificationModule } from './notification/notification.module';
-import { DislikedIngredientModule } from './disliked-ingredient/disliked-ingredient.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -70,7 +70,6 @@ import { DislikedIngredientModule } from './disliked-ingredient/disliked-ingredi
     TaboosModule,
     GoogleGeminiModule,
     NotificationModule,
-    DislikedIngredientModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DishIngredient } from 'src/dish/dish_ingredient.entity';
-import { DislikedIngredients } from 'src/disliked-ingredient/disliked-ingredient.entity';
+import { Personalize } from 'src/personalize/personalize.entity';
+
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   OneToMany,
-  JoinTable,
   ManyToMany,
 } from 'typeorm';
 
@@ -29,7 +29,6 @@ export class Ingredient {
   )
   dishToIngredients: Array<DishIngredient>;
 
-  @ManyToMany(() => DislikedIngredients, (dislikeds) => dislikeds.ingredients)
-  @JoinTable()
-  dislikeds: DislikedIngredients[];
+  @ManyToMany(() => Personalize, (personalize) => personalize.ingredients)
+  personalize: Personalize[];
 }
