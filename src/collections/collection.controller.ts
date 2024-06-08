@@ -171,4 +171,8 @@ export class CollectionController {
       dishId,
     );
   }
+  @Get('/dish/:dishId')
+  async findByDishId(@Param('dishId') dishId: number): Promise<Collection[]> {
+    return await this.collectionService.findByDishId(dishId);
+  }
 }

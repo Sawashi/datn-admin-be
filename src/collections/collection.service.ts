@@ -41,6 +41,14 @@ export class CollectionService {
       },
     });
   }
+
+  async findByDishId(dishId: number): Promise<Collection[]> {
+    return await this.collectionsRepository
+      .createQueryBuilder('collection')
+      .leftJoinAndSelect('collection.dishes', 'dish')
+      .where('dish.id = :dishId', { dishId })
+      .getMany();
+  }
   //  check if a dish is in the user's collection
   async isDishInCollection(userId: number, dishId: number): Promise<boolean> {
     const userCollection = await this.collectionsRepository.findOne({
@@ -146,7 +154,9 @@ export class CollectionService {
   ): Promise<CollectionWithDishFlagDto[]> {
     const collections = await this.collectionsRepository.find({
       where: { userId },
-      relations: ['dishes'],
+      relations: {
+        dishes: true,
+      },
     });
 
     return collections.map((collection) => ({
