@@ -190,4 +190,39 @@ export class CollectionService {
     });
     await this.collectionsRepository.save(collection);
   }
+  async updateDishCollections(
+    userId: number,
+    dishId: number,
+    collectionIds: number[],
+  ): Promise<void> {
+    const collections = await this.findByUserId(userId);
+    const dish = await this.collectionsRepository.manager.findOne(Dish, {
+      where: { id: dishId },
+      relations: ['collections'],
+    });
+
+    if (!dish) {
+      throw new Error('Dish not found');
+    }
+
+    // Add the dish to new collections
+    const collectionsToAdd = collections.filter((collection) =>
+      collectionIds.includes(collection.id),
+    );
+    collectionsToAdd.forEach((collection) => {
+      if (!dish.collections.find((c) => c.id === collection.id)) {
+        dish.collections.push(collection);
+      }
+    });
+
+    // Remove the dish from unchecked collections
+    dish.collections.filter(
+      (collection) => !collectionIds.includes(collection.id),
+    );
+    dish.collections = dish.collections.filter((collection) =>
+      collectionIds.includes(collection.id),
+    );
+
+    await this.collectionsRepository.manager.save(dish);
+  }
 }
