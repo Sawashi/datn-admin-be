@@ -171,4 +171,20 @@ export class CollectionController {
       dishId,
     );
   }
+  @Get('/dish/:dishId')
+  async findByDishId(@Param('dishId') dishId: number): Promise<Collection[]> {
+    return await this.collectionService.findByDishId(dishId);
+  }
+  @Post('/updateDishCollections')
+  async updateDishCollections(
+    @Body('userId') userId: number,
+    @Body('dishId') dishId: number,
+    @Body('collectionIds') collectionIds: number[],
+  ): Promise<void> {
+    await this.collectionService.updateDishCollections(
+      userId,
+      dishId,
+      collectionIds,
+    );
+  }
 }
