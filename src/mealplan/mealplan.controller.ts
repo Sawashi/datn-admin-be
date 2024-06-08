@@ -83,7 +83,6 @@ export class MealplanController {
 
     return await this.mealPlanService.addMealPlanForUser(userId);
   }
-
   @Patch('update-plan-date')
   async updatePlanDate(@Body() updatePlanDateDto: UpdateDishToMealPlanDto) {
     const { mealPlanId, dishId, planDate } = updatePlanDateDto;
@@ -98,14 +97,14 @@ export class MealplanController {
   async deleteDishFromMealPlan(
     @Body() deleteDishMealPlanDto: DeleteDishFromMealPlanDto,
   ) {
-    const { dishId, mealPlanId } = deleteDishMealPlanDto;
+    const { dishId, mealPlanId, planDate } = deleteDishMealPlanDto;
 
     return await this.mealPlanService.deleteDishFromMealPlan(
       dishId,
       mealPlanId,
+      planDate,
     );
   }
-
   // check if a dish is in the user's mealplan
   @Get('in-mealplan/:mealPlanId/dish/:dishId')
   async isDishInMealPlan(

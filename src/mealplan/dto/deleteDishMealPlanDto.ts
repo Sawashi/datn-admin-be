@@ -1,9 +1,13 @@
-import { IsInt } from 'class-validator';
+import { IsDateString, IsInt, IsOptional } from 'class-validator';
 
 export class DeleteDishFromMealPlanDto {
   @IsInt()
-  mealPlanId: number;
+  dishId: number;
 
   @IsInt()
-  dishId: number;
+  mealPlanId: number;
+
+  @IsOptional()
+  @IsDateString()
+  planDate?: Date;
 }
