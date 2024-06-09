@@ -76,11 +76,16 @@ export class NotificationService {
     for (const mp of mealplans) {
       for (const mpDish of mp.mealplanDishes) {
         if (isToday(mpDish.planDate)) {
-          messages.push({
-            to: mp.user.notificationToken,
-            title: 'A quick reminder',
-            body: "Don't forget today's mealplan",
-          });
+          if (
+            mp.user.notificationToken &&
+            Expo.isExpoPushToken(mp.user.notificationToken)
+          ) {
+            messages.push({
+              to: mp.user.notificationToken,
+              title: 'A quick reminder',
+              body: "Don't forget today's mealplan",
+            });
+          }
           break;
         }
       }
