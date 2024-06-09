@@ -49,12 +49,36 @@ export class PersonalizeService {
     });
   }
 
+  // get one Personalize
+  async findPersonalizeUser(id: number): Promise<Personalize> {
+    return await this.personalizeRepository.findOne({
+      where: { user: { id: id } },
+      relations: {
+        allergies: true,
+        diets: true,
+        cuisines: true,
+      },
+    });
+  }
+
   //create Personalize
   async create(personalize: Personalize): Promise<Personalize> {
     const { user, allergies, diets, cuisines } = personalize;
     const allergyEntities = await this.allergyRepository.findByIds(allergies);
     const dietEntities = await this.dietRepository.findByIds(diets);
     const cuisineEntities = await this.cuisineRepository.findByIds(cuisines);
+
+    if (allergies.length !== allergyEntities.length) {
+      throw new Error('Some allergies not found');
+    }
+
+    if (diets.length !== dietEntities.length) {
+      throw new Error('Some diets not found');
+    }
+
+    if (cuisines.length !== cuisineEntities.length) {
+      throw new Error('Some cuisines not found');
+    }
 
     const newPersonalize = this.personalizeRepository.create({
       user: user,
@@ -88,14 +112,23 @@ export class PersonalizeService {
 
     if (allergies !== undefined) {
       const allergyEntities = await this.allergyRepository.findByIds(allergies);
+      if (allergyEntities.length !== allergies.length) {
+        throw new Error('Allergies not found');
+      }
       personalize.allergies = allergyEntities;
     }
     if (diets !== undefined) {
       const dietEntities = await this.dietRepository.findByIds(diets);
+      if (dietEntities.length !== diets.length) {
+        throw new Error('Diets not found');
+      }
       personalize.diets = dietEntities;
     }
     if (cuisines !== undefined) {
       const cuisineEntities = await this.cuisineRepository.findByIds(cuisines);
+      if (cuisineEntities.length !== cuisines.length) {
+        throw new Error('Cuisines not found');
+      }
       personalize.cuisines = cuisineEntities;
     }
 
