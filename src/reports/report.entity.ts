@@ -1,28 +1,48 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 import { User } from 'src/users/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-
+import { Dish } from 'src/dish/dish.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from 'typeorm';
 @Entity('Report')
 export class Report {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
-  @ApiProperty()
-  @Column()
-  title: string;
+
   @ApiProperty()
   @Column()
   content: string;
   @ApiProperty()
-  @Column()
-  status: string;
+  @Column({ default: 0 })
+  status: number;
 
-  @ManyToOne(() => User, (user) => user.sentReports, { eager: false })
-  @Exclude({ toPlainOnly: true })
-  sender: User;
+  @ApiProperty()
+  @Column({ name: 'user_id' })
+  userId: number;
 
-  @ManyToOne(() => User, (user) => user.receivedReports, { eager: false })
-  @Exclude({ toPlainOnly: true })
-  recipient: User;
+  @ManyToOne(() => User, (user) => user.notes)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ApiProperty()
+  @Column({ name: 'dish_id' })
+  dishId: number;
+  @ManyToOne(() => Dish, (dish) => dish.notes)
+  @JoinColumn({ name: 'dish_id' })
+  dish: Dish;
+
+  @ApiProperty()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty()
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

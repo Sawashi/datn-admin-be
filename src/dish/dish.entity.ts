@@ -20,14 +20,14 @@ import { Diets } from 'src/diets/diets.entity';
 import { DishIngredient } from './dish_ingredient.entity';
 import { MealPlan } from 'src/mealplan/mealplan.entity';
 import { MealplanDish } from './dish_mealplan.entity';
-
+import { Report } from 'src/reports/report.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
   @Column({ nullable: true })
-  cookingTime: string;
+  cookingTime: number;
   @ApiProperty()
   @Column({ nullable: true })
   dishName: string;
@@ -76,6 +76,9 @@ export class Dish {
 
   @ManyToMany(() => MealPlan, (mealPlan) => mealPlan.dishes)
   mealPlans: MealPlan[];
+
+  @OneToMany(() => Report, (report) => report.dish)
+  report: Report[];
 
   @ApiProperty()
   @CreateDateColumn()

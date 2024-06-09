@@ -10,6 +10,7 @@ import * as dotenv from 'dotenv';
 import { UsersService } from 'src/users/users.service';
 import { Collection } from 'src/collections/collection.entity';
 import { Topic } from 'src/topics/topic.entity';
+import { MealPlan } from 'src/mealplan/mealplan.entity';
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ dotenv.config();
         expiresIn: 3600,
       },
     }),
-    TypeOrmModule.forFeature([User, Collection, Topic]),
+    TypeOrmModule.forFeature([User, Collection, Topic, MealPlan]),
   ],
   providers: [AuthService, JwtStrategy, UsersService],
   controllers: [AuthController],

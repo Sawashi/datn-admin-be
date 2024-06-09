@@ -21,6 +21,18 @@ export class MealplanService {
     userRepository;
   }
 
+  async getMealplanIdByUserId(userId: number): Promise<number> {
+    const mealPlan = await this.mealPlanRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!mealPlan) {
+      throw new Error('Meal Plan not found for the given user');
+    }
+
+    return mealPlan.id;
+  }
+
   async getDishesWithPlanDateByUserId(userId: number, weekOffset: number = 0) {
     const today = new Date();
     const startOfWeek = new Date(
@@ -79,7 +91,7 @@ export class MealplanService {
     dayOffset: number = 0,
   ) {
     const today = new Date();
-    const targetDate = new Date(today.setDate(today.getDate() + dayOffset * 7));
+    const targetDate = new Date(today.setDate(today.getDate() + dayOffset));
     targetDate.setHours(0, 0, 0, 0);
 
     const endOfDay = new Date(targetDate);
@@ -113,10 +125,11 @@ export class MealplanService {
     };
   }
 
-  async addDishToMealPlan(mealPlanId: number, dishId: number) {
+  async addDishToMealPlan(mealPlanId: number, dishId: number, planDate: Date) {
     const newDish = await this.mealplanDishRepository.create({
       mealPlanId: mealPlanId,
       dishId: dishId,
+      planDate: planDate,
     });
     return await this.mealplanDishRepository.save(newDish);
   }
@@ -128,22 +141,31 @@ export class MealplanService {
     return await this.mealPlanRepository.save(newMealPlan);
   }
 
-  async updatePlanDate(mealPlanId: number, dishId: number, planDate: Date) {
-    const mealplanDish = await this.mealplanDishRepository.findOne({
-      where: { mealPlanId: mealPlanId, dishId: dishId },
-    });
+  async updatePlanDate(mealPlanId: number, dishId: number, planDates: Date[]) {
+    await this.mealplanDishRepository.delete({ mealPlanId, dishId });
 
-    if (!mealplanDish) {
-      throw new Error('MealplanDish not found');
+    for (const planDate of planDates) {
+      await this.addDishToMealPlan(mealPlanId, dishId, planDate);
     }
 
-    mealplanDish.planDate = planDate;
-    return await this.mealplanDishRepository.save(mealplanDish);
+    return { success: true, message: 'Plan dates updated successfully' };
   }
 
-  async deleteDishFromMealPlan(dishId: number, mealPlanId: number) {
+  async deleteDishFromMealPlan(
+    dishId: number,
+    mealPlanId: number,
+    planDate?: Date,
+  ) {
+    let deleteCriteria: any = { dishId: dishId, mealPlanId: mealPlanId };
+
+    if (planDate !== undefined) {
+      deleteCriteria = { ...deleteCriteria, planDate: planDate };
+    } else {
+      deleteCriteria = { ...deleteCriteria, planDate: IsNull() };
+    }
+
     const deleteMealPlan = await this.mealplanDishRepository.findOne({
-      where: { dishId: dishId, mealPlanId: mealPlanId },
+      where: deleteCriteria,
     });
 
     if (deleteMealPlan) {
@@ -153,6 +175,29 @@ export class MealplanService {
       return { success: false, message: 'Dish not found in meal plan' };
     }
   }
+
+  async deleteAllByUser(userId: number) {
+    const mealPlans = await this.mealPlanRepository.find({
+      where: { user_id: userId },
+      relations: ['mealplanDishes'],
+    });
+
+    if (mealPlans.length === 0) {
+      throw new Error('No meal plans found for the given user');
+    }
+
+    for (const mealPlan of mealPlans) {
+      await this.mealplanDishRepository.delete({
+        mealPlanId: mealPlan.id,
+      });
+    }
+
+    return {
+      success: true,
+      message: 'All meal plans and associated dishes deleted for the user',
+    };
+  }
+
   //  check if a dish is in the user's mealplan
   async isDishInMealPlan(dishId: number, mealplanId: number): Promise<boolean> {
     const userMealplan = await this.mealplanDishRepository.findOne({

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -44,6 +45,14 @@ export class MealplanController {
     );
   }
 
+  @Get('user/:userId')
+  async getMealplanIdByUserId(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<{ mealplanId: number }> {
+    const mealplanId = await this.mealPlanService.getMealplanIdByUserId(userId);
+    return { mealplanId };
+  }
+
   @Get(':userId/today')
   async getDishesWithPlanDateByUserIdForToday(
     @Param('userId') userId: number,
@@ -57,9 +66,13 @@ export class MealplanController {
   }
   @Post()
   async addDishtoMealPlan(@Body() addDishToMealPlanDto: AddDishToMealPlanDto) {
-    const { mealPlanId, dishId } = addDishToMealPlanDto;
+    const { mealPlanId, dishId, planDate } = addDishToMealPlanDto;
 
-    return await this.mealPlanService.addDishToMealPlan(mealPlanId, dishId);
+    return await this.mealPlanService.addDishToMealPlan(
+      mealPlanId,
+      dishId,
+      planDate,
+    );
   }
 
   @Post('user-mealplan')
@@ -70,14 +83,13 @@ export class MealplanController {
 
     return await this.mealPlanService.addMealPlanForUser(userId);
   }
-
   @Patch('update-plan-date')
   async updatePlanDate(@Body() updatePlanDateDto: UpdateDishToMealPlanDto) {
     const { mealPlanId, dishId, planDate } = updatePlanDateDto;
     return await this.mealPlanService.updatePlanDate(
       mealPlanId,
       dishId,
-      new Date(planDate),
+      planDate,
     );
   }
 
@@ -85,14 +97,14 @@ export class MealplanController {
   async deleteDishFromMealPlan(
     @Body() deleteDishMealPlanDto: DeleteDishFromMealPlanDto,
   ) {
-    const { dishId, mealPlanId } = deleteDishMealPlanDto;
+    const { dishId, mealPlanId, planDate } = deleteDishMealPlanDto;
 
     return await this.mealPlanService.deleteDishFromMealPlan(
       dishId,
       mealPlanId,
+      planDate,
     );
   }
-
   // check if a dish is in the user's mealplan
   @Get('in-mealplan/:mealPlanId/dish/:dishId')
   async isDishInMealPlan(
@@ -105,5 +117,11 @@ export class MealplanController {
       mealPlanId,
     );
     return { isInMealPlan };
+  }
+
+  @Delete('user/:userId')
+  async deleteAllByUser(@Param('userId', ParseIntPipe) userId: number) {
+    const result = await this.mealPlanService.deleteAllByUser(userId);
+    return result;
   }
 }

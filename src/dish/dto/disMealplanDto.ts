@@ -1,4 +1,4 @@
-import { IsDateString, IsInt } from 'class-validator';
+import { IsArray, IsInt } from 'class-validator';
 
 export class AddDishToMealPlanDto {
   @IsInt()
@@ -6,8 +6,9 @@ export class AddDishToMealPlanDto {
 
   @IsInt()
   dishId: number;
-}
 
+  planDate: Date;
+}
 export class UpdateDishToMealPlanDto {
   @IsInt()
   mealPlanId: number;
@@ -15,6 +16,6 @@ export class UpdateDishToMealPlanDto {
   @IsInt()
   dishId: number;
 
-  @IsDateString()
-  planDate: string;
+  @IsArray()
+  planDate: Date[];
 }

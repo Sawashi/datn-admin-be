@@ -128,6 +128,20 @@ export class CollectionController {
       collectionIds,
     );
   }
+
+  @Post('addByName/user/:userId/dish/:dishId')
+  async addDishByCollectionName(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+    @Body('collectionName') collectionName: string,
+  ) {
+    await this.collectionService.addDishByCollectionName(
+      userId,
+      dishId,
+      collectionName,
+    );
+  }
+
   @Get('user/:userId/dishes/:dishId')
   async getCollectionsWithDishFlag(
     @Param('userId') userId: number,
@@ -138,5 +152,39 @@ export class CollectionController {
       dishId,
     );
     return collections;
+  }
+
+  @Get(':collectionId/dishes')
+  async getDishesFromCollection(@Param('collectionId') collectionId: number) {
+    const dishes =
+      await this.collectionService.getDishesFromCollection(collectionId);
+    return dishes;
+  }
+
+  @Delete(':collectionId/removeDish/:dishId')
+  async removeDishFromCollection(
+    @Param('collectionId') collectionId: number,
+    @Param('dishId') dishId: number,
+  ) {
+    return this.collectionService.removeDishFromCollection(
+      collectionId,
+      dishId,
+    );
+  }
+  @Get('/dish/:dishId')
+  async findByDishId(@Param('dishId') dishId: number): Promise<Collection[]> {
+    return await this.collectionService.findByDishId(dishId);
+  }
+  @Post('/updateDishCollections')
+  async updateDishCollections(
+    @Body('userId') userId: number,
+    @Body('dishId') dishId: number,
+    @Body('collectionIds') collectionIds: number[],
+  ): Promise<void> {
+    await this.collectionService.updateDishCollections(
+      userId,
+      dishId,
+      collectionIds,
+    );
   }
 }
