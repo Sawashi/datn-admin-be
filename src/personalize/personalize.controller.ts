@@ -47,6 +47,16 @@ export class PersonalizeController {
     return personalize;
   }
 
+  //Get user personalize
+  @Get('/user/:id')
+  async findPersonalizeUser(@Param('id') id: number): Promise<Personalize> {
+    const personalize = await this.personalizeService.findPersonalizeUser(id);
+    if (!personalize) {
+      throw new Error('Personalize not found');
+    }
+    return personalize;
+  }
+
   // Create Personalize
   @Post()
   async create(@Body() personalize: Personalize): Promise<Personalize> {
