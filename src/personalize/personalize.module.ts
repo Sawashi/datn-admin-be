@@ -6,9 +6,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Diets } from 'src/diets/diets.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Allergies } from 'src/allergies/allergies.entity';
+import { Ingredient } from 'src/ingredient/ingredient.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Personalize, Diets, Cuisine, Allergies])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Personalize,
+      Diets,
+      Cuisine,
+      Allergies,
+      Ingredient,
+    ]),
+  ],
   providers: [PersonalizeService],
   controllers: [PersonalizeController],
 })

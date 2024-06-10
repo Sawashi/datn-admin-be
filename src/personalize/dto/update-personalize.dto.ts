@@ -19,4 +19,10 @@ export class UpdatePersonalizeDto {
   @IsArray()
   @IsNumber({}, { each: true })
   cuisines?: number[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  dislikeds?: number[];
 }

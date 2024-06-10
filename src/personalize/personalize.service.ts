@@ -6,6 +6,7 @@ import { Allergies } from 'src/allergies/allergies.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { UpdatePersonalizeDto } from './dto/update-personalize.dto';
+import { Ingredient } from 'src/ingredient/ingredient.entity';
 @Injectable()
 export class PersonalizeService {
   constructor(
@@ -17,11 +18,14 @@ export class PersonalizeService {
     private dietRepository: Repository<Diets>,
     @InjectRepository(Cuisine)
     private cuisineRepository: Repository<Cuisine>,
+    @InjectRepository(Ingredient)
+    private ingredientRepository: Repository<Ingredient>,
   ) {
     personalizeRepository: personalizeRepository;
     allergyRepository: allergyRepository;
     dietRepository: dietRepository;
     cuisineRepository: cuisineRepository;
+    ingredientRepository: ingredientRepository;
   }
 
   // get all Personalize
@@ -32,6 +36,7 @@ export class PersonalizeService {
         allergies: true,
         diets: true,
         cuisines: true,
+        ingredients: true,
       },
     });
   }
@@ -45,22 +50,25 @@ export class PersonalizeService {
         allergies: true,
         diets: true,
         cuisines: true,
+        ingredients: true,
       },
     });
   }
 
   //create Personalize
   async create(personalize: Personalize): Promise<Personalize> {
-    const { user, allergies, diets, cuisines } = personalize;
+    const { user, allergies, diets, cuisines, ingredients } = personalize;
     const allergyEntities = await this.allergyRepository.findByIds(allergies);
     const dietEntities = await this.dietRepository.findByIds(diets);
     const cuisineEntities = await this.cuisineRepository.findByIds(cuisines);
-
+    const dislikedEntities =
+      await this.cuisineRepository.findByIds(ingredients);
     const newPersonalize = this.personalizeRepository.create({
       user: user,
       cuisines: cuisineEntities,
       allergies: allergyEntities,
       diets: dietEntities,
+      ingredients: dislikedEntities,
     });
     return await this.personalizeRepository.save(newPersonalize);
   }
@@ -84,7 +92,7 @@ export class PersonalizeService {
       throw new Error('Personalize not found');
     }
 
-    const { allergies, diets, cuisines } = updatePersonalizeDto;
+    const { allergies, diets, cuisines, dislikeds } = updatePersonalizeDto;
 
     if (allergies !== undefined) {
       const allergyEntities = await this.allergyRepository.findByIds(allergies);
@@ -98,7 +106,11 @@ export class PersonalizeService {
       const cuisineEntities = await this.cuisineRepository.findByIds(cuisines);
       personalize.cuisines = cuisineEntities;
     }
-
+    if (dislikeds !== undefined) {
+      const dislikedsEntities =
+        await this.ingredientRepository.findByIds(dislikeds);
+      personalize.ingredients = dislikedsEntities;
+    }
     return this.personalizeRepository.save(personalize);
   }
 
