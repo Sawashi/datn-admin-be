@@ -14,6 +14,7 @@ export class NotificationService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(MealPlan)
     private mealplansRepository: Repository<MealPlan>,
   ) {
     usersRepository: usersRepository;
