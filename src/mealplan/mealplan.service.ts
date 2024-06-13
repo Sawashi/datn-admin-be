@@ -187,14 +187,18 @@ export class MealplanService {
     }
 
     for (const mealPlan of mealPlans) {
-      await this.mealplanDishRepository.delete({
-        mealPlanId: mealPlan.id,
-      });
+      const mealplanDishesToDelete = mealPlan.mealplanDishes.filter(
+        (dish) => dish.planDate !== null,
+      );
+
+      for (const mealplanDish of mealplanDishesToDelete) {
+        await this.mealplanDishRepository.delete({ id: mealplanDish.id });
+      }
     }
 
     return {
       success: true,
-      message: 'All meal plans and associated dishes deleted for the user',
+      message: 'All meal plan dishes without a date deleted for the user',
     };
   }
 
