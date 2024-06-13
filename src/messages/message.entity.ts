@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Topic } from 'src/topics/topic.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 @Entity('Message')
 export class Message {
   @PrimaryGeneratedColumn()
@@ -26,4 +33,12 @@ export class Message {
   @ManyToOne(() => Topic, (topic) => topic.messageList, { eager: false })
   @Exclude({ toPlainOnly: true })
   topicBelong: Topic;
+
+  @ApiProperty()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty()
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
