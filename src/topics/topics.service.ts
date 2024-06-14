@@ -95,7 +95,7 @@ export class TopicsService {
   }
 
   async getTopicByUserId(id: number) {
-    return await this.topicsRepository.find({
+    const topics = await this.topicsRepository.find({
       where: {
         user: { id: id },
         isActive: true,
@@ -111,6 +111,14 @@ export class TopicsService {
         },
       },
     });
+
+    topics.forEach((topic) => {
+      topic.messageList.sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+      );
+    });
+
+    return topics;
   }
 
   async getTopicByDateRanges(id: number) {
