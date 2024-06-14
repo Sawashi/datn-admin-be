@@ -32,6 +32,7 @@ import { GoogleGeminiModule } from './google-gemini/google-gemini.module';
 import { NotificationModule } from './notification/notification.module';
 import { DislikedIngredientModule } from './disliked-ingredient/disliked-ingredient.module';
 import { ScheduleModule as ScheduleModule_Cron } from '@nestjs/schedule';
+import { FeedbacksModule } from './feedbacks/feedbacks.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -73,6 +74,7 @@ import { ScheduleModule as ScheduleModule_Cron } from '@nestjs/schedule';
     NotificationModule,
     DislikedIngredientModule,
     ScheduleModule_Cron.forRoot(),
+    FeedbacksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
