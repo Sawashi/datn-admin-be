@@ -18,6 +18,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/role.enum';
+import { CheckDishInCollectionDto } from './dto/check-dish-in-collection.dto';
 
 @ApiTags('Collection')
 @Controller('collections')
@@ -198,5 +199,14 @@ export class CollectionController {
       dishId,
       collectionName,
     );
+  }
+  @Post('check-in-collection')
+  @ApiOperation({
+    summary: 'Check if a dish is in a user collection by collection name',
+  })
+  async checkIfInCollection(
+    @Body() checkDto: CheckDishInCollectionDto,
+  ): Promise<{ isInCollection: boolean }> {
+    return await this.collectionService.checkIfInCollection(checkDto);
   }
 }

@@ -4,6 +4,7 @@ import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dish } from '../dish/dish.entity';
 import { CollectionWithDishFlagDto } from './dto/collectionWithDishFlag.dto';
+import { CheckDishInCollectionDto } from './dto/check-dish-in-collection.dto';
 @Injectable()
 export class CollectionService {
   constructor(
@@ -253,5 +254,22 @@ export class CollectionService {
     );
 
     await this.collectionsRepository.manager.save(dish);
+  }
+  async checkIfInCollection(
+    checkDto: CheckDishInCollectionDto,
+  ): Promise<{ isInCollection: boolean }> {
+    const { collectionName, dishId, userId } = checkDto;
+
+    const collection = await this.collectionsRepository.findOne({
+      where: { userId, collectionName },
+      relations: ['dishes'],
+    });
+
+    if (!collection) {
+      return { isInCollection: false };
+    }
+
+    const isInCollection = collection.dishes.some((dish) => dish.id === dishId);
+    return { isInCollection };
   }
 }
