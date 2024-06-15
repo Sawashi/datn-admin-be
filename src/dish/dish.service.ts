@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { Dish } from './dish.entity';
 import { DishDto } from './dto/dishDto.dto';
 import { Note } from 'src/notes/notes.entity';
@@ -214,30 +214,39 @@ export class DishService {
     searchText?: string,
     sort: 'asc' | 'desc' = 'asc',
     cookingTime?: string,
-    ingredientIds?: number[] | number,
-    cuisineIds?: number[] | number,
-    dietIds?: number[] | number,
+    ingredientIds?: string[] | string,
+    cuisineIds?: string[] | string,
+    dietIds?: string[] | string,
+    ingredientNames?: string[] | string,
   ): Promise<Dish[]> {
-    if (typeof ingredientIds === 'number') {
+    if (typeof ingredientIds === 'string') {
       ingredientIds = [ingredientIds];
     }
 
-    if (typeof cuisineIds === 'number') {
+    if (typeof cuisineIds === 'string') {
       cuisineIds = [cuisineIds];
     }
 
-    if (typeof dietIds === 'number') {
+    if (typeof dietIds === 'string') {
       dietIds = [dietIds];
+    }
+
+    if (typeof ingredientNames === 'string') {
+      ingredientNames = [ingredientNames];
     }
 
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
+      .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
       .leftJoinAndSelect('dish.diets', 'dish_diets_diets')
-      .leftJoinAndSelect('dish.cuisines', 'cuisine')
-      .where('dish.dishName like :searchText', {
-        searchText: `%${searchText ?? ''}%`,
+      .leftJoinAndSelect('dish.cuisines', 'cuisine');
+
+    if (searchText) {
+      queryBuilder.where('dish.dishName ilike :searchText', {
+        searchText: `%${searchText}%`,
       });
+    }
 
     if (cookingTime) {
       queryBuilder.andWhere('dish.cookingTime <= :cookingTime', {
@@ -264,6 +273,23 @@ export class DishService {
       queryBuilder.andWhere('dish_diets_diets.id IN (:...dietIds)', {
         dietIds: dietIds,
       });
+    }
+
+    if (ingredientNames && ingredientNames.length > 0) {
+      const ingredientConditions = ingredientNames
+        .map((_name, index) => `ingredient.ingredientName ILIKE :name${index}`)
+        .join(' OR ');
+
+      const parameters = ingredientNames.reduce((acc, name, index) => {
+        acc[`name${index}`] = `%${name}%`;
+        return acc;
+      }, {});
+
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where(ingredientConditions, parameters);
+        }),
+      );
     }
 
     if (sort) {

@@ -64,9 +64,10 @@ export class DishController {
     @Query('text') text: string,
     @Query('sort') sort?: 'asc' | 'desc',
     @Query('cookingTime') cookingTime?: string,
-    @Query('ingredientIds') ingredientIds?: number[] | number,
-    @Query('cuisineIds') cuisineIds?: number[] | number,
-    @Query('dietIds') dietIds?: number[] | number,
+    @Query('ingredientIds') ingredientIds?: string[] | string,
+    @Query('cuisineIds') cuisineIds?: string[] | string,
+    @Query('dietIds') dietIds?: string[] | string,
+    @Query('ingredientNames') ingredientNames?: string[] | string,
   ): Promise<Dish[]> {
     return this.dishService.findDishBySearchText(
       text,
@@ -75,6 +76,7 @@ export class DishController {
       ingredientIds,
       cuisineIds,
       dietIds,
+      ingredientNames,
     );
   }
 
