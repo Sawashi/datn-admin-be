@@ -348,6 +348,14 @@ export class DishService {
       [],
     );
 
+    if (recommendedDishes.length === 0) {
+      const dishes = await this.findAll({
+        page: 1,
+        limit: 5,
+      });
+      return dishes.data;
+    }
+
     return recommendedDishes;
   }
 
@@ -360,6 +368,14 @@ export class DishService {
       .select('dish');
 
     const dishes = await queryBuilder.getMany();
+
+    if (dishes.length === 0) {
+      const dishes = await this.findAll({
+        page: 1,
+        limit: 5,
+      });
+      return dishes.data;
+    }
 
     return dishes;
   }
@@ -378,6 +394,14 @@ export class DishService {
 
     const dishes = await queryBuilder.getMany();
 
+    if (dishes.length === 0) {
+      const dishes = await this.findAll({
+        page: 1,
+        limit: 5,
+      });
+      return dishes.data;
+    }
+
     return dishes;
   }
 
@@ -392,6 +416,14 @@ export class DishService {
       .select('dish');
 
     const dishes = await queryBuilder.getMany();
+
+    if (dishes.length === 0) {
+      const dishes = await this.findAll({
+        page: 1,
+        limit: 5,
+      });
+      return dishes.data;
+    }
 
     return dishes;
   }
