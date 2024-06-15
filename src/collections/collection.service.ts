@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Collection } from './collection.entity';
 import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -146,6 +146,35 @@ export class CollectionService {
     // Add the dish to the collection
     allSavedDishsCollection.dishes.push(dish);
     await this.collectionsRepository.save(allSavedDishsCollection);
+  }
+
+  async removeDishByCollectionName(
+    userId: number,
+    dishId: number,
+    collectionName: string,
+  ): Promise<Collection> {
+    const collection = await this.collectionsRepository.findOne({
+      where: { userId, collectionName },
+      relations: ['dishes'],
+    });
+
+    if (!collection) {
+      throw new NotFoundException(
+        `Collection with name ${collectionName} not found for user ${userId}`,
+      );
+    }
+
+    const dish = await this.dishesRepository.findOne({ where: { id: dishId } });
+    if (!dish) {
+      throw new NotFoundException(`Dish with ID ${dishId} not found`);
+    }
+
+    collection.dishes = collection.dishes.filter(
+      (d) => d.id.toString() !== dishId.toString(),
+    );
+    await this.collectionsRepository.save(collection);
+    console.log(collection);
+    return collection;
   }
 
   async getCollectionsWithDishFlag(

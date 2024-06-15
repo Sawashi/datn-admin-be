@@ -187,4 +187,16 @@ export class CollectionController {
       collectionIds,
     );
   }
+  @Delete('removeByName/user/:userId/dish/:dishId')
+  async removeDishByCollectionName(
+    @Param('userId') userId: number,
+    @Param('dishId') dishId: number,
+    @Body('collectionName') collectionName: string,
+  ) {
+    await this.collectionService.removeDishByCollectionName(
+      userId,
+      dishId,
+      collectionName,
+    );
+  }
 }
