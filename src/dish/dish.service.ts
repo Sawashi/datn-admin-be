@@ -328,6 +328,14 @@ export class DishService {
       .leftJoinAndSelect('diet.dishes', 'dietDish');
     const response = await queryBuilder.getOne();
 
+    if (!response) {
+      const dishes = await this.findAll({
+        page: 1,
+        limit: 5,
+      });
+      return dishes.data;
+    }
+
     const dishesCuisine = response.cuisines
       .map((cuisine) => cuisine.dishes)
       .flat();
