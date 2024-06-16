@@ -108,12 +108,12 @@ export class UsersService {
 
       //console.log('>>>',  savedUser);
 
-      const mealPlan = this.mealplanRepository.create({
-        user_id: savedUser?.id,
-      });
+      // const mealPlan = this.mealplanRepository.create({
+      //   user_id: savedUser?.id,
+      // });
 
-      await this.mealplanRepository.save(mealPlan);
-      savedUser.mealPlan = mealPlan;
+      // await this.mealplanRepository.save(mealPlan);
+      // savedUser.mealPlan = mealPlan;
       return savedUser;
     } catch (error) {
       if (error.code === '23505') {
