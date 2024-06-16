@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Collection } from './collection.entity';
 import { Repository, In } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dish } from '../dish/dish.entity';
 import { CollectionWithDishFlagDto } from './dto/collectionWithDishFlag.dto';
+import { CheckDishInCollectionDto } from './dto/check-dish-in-collection.dto';
 @Injectable()
 export class CollectionService {
   constructor(
@@ -148,6 +149,35 @@ export class CollectionService {
     await this.collectionsRepository.save(allSavedDishsCollection);
   }
 
+  async removeDishByCollectionName(
+    userId: number,
+    dishId: number,
+    collectionName: string,
+  ): Promise<Collection> {
+    const collection = await this.collectionsRepository.findOne({
+      where: { userId, collectionName },
+      relations: ['dishes'],
+    });
+
+    if (!collection) {
+      throw new NotFoundException(
+        `Collection with name ${collectionName} not found for user ${userId}`,
+      );
+    }
+
+    const dish = await this.dishesRepository.findOne({ where: { id: dishId } });
+    if (!dish) {
+      throw new NotFoundException(`Dish with ID ${dishId} not found`);
+    }
+
+    collection.dishes = collection.dishes.filter(
+      (d) => d.id.toString() !== dishId.toString(),
+    );
+    await this.collectionsRepository.save(collection);
+    console.log(collection);
+    return collection;
+  }
+
   async getCollectionsWithDishFlag(
     userId: number,
     dishId: number,
@@ -224,5 +254,22 @@ export class CollectionService {
     );
 
     await this.collectionsRepository.manager.save(dish);
+  }
+  async checkIfInCollection(
+    checkDto: CheckDishInCollectionDto,
+  ): Promise<{ isInCollection: boolean }> {
+    const { collectionName, dishId, userId } = checkDto;
+
+    const collection = await this.collectionsRepository.findOne({
+      where: { userId, collectionName },
+      relations: ['dishes'],
+    });
+
+    if (!collection) {
+      return { isInCollection: false };
+    }
+
+    const isInCollection = collection.dishes.some((dish) => dish.id === dishId);
+    return { isInCollection };
   }
 }

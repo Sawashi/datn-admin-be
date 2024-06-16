@@ -41,4 +41,8 @@ export class Message {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ApiProperty()
+  @Column({ default: false })
+  isRecipe: boolean;
 }
