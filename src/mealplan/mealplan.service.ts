@@ -94,11 +94,16 @@ export class MealplanService {
       },
     });
 
-    if (!planDate || planDate.length === 0) {
+    // Lọc bỏ các giá trị null hoặc undefined
+    const validPlanDates = planDate
+      .map((item) => item.planDate)
+      .filter((date) => date !== null && date !== undefined);
+
+    if (validPlanDates.length === 0) {
       return [];
     }
 
-    return planDate.map((item) => item.planDate);
+    return validPlanDates;
   }
 
   async getDishesWithPlanDateByUserIdForToday(
