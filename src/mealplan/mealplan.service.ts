@@ -86,6 +86,16 @@ export class MealplanService {
     return groupedDishes;
   }
 
+  async getPlanDateByMealPlan(mealPlanId: number, dishId: number) {
+    const planDate = await this.mealplanDishRepository.find({
+      where: {
+        mealPlanId,
+        dishId,
+      },
+    });
+    return planDate.map((item) => item.planDate);
+  }
+
   async getDishesWithPlanDateByUserIdForToday(
     userId: number,
     dayOffset: number = 0,

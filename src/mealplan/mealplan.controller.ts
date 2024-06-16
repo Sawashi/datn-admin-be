@@ -64,6 +64,14 @@ export class MealplanController {
       dayOffsetNumber,
     );
   }
+
+  @Get('dateMealplan/:mealPlanId/dish/:dishId')
+  async getDateByMealPlanDish(
+    @Param('mealPlanId') mealPlanId: number,
+    @Param('dishId') dishId: number,
+  ) {
+    return await this.mealPlanService.getPlanDateByMealPlan(mealPlanId, dishId);
+  }
   @Post()
   async addDishtoMealPlan(@Body() addDishToMealPlanDto: AddDishToMealPlanDto) {
     const { mealPlanId, dishId, planDate } = addDishToMealPlanDto;
