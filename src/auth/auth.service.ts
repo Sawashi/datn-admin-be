@@ -25,7 +25,9 @@ export class AuthService {
     userService: userService;
   }
 
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<{
+    message: string;
+  }> {
     const { username, password } = authCredentialsDto;
 
     const salt = await bcrypt.genSalt();
@@ -37,6 +39,7 @@ export class AuthService {
 
     try {
       await this.userService.create(user);
+      return { message: 'User created successfully' };
     } catch (error) {
       if (error instanceof ConflictException) {
         throw error;
