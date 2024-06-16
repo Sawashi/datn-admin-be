@@ -2,13 +2,21 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-
+import { FilteredResult } from './filtered.entity';
+import { Dish } from 'src/dish/dish.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 @Injectable()
 export class OpenaiService {
   private readonly apiKey: string = process.env.OPENAI_KEY;
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    @InjectRepository(Dish)
+    private dishRepository: Repository<Dish>,
+  ) {
     httpService: httpService;
+    dishRepository: dishRepository;
   }
 
   async callOpenAI(prompt: string): Promise<string> {
@@ -40,5 +48,76 @@ export class OpenaiService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async find(name: string): Promise<FilteredResult> {
+    const dishes = await this.dishRepository.find({
+      relations: {
+        reviews: true,
+        notes: true,
+        collections: true,
+        dishToIngredients: {
+          ingredient: true,
+        },
+      },
+    });
+
+    // Make array contain only id and name of dishes
+    const dishList = dishes.map((dish) => {
+      return { id: dish.id, dishName: dish.dishName };
+    });
+
+    const prefix =
+      'Question: Read the queryName and dishList below, find the dish in dishList related to the queryName:\n';
+    const note =
+      'Note: Must analyze the ingredient of the dish in queryName to find the dish in dishList, example: queryName "Phở bò" mustn\'t return "Phở gà", queryName "bún" can return "bún bò" and "bún gà"\n';
+    const queryName = 'Name: ' + name + '\n';
+    const queryList = 'dishList: ' + JSON.stringify(dishList) + '\n';
+    const suffix =
+      "Format of the answer (if don't have result just return empty array):";
+    const format = '[{ "id": <id of the dish> }]';
+    const query = prefix + note + queryName + queryList + suffix + format;
+
+    let attempt = 0;
+    const MAX_RETRIES = 5;
+
+    while (attempt < MAX_RETRIES) {
+      try {
+        const response = await this.callOpenAI(query);
+        const parsedResponse: Array<{ id: number }> = JSON.parse(response);
+
+        if (
+          !Array.isArray(parsedResponse) ||
+          !parsedResponse.every(
+            (item) =>
+              typeof item.id === 'number' && Object.keys(item).length === 1,
+          )
+        ) {
+          throw new Error('Validation failed');
+        }
+
+        const resultDishes = dishes.filter((dish) =>
+          parsedResponse.some((pr) => dish.id === pr.id),
+        );
+
+        if (resultDishes.length > 0) {
+          return {
+            existedInDatabase: true,
+            dishList: resultDishes,
+          };
+        }
+
+        return { existedInDatabase: false, dishList: [] };
+      } catch (error) {
+        attempt++;
+        console.error(`Failed to parse response on attempt ${attempt}:`, error);
+
+        if (attempt >= MAX_RETRIES) {
+          return { existedInDatabase: false, dishList: [] };
+        }
+      }
+    }
+
+    return { existedInDatabase: false, dishList: [] };
   }
 }
