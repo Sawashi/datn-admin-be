@@ -67,16 +67,29 @@ export class OpenaiService {
       return { id: dish.id, dishName: dish.dishName };
     });
 
+    // const prefix =
+    //   'Question: Read the queryName and dishList below, find the dish in dishList related to the queryName:\n';
+    // const note =
+    //   'Note: Must analyze the ingredient of the dish in queryName to find the dish in dishList, example: queryName "Phở bò" mustn\'t return "Phở gà", queryName "bún" can return "bún bò" and "bún gà"\n';
+    // const queryName = 'Name: ' + name + '\n';
+    // const queryList = 'dishList: ' + JSON.stringify(dishList) + '\n';
+    // const suffix =
+    //   "Format of the answer (if don't have result just return empty array):";
+    // const format = '[{ "id": <id of the dish> }]';
+    //     Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 50% với tên món ăn cần tìm:
+    // - Tên món ăn cần tìm: "bún riêu cua miền tây"
+    // - Danh sách: [{"id": 1, "dishName": "phở bò nam định"}, {"id": 2, "dishName": "bún bò"}, {"id": 3, "dishName": "bún riêu cua đồng"}, {"id": 4, "dishName": "phở gà"}, {"id": 5, "dishName": "apple pie british"}]
+    // - In ra cho tôi format json '[{ "id": <id of the dish> }]'
+    // Nếu không có kết quả phù hợp thì trả về []. Tôi chỉ cần json và không cần các thông tin khác.
     const prefix =
-      'Question: Read the queryName and dishList below, find the dish in dishList related to the queryName:\n';
-    const note =
-      'Note: Must analyze the ingredient of the dish in queryName to find the dish in dishList, example: queryName "Phở bò" mustn\'t return "Phở gà", queryName "bún" can return "bún bò" and "bún gà"\n';
-    const queryName = 'Name: ' + name + '\n';
-    const queryList = 'dishList: ' + JSON.stringify(dishList) + '\n';
+      'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 50% với tên món ăn cần tìm:\n';
+    const queryName = '- Tên món ăn cần tìm: ' + name + '\n';
+    const queryList = '- Danh sách: ' + JSON.stringify(dishList) + '\n';
     const suffix =
-      "Format of the answer (if don't have result just return empty array):";
-    const format = '[{ "id": <id of the dish> }]';
-    const query = prefix + note + queryName + queryList + suffix + format;
+      'Nếu không có kết quả phù hợp thì trả về []. Tôi chỉ cần json và không cần các thông tin khác.';
+    const format =
+      '- In ra cho tôi format json \'[{ "id": <id of the dish> }]\'\n';
+    const query = prefix + queryName + queryList + format + suffix;
 
     let attempt = 0;
     const MAX_RETRIES = 5;
