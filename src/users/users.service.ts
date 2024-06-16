@@ -106,7 +106,7 @@ export class UsersService {
         colDessert,
       ];
 
-      //console.log('>>>', savedUser);
+      //console.log('>>>',  savedUser);
 
       const mealPlan = this.mealplanRepository.create({
         user_id: savedUser?.id,
