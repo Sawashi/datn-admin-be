@@ -93,6 +93,11 @@ export class MealplanService {
         dishId,
       },
     });
+
+    if (!planDate || planDate.length === 0) {
+      return [];
+    }
+
     return planDate.map((item) => item.planDate);
   }
 
