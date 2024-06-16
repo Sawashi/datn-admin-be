@@ -18,16 +18,18 @@ export class MealPlan {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
+
   @ApiProperty()
   @Column()
   user_id: number;
 
   @OneToOne(() => User, (user) => user.mealPlan)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToMany(() => Dish, (dish) => dish.mealPlans)
   dishes: Dish[];
+
   @OneToMany(() => MealplanDish, (mealplanDish) => mealplanDish.mealPlan)
   mealplanDishes: MealplanDish[];
 }
