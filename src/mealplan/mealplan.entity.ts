@@ -24,7 +24,7 @@ export class MealPlan {
   user_id: number;
 
   @OneToOne(() => User, (user) => user.mealPlan)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'id' })
   user: User;
 
   @ManyToMany(() => Dish, (dish) => dish.mealPlans)
