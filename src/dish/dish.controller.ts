@@ -130,6 +130,18 @@ export class DishController {
     return this.dishService.create(dishDto, uploadedImage.secure_url);
   }
 
+  @Post('upload-image')
+  @UseInterceptors(FileInterceptor('image')) // 'file' should match the field name in the form data
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<{ imageUrl: string }> {
+    // Upload file to Cloudinary
+    const uploadedImage = await this.cloudinaryService.uploadImage(file);
+    return {
+      imageUrl: uploadedImage.secure_url,
+    };
+  }
+
   //update dish
   @Patch(':id')
   @UseInterceptors(FileInterceptor('image')) // 'file' should match the field name in the form data
