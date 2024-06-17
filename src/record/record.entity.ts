@@ -65,4 +65,8 @@ export class Record {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ApiProperty()
+  @Column({ default: 0 })
+  typeSuggest: number;
 }
