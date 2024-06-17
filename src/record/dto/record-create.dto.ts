@@ -47,4 +47,9 @@ export class RecordCreateDto {
   @IsArray()
   @IsNumber({}, { each: true })
   cuisines?: number[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsIn([0, 1], { message: 'Type suggest must be either 0, 1' })
+  typeSuggest: number;
 }

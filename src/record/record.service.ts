@@ -66,6 +66,9 @@ export class RecordService {
       meal: recordCreateDto.meal ? recordCreateDto.meal : 0,
       money: recordCreateDto.money ? recordCreateDto.money : 0,
       numberOfDiners: recordCreateDto.numberOfDiners,
+      typeSuggest: recordCreateDto.typeSuggest
+        ? recordCreateDto.typeSuggest
+        : 0,
     });
 
     if (userId) {
