@@ -29,7 +29,7 @@ export class OpenaiService {
     const data = {
       model: 'gpt-3.5-turbo-0125',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 300,
+      max_tokens: 800,
     };
 
     try {
