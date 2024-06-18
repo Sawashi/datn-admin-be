@@ -132,4 +132,10 @@ export class MealplanController {
     const result = await this.mealPlanService.deleteAllByUser(userId);
     return result;
   }
+
+  @Get('mealplan/:mealplanId')
+  async getDishMealPlan(@Param('mealplanId') mealplanId: number) {
+    const result = await this.mealPlanService.getDishedMealPlan(mealplanId);
+    return result;
+  }
 }

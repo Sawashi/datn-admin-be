@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MealplanDish } from 'src/dish/dish_mealplan.entity';
-import { Between, IsNull, Repository } from 'typeorm';
+import { Between, IsNull, Not, Repository } from 'typeorm';
 import { MealPlan } from './mealplan.entity';
 import { User } from 'src/users/user.entity';
 
@@ -228,5 +228,16 @@ export class MealplanService {
       where: { mealPlan: { id: mealplanId }, dish: { id: dishId } },
     });
     return !!userMealplan;
+  }
+
+  async getDishedMealPlan(mealPlanId: number) {
+    const listDish = await this.mealplanDishRepository.find({
+      where: { mealPlanId: mealPlanId, planDate: Not(IsNull()) },
+    });
+
+    const uniqueDishIds = new Set<number>();
+    listDish.forEach((dish) => uniqueDishIds.add(dish.dishId));
+
+    return Array.from(uniqueDishIds);
   }
 }
