@@ -400,10 +400,12 @@ export class DishService {
       .createQueryBuilder('dish')
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
-      .leftJoin('dish.diets', 'diet')
+      .leftJoinAndSelect('dish.diets', 'diet')
       .groupBy('dish.id')
+      .addGroupBy('dish_ingredient.id')
+      .addGroupBy('ingredient.id')
       .having('COUNT(diet.id) >= :dietCount', { dietCount: dietCount })
-      .select('dish');
+      .select(['dish', 'dish_ingredient', 'ingredient']);
 
     const dishes = await queryBuilder.getMany();
 
@@ -425,8 +427,6 @@ export class DishService {
 
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
-      .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
-      .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
       .leftJoin('dish.diets', 'diet')
       .where('diet.name IN (:...dishNames)', {
         dishNames: dietNames,
@@ -448,13 +448,15 @@ export class DishService {
   async getQuicklyDishes(ingredientCount: number): Promise<Dish[]> {
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
-      .leftJoin('dish.dishToIngredients', 'dish_ingredient')
+      .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
       .groupBy('dish.id')
+      .addGroupBy('dish_ingredient.id')
+      .addGroupBy('ingredient.id')
       .having('COUNT(dish_ingredient.id) <= :ingredientCount', {
         ingredientCount: ingredientCount,
       })
-      .select('dish');
+      .select(['dish', 'dish_ingredient', 'ingredient']);
 
     const dishes = await queryBuilder.getMany();
 
