@@ -133,9 +133,12 @@ export class MealplanController {
     return result;
   }
 
-  @Get('mealplan/:mealplanId')
-  async getDishMealPlan(@Param('mealplanId') mealplanId: number) {
-    const result = await this.mealPlanService.getDishedMealPlan(mealplanId);
-    return result;
+  @Get('dishes/date')
+  async getDishedMealPlan(
+    @Query('planDate') planDate: string,
+    @Query('mealPlanId', ParseIntPipe) mealPlanId: number,
+  ): Promise<number[]> {
+    const date = new Date(planDate);
+    return await this.mealPlanService.getDishedMealPlan(date, mealPlanId);
   }
 }

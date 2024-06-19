@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MealplanDish } from 'src/dish/dish_mealplan.entity';
-import { Between, IsNull, Not, Repository } from 'typeorm';
+import { Between, IsNull, Repository } from 'typeorm';
 import { MealPlan } from './mealplan.entity';
 import { User } from 'src/users/user.entity';
 
@@ -230,14 +230,24 @@ export class MealplanService {
     return !!userMealplan;
   }
 
-  async getDishedMealPlan(mealPlanId: number) {
-    const listDish = await this.mealplanDishRepository.find({
-      where: { mealPlanId: mealPlanId, planDate: Not(IsNull()) },
+  async getDishedMealPlan(
+    planDate: Date,
+    mealPlanId: number,
+  ): Promise<number[]> {
+    const startOfDay = new Date(planDate);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(planDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const dishes = await this.mealplanDishRepository.find({
+      where: {
+        mealPlanId: mealPlanId,
+        planDate: Between(startOfDay, endOfDay),
+      },
+      select: ['dishId'],
     });
 
-    const uniqueDishIds = new Set<number>();
-    listDish.forEach((dish) => uniqueDishIds.add(dish.dishId));
-
-    return Array.from(uniqueDishIds);
+    return dishes.map((dish) => dish.dishId);
   }
 }
