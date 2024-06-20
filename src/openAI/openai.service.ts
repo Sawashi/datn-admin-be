@@ -9,6 +9,9 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class OpenaiService {
   private readonly apiKey: string = process.env.OPENAI_KEY;
+  private readonly googleKey: string = process.env.GOOGLE_API_KEY;
+  private readonly customeSearchEngine: string =
+    process.env.CUSTOM_SEARCH_ENGINE_ID;
 
   constructor(
     private readonly httpService: HttpService,
@@ -132,5 +135,38 @@ export class OpenaiService {
     }
 
     return { existedInDatabase: false, dishList: [] };
+  }
+
+  async searchImages(query: string): Promise<string> {
+    const maxResults = 10;
+
+    const randomStart = Math.floor(Math.random() * maxResults) + 1;
+
+    const url = 'https://www.googleapis.com/customsearch/v1';
+    const params = {
+      q: query,
+      cx: this.customeSearchEngine,
+      key: this.googleKey,
+      searchType: 'image',
+      num: 1,
+      start: randomStart,
+      fileType: 'jpg|png',
+    };
+
+    try {
+      const response: AxiosResponse<any> = await this.httpService.axiosRef.get(
+        url,
+        { params },
+      );
+      const items = response.data.items;
+      if (items && items.length > 0) {
+        const imageLink = items[0].link || items[0].thumbnailLink;
+        return imageLink;
+      } else {
+        throw new Error('No images found');
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }

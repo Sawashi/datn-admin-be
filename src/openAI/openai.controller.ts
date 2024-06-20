@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
 import { OpenaiService } from './openai.service';
 import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -18,6 +18,16 @@ class FindDto {
 export class OpenaiController {
   constructor(private readonly openaiService: OpenaiService) {
     openaiService: openaiService;
+  }
+
+  @Get('photos')
+  async getRandomImage(@Query('query') query: string) {
+    try {
+      const imageLink = await this.openaiService.searchImages(query);
+      return { imageUrl: imageLink };
+    } catch (error) {
+      return { error: error.message };
+    }
   }
 
   @Post('generate')
