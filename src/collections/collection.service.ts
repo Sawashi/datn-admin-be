@@ -46,7 +46,19 @@ export class CollectionService {
           dishes: true,
         },
         order: {
-          collectionName: sort,
+          collectionName: 'DESC',
+        },
+      });
+    }
+    if (sortField === 'updatedAt') {
+      return await this.collectionsRepository.find({
+        where: { user: { id: userId } },
+        relations: {
+          user: true,
+          dishes: true,
+        },
+        order: {
+          updatedAt: 'DESC',
         },
       });
     }
