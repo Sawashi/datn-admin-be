@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { CollectionService } from './collection.service';
 import { Collection } from './collection.entity';
@@ -58,8 +59,12 @@ export class CollectionController {
     description: 'Get Collections by user ID',
   })
   @Get('/user/:userId')
-  async findByUserId(@Param('userId') userId: number): Promise<Collection[]> {
-    return await this.collectionService.findByUserId(userId);
+  async findByUserId(
+    @Param('userId') userId: number,
+    @Query('sortBy') sort?: 'asc' | 'desc',
+    @Query('sortField') sortField?: string,
+  ): Promise<Collection[]> {
+    return await this.collectionService.findByUserId(userId, sort, sortField);
   }
 
   // check if a dish is in the user's collection

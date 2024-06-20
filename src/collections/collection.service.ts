@@ -33,12 +33,31 @@ export class CollectionService {
   }
 
   // get collections by userId
-  async findByUserId(userId: number): Promise<Collection[]> {
+  async findByUserId(
+    userId: number,
+    sort: 'asc' | 'desc' = 'asc',
+    sortField?: string,
+  ): Promise<Collection[]> {
+    if (sortField === 'collectionName') {
+      return await this.collectionsRepository.find({
+        where: { user: { id: userId } },
+        relations: {
+          user: true,
+          dishes: true,
+        },
+        order: {
+          collectionName: sort,
+        },
+      });
+    }
     return await this.collectionsRepository.find({
       where: { user: { id: userId } },
       relations: {
         user: true,
         dishes: true,
+      },
+      order: {
+        createdAt: sort,
       },
     });
   }
