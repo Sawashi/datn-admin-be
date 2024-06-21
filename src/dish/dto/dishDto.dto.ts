@@ -40,7 +40,7 @@ export class DishDto {
 
   @ApiProperty({ type: [CreateDishIngredientDto] })
   //@IsArray()
-  @IsOptional()
+  @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => CreateDishIngredientDto)
   ingredients: CreateDishIngredientDto[];
