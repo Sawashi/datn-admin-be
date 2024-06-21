@@ -33,6 +33,8 @@ export class DishService {
     private dietRepository: Repository<Diets>,
     @InjectRepository(Personalize)
     private personalizeRepository: Repository<Personalize>,
+    @InjectRepository(DishIngredient)
+    private readonly dishIngredientRepository: Repository<DishIngredient>,
   ) {
     dishRepository: dishRepository;
     noteRepository: noteRepository;
@@ -42,6 +44,7 @@ export class DishService {
     cuisineRepository: cuisineRepository;
     dietRepository: dietRepository;
     personalizeRepository: personalizeRepository;
+    dishIngredientRepository: dishIngredientRepository;
   }
 
   async findAll(
@@ -85,7 +88,8 @@ export class DishService {
 
   async create(dishDto: DishDto, imageUrl: string): Promise<Dish> {
     const { ingredients, cuisines, diets } = dishDto;
-
+    console.log('list Ingre:', ingredients);
+    console.log('dishDto Ingre:', dishDto);
     const newDish = this.dishRepository.create({
       cookingTime: dishDto.cookingTime,
       dishName: dishDto.dishName,
@@ -95,24 +99,6 @@ export class DishService {
       author: dishDto.author,
       directions: dishDto.directions,
     });
-
-    if (ingredients) {
-      const ingredientEntities = await this.ingredientRepository.findByIds(
-        JSON.parse(ingredients),
-      );
-      if (ingredientEntities.length === JSON.parse(ingredients).length) {
-        const dishIngredients = ingredientEntities.map((ingredient) => {
-          const dishIngredient = new DishIngredient();
-          dishIngredient.ingredient = ingredient;
-          dishIngredient.dish = newDish;
-          return dishIngredient;
-        });
-        newDish.dishToIngredients = dishIngredients;
-        console.log(dishIngredients);
-      } else {
-        throw new Error('Ingredients not found');
-      }
-    }
 
     if (cuisines) {
       const cuisineEntities = await this.cuisineRepository.findOne({
@@ -132,8 +118,38 @@ export class DishService {
         newDish.diets = dietEntities;
       }
     }
+    // Save the dish to get the ID for relationships
+    const savedDish = await this.dishRepository.save(newDish);
 
-    return await this.dishRepository.save(newDish);
+    for (const ingredientDto of ingredients) {
+      let ingredient = await this.ingredientRepository.findOne({
+        where: { ingredientName: ingredientDto.ingredientName },
+      });
+
+      // If the ingredient does not exist, create a new one
+      if (!ingredient) {
+        ingredient = this.ingredientRepository.create({
+          ingredientName: ingredientDto?.ingredientName,
+          imageUrl: ingredientDto?.imageUrl,
+          description: ingredientDto?.description,
+        });
+        ingredient = await this.ingredientRepository.save(ingredient);
+      }
+
+      // Create the DishIngredient entity
+      const dishIngredient = this.dishIngredientRepository.create({
+        dish: savedDish,
+        ingredient,
+        mass: ingredientDto.mass,
+      });
+
+      await this.dishIngredientRepository.save(dishIngredient);
+    }
+
+    return this.dishRepository.findOne({
+      where: { id: savedDish.id },
+      relations: ['dishToIngredients', 'dishToIngredients.ingredient'],
+    });
   }
 
   async update(id: number, dishPatchDto: DishPatchDto): Promise<Dish> {

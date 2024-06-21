@@ -11,6 +11,7 @@ import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
+import { DishIngredient } from 'src/dish/dish_ingredient.entity';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Personalize } from 'src/personalize/personalize.entity';
       Collection,
       Cuisine,
       Diets,
+      DishIngredient,
     ]),
   ],
   providers: [ReviewsService, DishService],
