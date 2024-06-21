@@ -1,8 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreateDishIngredientDto } from './createDishIngreDto.dto';
 export class DishDto {
   @ApiProperty()
-  @IsString()
+  //@IsNumber()
   @IsOptional()
   cookingTime?: number;
 
@@ -31,10 +38,11 @@ export class DishDto {
   @IsOptional()
   directions?: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  ingredients?: string;
+  @ApiProperty({ type: [CreateDishIngredientDto] })
+  //@IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateDishIngredientDto)
+  ingredients: CreateDishIngredientDto[];
 
   @ApiProperty()
   //@IsNumber()
