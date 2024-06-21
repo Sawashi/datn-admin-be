@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, In, Repository } from 'typeorm';
+import { Brackets, ILike, In, Repository } from 'typeorm';
 import { Dish } from './dish.entity';
 import { DishDto } from './dto/dishDto.dto';
 import { Note } from 'src/notes/notes.entity';
@@ -88,8 +88,6 @@ export class DishService {
 
   async create(dishDto: DishDto, imageUrl: string): Promise<Dish> {
     const { ingredients, cuisines, diets } = dishDto;
-    console.log('list Ingre:', ingredients);
-    console.log('dishDto Ingre:', dishDto);
     const newDish = this.dishRepository.create({
       cookingTime: dishDto.cookingTime,
       dishName: dishDto.dishName,
@@ -118,33 +116,51 @@ export class DishService {
         newDish.diets = dietEntities;
       }
     }
-    // Save the dish to get the ID for relationships
     const savedDish = await this.dishRepository.save(newDish);
 
-    for (const ingredientDto of ingredients) {
-      let ingredient = await this.ingredientRepository.findOne({
-        where: { ingredientName: ingredientDto.ingredientName },
+    const ingredientPromises = ingredients.map(async (ingredientDto) => {
+      const existingIngredient = await this.ingredientRepository.findOne({
+        where: {
+          ingredientName: ILike(ingredientDto.ingredientName),
+        },
       });
 
-      // If the ingredient does not exist, create a new one
-      if (!ingredient) {
-        ingredient = this.ingredientRepository.create({
-          ingredientName: ingredientDto?.ingredientName,
-          imageUrl: ingredientDto?.imageUrl,
-          description: ingredientDto?.description,
+      if (!existingIngredient) {
+        const newIngredient = this.ingredientRepository.create({
+          ingredientName: ingredientDto.ingredientName,
+          imageUrl: ingredientDto.imageUrl,
+          description: ingredientDto.description,
         });
-        ingredient = await this.ingredientRepository.save(ingredient);
+
+        await this.ingredientRepository.save(newIngredient);
+
+        return {
+          ingredient: newIngredient,
+          mass: ingredientDto.mass,
+        };
+      } else {
+        return {
+          ingredient: existingIngredient,
+          mass: ingredientDto.mass,
+        };
       }
+    });
 
-      // Create the DishIngredient entity
-      const dishIngredient = this.dishIngredientRepository.create({
-        dish: savedDish,
-        ingredient,
-        mass: ingredientDto.mass,
-      });
+    const resolvedIngredients = await Promise.all(ingredientPromises);
 
-      await this.dishIngredientRepository.save(dishIngredient);
-    }
+    const dishIngredientPromises = resolvedIngredients.map(
+      ({ ingredient, mass }) => {
+        const dishIngredient = this.dishIngredientRepository.create({
+          dish: savedDish,
+          ingredient,
+          mass,
+        });
+
+        return this.dishIngredientRepository.save(dishIngredient);
+      },
+    );
+
+    await Promise.all(dishIngredientPromises);
 
     return this.dishRepository.findOne({
       where: { id: savedDish.id },
