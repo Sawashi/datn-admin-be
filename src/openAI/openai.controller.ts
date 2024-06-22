@@ -30,6 +30,16 @@ export class OpenaiController {
     }
   }
 
+  @Get('videos')
+  async getLinkVideo(@Query('query') query: string) {
+    try {
+      const imageLink = await this.openaiService.searchVideo(query);
+      return imageLink;
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
   @Get('recipe-image')
   async getRecipeImage(@Query('query') query: string) {
     try {

@@ -70,20 +70,6 @@ export class OpenaiService {
       return { id: dish.id, dishName: dish.dishName };
     });
 
-    // const prefix =
-    //   'Question: Read the queryName and dishList below, find the dish in dishList related to the queryName:\n';
-    // const note =
-    //   'Note: Must analyze the ingredient of the dish in queryName to find the dish in dishList, example: queryName "Phở bò" mustn\'t return "Phở gà", queryName "bún" can return "bún bò" and "bún gà"\n';
-    // const queryName = 'Name: ' + name + '\n';
-    // const queryList = 'dishList: ' + JSON.stringify(dishList) + '\n';
-    // const suffix =
-    //   "Format of the answer (if don't have result just return empty array):";
-    // const format = '[{ "id": <id of the dish> }]';
-    //     Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 50% với tên món ăn cần tìm:
-    // - Tên món ăn cần tìm: "bún riêu cua miền tây"
-    // - Danh sách: [{"id": 1, "dishName": "phở bò nam định"}, {"id": 2, "dishName": "bún bò"}, {"id": 3, "dishName": "bún riêu cua đồng"}, {"id": 4, "dishName": "phở gà"}, {"id": 5, "dishName": "apple pie british"}]
-    // - In ra cho tôi format json '[{ "id": <id of the dish> }]'
-    // Nếu không có kết quả phù hợp thì trả về []. Tôi chỉ cần json và không cần các thông tin khác.
     const prefix =
       'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 100% với tên món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác:\n';
     const queryName = '- Tên món ăn cần tìm: ' + name + '\n';
@@ -170,18 +156,47 @@ export class OpenaiService {
     }
   }
 
-  async getRecipeWithImage(
-    query: string,
-  ): Promise<{ recipe: string; image: string }> {
+  async searchVideo(query: string): Promise<any> {
+    const url = 'https://youtube.googleapis.com/youtube/v3/search';
+    const params = {
+      key: this.googleKey,
+      q: query,
+      part: 'snippet',
+      type: 'video',
+      maxResults: 3,
+    };
+
+    try {
+      const response: AxiosResponse<any> = await this.httpService.axiosRef.get(
+        url,
+        { params },
+      );
+      return response.data.items.map((item) => ({
+        title: item.snippet.title,
+        url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+      }));
+    } catch (error) {
+      throw new Error(`Failed to search YouTube ${error.message}`);
+    }
+  }
+
+  async getRecipeWithImage(query: string): Promise<{
+    recipe: string;
+    image: string;
+    video: { title: string; url: string };
+  }> {
     try {
       const recipePrompt = `Giới thiệu và cho tôi công thức nấu ăn của món ${query}`;
       const recipe = await this.callOpenAI(recipePrompt);
 
       const image = await this.searchImages(query);
 
+      const video = await this.searchVideo(query);
+
       return {
         recipe: recipe,
         image: image,
+        video: video,
       };
     } catch (error) {
       throw new Error(`Failed to get recipe with image: ${error.message}`);
