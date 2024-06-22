@@ -45,4 +45,8 @@ export class Message {
   @ApiProperty()
   @Column({ default: false })
   isRecipe: boolean;
+
+  @ApiProperty()
+  @Column({ default: false })
+  isRecipeImage: boolean;
 }
