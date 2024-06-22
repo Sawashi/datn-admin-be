@@ -85,7 +85,7 @@ export class OpenaiService {
     // - In ra cho tôi format json '[{ "id": <id of the dish> }]'
     // Nếu không có kết quả phù hợp thì trả về []. Tôi chỉ cần json và không cần các thông tin khác.
     const prefix =
-      'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 50% với tên món ăn cần tìm:\n';
+      'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 80% với tên món ăn cần tìm:\n';
     const queryName = '- Tên món ăn cần tìm: ' + name + '\n';
     const queryList = '- Danh sách: ' + JSON.stringify(dishList) + '\n';
     const suffix =
