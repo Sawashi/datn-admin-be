@@ -32,7 +32,7 @@ export class OpenaiService {
     const data = {
       model: 'gpt-3.5-turbo-0125',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 800,
+      max_tokens: 1500,
     };
 
     try {
@@ -167,6 +167,24 @@ export class OpenaiService {
       }
     } catch (error) {
       throw new Error(error.message);
+    }
+  }
+
+  async getRecipeWithImage(
+    query: string,
+  ): Promise<{ recipe: string; image: string }> {
+    try {
+      const recipePrompt = `Giới thiệu và cho tôi công thức nấu ăn của món ${query}`;
+      const recipe = await this.callOpenAI(recipePrompt);
+
+      const image = await this.searchImages(query);
+
+      return {
+        recipe: recipe,
+        image: image,
+      };
+    } catch (error) {
+      throw new Error(`Failed to get recipe with image: ${error.message}`);
     }
   }
 }

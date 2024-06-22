@@ -30,6 +30,16 @@ export class OpenaiController {
     }
   }
 
+  @Get('recipe-image')
+  async getRecipeImage(@Query('query') query: string) {
+    try {
+      const recipe = await this.openaiService.getRecipeWithImage(query);
+      return recipe;
+    } catch (error) {
+      return error;
+    }
+  }
+
   @Post('generate')
   async generateText(@Body('prompt') prompt: string): Promise<string> {
     return this.openaiService.callOpenAI(prompt);
