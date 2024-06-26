@@ -224,7 +224,7 @@ export class DishService {
   }
   // delete dish
   async delete(id: number): Promise<void> {
-    await this.dishRepository.softDelete(id);
+    await this.dishRepository.delete(id);
   }
 
   // compute rating
