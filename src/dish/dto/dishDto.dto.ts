@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateDishIngredientDto } from './createDishIngreDto.dto';
+import { DeleteDateColumn } from 'typeorm';
 export class DishDto {
   @ApiProperty()
   //@IsNumber()
@@ -53,4 +54,7 @@ export class DishDto {
   @ApiProperty()
   @IsOptional()
   diets?: number[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
