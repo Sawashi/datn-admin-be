@@ -17,11 +17,11 @@ export class CuisinesService {
 
   // get all cuisines
   async findAll(): Promise<Cuisine[]> {
-    return await this.cuisinesRepository
-      .createQueryBuilder('cuisine')
-      .leftJoinAndSelect('cuisine.dishes', 'dish')
-      .where('dish.deletedAt IS NULL')
-      .getMany();
+    return await this.cuisinesRepository.find({
+      relations: {
+        dishes: true,
+      },
+    });
   }
 
   // get one cuisine
