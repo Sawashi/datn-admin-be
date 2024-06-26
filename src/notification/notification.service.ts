@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Expo } from 'expo-server-sdk';
-import { Cron } from '@nestjs/schedule';
+// import { Cron } from '@nestjs/schedule';
 import { MealPlan } from 'src/mealplan/mealplan.entity';
 import { isToday } from 'date-fns';
 
@@ -38,7 +38,7 @@ export class NotificationService {
   }
 
   // Send noti to all users
-  @Cron('0 6 * * *', { name: 'dailyn_notification' })
+  // @Cron('0 6 * * *', { name: 'dailyn_notification' })
   async sendToAll(): Promise<void> {
     const users = await this.usersRepository.find();
     const messages = [];
@@ -69,7 +69,7 @@ export class NotificationService {
     })();
   }
 
-  @Cron('0 6 * * *', { name: 'mealplan_notification' })
+  // @Cron('0 6 * * *', { name: 'mealplan_notification' })
   async cronSendNotification(): Promise<void> {
     const mealplans = await this.mealplansRepository.find({
       relations: { mealplanDishes: true, user: true },
