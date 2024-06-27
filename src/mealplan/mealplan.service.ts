@@ -196,6 +196,23 @@ export class MealplanService {
     }
   }
 
+  async deleteAllDishFromMealPlan(dishId: number, mealPlanId: number) {
+    const deleteCriteria: any = { dishId: dishId, mealPlanId: mealPlanId };
+
+    const deleteMealPlanList = await this.mealplanDishRepository.find({
+      where: deleteCriteria,
+    });
+
+    if (deleteMealPlanList) {
+      for (const deleteMealPlan of deleteMealPlanList) {
+        await this.mealplanDishRepository.delete(deleteMealPlan?.id);
+      }
+      return { success: true, message: 'Dish deleted from meal plan' };
+    } else {
+      return { success: false, message: 'Dish not found in meal plan' };
+    }
+  }
+
   async deleteAllByUser(userId: number) {
     const mealPlans = await this.mealPlanRepository.find({
       where: { user_id: userId },
