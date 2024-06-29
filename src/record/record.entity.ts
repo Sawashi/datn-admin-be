@@ -69,4 +69,8 @@ export class Record {
   @ApiProperty()
   @Column({ default: 0 })
   typeSuggest: number;
+
+  @ApiProperty()
+  @Column({ default: true })
+  active: boolean;
 }

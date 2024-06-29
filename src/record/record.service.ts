@@ -8,6 +8,7 @@ import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { User } from 'src/users/user.entity';
 import { RecordCreateDto } from './dto/record-create.dto';
 import { RecordUpdateDto } from './dto/record-update.dto';
+import { Topic } from 'src/topics/topic.entity';
 
 @Injectable()
 export class RecordService {
@@ -22,17 +23,23 @@ export class RecordService {
     private cuisineRepository: Repository<Cuisine>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Topic)
+    private topicRepository: Repository<Topic>,
   ) {
     recordRepository: recordRepository;
     allergyRepository: allergyRepository;
     dietRepository: dietRepository;
     cuisineRepository: cuisineRepository;
     userRepository: userRepository;
+    topicRepository: topicRepository;
   }
 
   // get all Record
   async findAll(): Promise<Record[]> {
     return await this.recordRepository.find({
+      where: {
+        active: true,
+      },
       relations: {
         user: true,
         allergies: true,
@@ -45,7 +52,10 @@ export class RecordService {
   // get one Record
   async findOne(id: number): Promise<Record> {
     return await this.recordRepository.findOne({
-      where: { id },
+      where: {
+        id,
+        active: true,
+      },
       relations: {
         user: true,
         allergies: true,
@@ -149,6 +159,16 @@ export class RecordService {
 
   // delete Record
   async delete(id: number): Promise<void> {
-    await this.recordRepository.delete(id);
+    await this.recordRepository.update(id, { active: false });
+    const topics = await this.topicRepository.find({
+      where: { record: { id } },
+    });
+
+    // Update related records
+    console.log(topics);
+    for (const topic of topics) {
+      topic.record = null;
+      await this.topicRepository.save(topic);
+    }
   }
 }

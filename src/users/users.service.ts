@@ -42,7 +42,7 @@ export class UsersService {
 
   // get one user
   async findOne(id: number): Promise<User> {
-    return await this.usersRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: { id },
       relations: {
         reviews: true,
@@ -56,6 +56,13 @@ export class UsersService {
         },
       },
     });
+
+    if (user) {
+      // Filter out inactive records
+      user.records = user.records.filter((record) => record.active);
+    }
+
+    return user;
   }
 
   //create user

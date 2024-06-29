@@ -99,4 +99,8 @@ export class User {
 
   @OneToMany(() => Record, (record) => record.user)
   records: Record[];
+
+  @ApiProperty()
+  @Column({ default: true })
+  isSuggest: boolean;
 }
