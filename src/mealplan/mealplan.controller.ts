@@ -113,6 +113,18 @@ export class MealplanController {
       planDate,
     );
   }
+
+  @Delete('deleteAllDish')
+  async deleteAllDishFromMealPlan(
+    @Body() deleteDishMealPlanDto: DeleteDishFromMealPlanDto,
+  ) {
+    const { dishId, mealPlanId } = deleteDishMealPlanDto;
+
+    return await this.mealPlanService.deleteAllDishFromMealPlan(
+      dishId,
+      mealPlanId,
+    );
+  }
   // check if a dish is in the user's mealplan
   @Get('in-mealplan/:mealPlanId/dish/:dishId')
   async isDishInMealPlan(

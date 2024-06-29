@@ -33,6 +33,7 @@ import { NotificationModule } from './notification/notification.module';
 import { DislikedIngredientModule } from './disliked-ingredient/disliked-ingredient.module';
 import { ScheduleModule as ScheduleModule_Cron } from '@nestjs/schedule';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
+import { FeedbackAppsModule } from './feedback-apps/feedback-apps.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -75,6 +76,7 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
     DislikedIngredientModule,
     ScheduleModule_Cron.forRoot(),
     FeedbacksModule,
+    FeedbackAppsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

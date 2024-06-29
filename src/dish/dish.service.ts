@@ -60,6 +60,9 @@ export class DishService {
           ingredient: true,
         },
       },
+      where: {
+        deletedAt: null,
+      },
       skip: (page - 1) * limit,
       take: limit,
     });
@@ -74,7 +77,7 @@ export class DishService {
   // get one dish
   async findOne(id: number): Promise<Dish> {
     return await this.dishRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
       relations: {
         reviews: true,
         notes: true,
@@ -224,7 +227,7 @@ export class DishService {
   }
   // delete dish
   async delete(id: number): Promise<void> {
-    await this.dishRepository.delete(id);
+    await this.dishRepository.softDelete(id);
   }
 
   // compute rating
@@ -272,7 +275,8 @@ export class DishService {
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
       .leftJoinAndSelect('dish.diets', 'dish_diets_diets')
-      .leftJoinAndSelect('dish.cuisines', 'cuisine');
+      .leftJoinAndSelect('dish.cuisines', 'cuisine')
+      .where('dish.deletedAt IS NULL');
 
     if (searchText) {
       queryBuilder.where('dish.dishName ilike :searchText', {
@@ -338,7 +342,9 @@ export class DishService {
     sort: 'asc' | 'desc' = 'asc',
     limit?: number, // Add the limit parameter
   ): Promise<Dish[]> {
-    const queryBuilder = this.dishRepository.createQueryBuilder('dish');
+    const queryBuilder = this.dishRepository
+      .createQueryBuilder('dish')
+      .where('dish.deletedAt IS NULL');
 
     if (sort) {
       queryBuilder.orderBy(
@@ -356,7 +362,7 @@ export class DishService {
 
   async findRelatedDishes(id: number): Promise<Dish[]> {
     const dish = await this.dishRepository.findOne({
-      where: { id },
+      where: { id, deletedAt: null },
     });
     if (!dish) {
       throw new NotFoundException('Dish not found');
@@ -385,7 +391,9 @@ export class DishService {
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
       .leftJoinAndSelect('personalize.diets', 'diet')
-      .leftJoinAndSelect('diet.dishes', 'dietDish');
+      .leftJoinAndSelect('diet.dishes', 'dietDish')
+      .andWhere('dish.deletedAt IS NULL');
+
     const response = await queryBuilder.getOne();
 
     if (!response) {
@@ -433,6 +441,7 @@ export class DishService {
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
       .leftJoinAndSelect('dish.diets', 'diet')
+      .where('dish.deletedAt IS NULL')
       .groupBy('dish.id')
       .addGroupBy('dish_ingredient.id')
       .addGroupBy('ingredient.id')
@@ -482,6 +491,7 @@ export class DishService {
       .createQueryBuilder('dish')
       .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
       .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
+      .where('dish.deletedAt IS NULL')
       .groupBy('dish.id')
       .addGroupBy('dish_ingredient.id')
       .addGroupBy('ingredient.id')

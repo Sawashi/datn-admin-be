@@ -12,6 +12,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -62,6 +63,33 @@ export class AuthService {
       return { accessToken, id: user.id };
     } else {
       throw new UnauthorizedException('Please check your login credentials');
+    }
+  }
+
+  async changePassword(
+    userId: number,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    const { currentPassword, newPassword } = changePasswordDto;
+    const user = await this.authRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    try {
+      await this.authRepository.save(user);
+      return { message: 'Password changed successfully' };
+    } catch (error) {
+      throw new InternalServerErrorException();
     }
   }
 }

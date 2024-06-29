@@ -21,6 +21,11 @@ export class CuisinesService {
       relations: {
         dishes: true,
       },
+      where: {
+        dishes: {
+          deletedAt: null,
+        },
+      },
     });
   }
 

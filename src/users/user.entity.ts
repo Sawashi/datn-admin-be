@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Collection } from 'src/collections/collection.entity';
+import { FeedbackApps } from 'src/feedback-apps/entities/feedback-app.entity';
 
 import { MealPlan } from 'src/mealplan/mealplan.entity';
 import { Note } from 'src/notes/notes.entity';
@@ -99,6 +100,9 @@ export class User {
 
   @OneToMany(() => Record, (record) => record.user)
   records: Record[];
+
+  @OneToMany(() => FeedbackApps, (feedback) => feedback.user)
+  feedbacks: FeedbackApps[];
 
   @ApiProperty()
   @Column({ default: true })
