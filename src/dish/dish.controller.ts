@@ -88,6 +88,15 @@ export class DishController {
     return this.dishService.recommendDishes(loginUser.id);
   }
 
+  @Get('recommend2')
+  async Dishes(
+    @GetUser() loginUser: User,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 5,
+  ) {
+    return await this.dishService.recommendDishes2(loginUser.id, page, limit);
+  }
+
   @Get('healthy')
   async healthy(@Query('dietCount') dietCount: number): Promise<Dish[]> {
     return this.dishService.getHealthyDishes(dietCount);
