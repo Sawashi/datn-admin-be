@@ -21,6 +21,7 @@ export class FeedbackApps {
 
   @Column({
     nullable: true,
+    default: false,
   })
   isDelete: boolean;
 }
