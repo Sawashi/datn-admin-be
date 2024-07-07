@@ -513,26 +513,60 @@ export class DishService {
     return dishes;
   }
 
-  // async findRelatedDishes(dto: GetRelatedDishesDto): Promise<OutputDishDto[]> {
-  //   const dish = await this.dishRepository.findOne(dto.dishId);
-  //   if (!dish) {
-  //     throw new NotFoundException('Dish not found');
-  //   }
+  async recommendDishes2(
+    userId: number,
+    page: number,
+    limit: number,
+  ): Promise<Dish[]> {
+    const queryBuilder = this.personalizeRepository
+      .createQueryBuilder('personalize')
+      .where('personalize.user_id = :userId', { userId })
+      .leftJoinAndSelect('personalize.cuisines', 'cuisine')
+      .leftJoinAndSelect('cuisine.dishes', 'dish')
+      .leftJoinAndSelect('dish.dishToIngredients', 'dish_ingredient')
+      .leftJoinAndSelect('dish_ingredient.ingredient', 'ingredient')
+      .leftJoinAndSelect('personalize.diets', 'diet')
+      .leftJoinAndSelect('diet.dishes', 'dietDish');
+    const response = await queryBuilder.getOne();
 
-  //   const inputDishName = dish.dishName.toLowerCase();
-  //   const inputKeywords = inputDishName.split(' ');
+    let recommendedDishes = [];
 
-  //   const dishes = await this.dishRepository.find();
-  //   const relatedDishes = dishes.filter(d => {
-  //     const dishName = d.dishName.toLowerCase();
-  //     return inputKeywords.some(keyword => dishName.includes(keyword)) &&
-  //            d.id !== dish.id;
-  //   });
+    if (response) {
+      const dishesCuisine = response.cuisines
+        .map((cuisine) => cuisine.dishes)
+        .flat();
+      const dishesDiet = response.diets.map((diet) => diet.dishes).flat();
 
-  //   return relatedDishes.map(d => ({
-  //     id: d.id,
-  //     dishName: d.dishName,
-  //     imageUrl: d.imageUrl,
-  //   }));
-  // }
+      recommendedDishes = [...dishesCuisine, ...dishesDiet].reduce(
+        (accumulator, currentDish) => {
+          const existingDishIndex = accumulator.findIndex(
+            (dish) => dish.id === currentDish.id,
+          );
+
+          if (existingDishIndex === -1) {
+            accumulator.push(currentDish);
+          }
+
+          return accumulator;
+        },
+        [],
+      );
+    }
+
+    if (recommendedDishes.length === 0) {
+      const dishes = await this.findAll({
+        page,
+        limit,
+      });
+      return dishes.data;
+    }
+
+    const startIndex = (page - 1) * limit;
+    const paginatedDishes = recommendedDishes.slice(
+      startIndex,
+      startIndex + limit,
+    );
+
+    return paginatedDishes;
+  }
 }
