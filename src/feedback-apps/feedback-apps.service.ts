@@ -26,7 +26,10 @@ export class FeedbackAppsService {
   }
 
   findAll(): Promise<FeedbackApps[]> {
-    return this.feedbackAppsRepository.find({ relations: ['user'] });
+    return this.feedbackAppsRepository.find({
+      relations: ['user'],
+      where: { isDelete: false },
+    });
   }
 
   async findOne(id: number): Promise<FeedbackApps> {
@@ -51,6 +54,9 @@ export class FeedbackAppsService {
 
   async remove(id: number): Promise<void> {
     const feedback = await this.findOne(id);
-    await this.feedbackAppsRepository.remove(feedback);
+
+    // soft delete
+    feedback.isDelete = true;
+    await this.feedbackAppsRepository.save(feedback);
   }
 }

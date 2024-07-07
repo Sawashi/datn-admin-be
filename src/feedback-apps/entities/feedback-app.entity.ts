@@ -18,4 +18,9 @@ export class FeedbackApps {
 
   @ManyToOne(() => User, (user) => user.feedbacks)
   user: User;
+
+  @Column({
+    nullable: true,
+  })
+  isDelete: boolean;
 }
