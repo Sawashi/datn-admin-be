@@ -28,7 +28,7 @@ export class FeedbackAppsService {
   findAll(): Promise<FeedbackApps[]> {
     return this.feedbackAppsRepository.find({
       relations: ['user'],
-      where: { isDelete: false },
+      where: { isDelete: null },
     });
   }
 
