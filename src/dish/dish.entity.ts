@@ -22,6 +22,7 @@ import { DishIngredient } from './dish_ingredient.entity';
 import { MealPlan } from 'src/mealplan/mealplan.entity';
 import { MealplanDish } from './dish_mealplan.entity';
 import { Report } from 'src/reports/report.entity';
+import { Courses } from 'src/course/course.entity';
 @Entity('Dish')
 export class Dish {
   @PrimaryGeneratedColumn()
@@ -74,6 +75,10 @@ export class Dish {
   @ManyToMany(() => Diets, (diet) => diet.dishes)
   @JoinTable()
   diets: Diets[];
+
+  @ManyToMany(() => Courses, (diet) => diet.dishes)
+  @JoinTable()
+  courses: Courses[];
 
   @ManyToMany(() => MealPlan, (mealPlan) => mealPlan.dishes)
   mealPlans: MealPlan[];

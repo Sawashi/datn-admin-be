@@ -53,4 +53,8 @@ export class DishDto {
   @ApiProperty()
   @IsOptional()
   diets?: number[];
+
+  @ApiProperty()
+  @IsOptional()
+  courses?: number[];
 }

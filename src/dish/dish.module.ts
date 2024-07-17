@@ -12,6 +12,7 @@ import { Collection } from 'src/collections/collection.entity';
 import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
+import { Courses } from 'src/course/course.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { Personalize } from 'src/personalize/personalize.entity';
       Collection,
       Cuisine,
       Diets,
+      Courses,
     ]),
   ],
   controllers: [DishController],

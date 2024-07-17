@@ -12,6 +12,7 @@ import { Cuisine } from 'src/cuisines/cuisine.entity';
 import { Diets } from 'src/diets/diets.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
 import { DishIngredient } from 'src/dish/dish_ingredient.entity';
+import { Courses } from 'src/course/course.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DishIngredient } from 'src/dish/dish_ingredient.entity';
       Cuisine,
       Diets,
       DishIngredient,
+      Courses,
     ]),
   ],
   providers: [ReviewsService, DishService],
