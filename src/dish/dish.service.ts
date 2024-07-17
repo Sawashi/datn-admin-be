@@ -13,6 +13,7 @@ import { Diets } from 'src/diets/diets.entity';
 import { DishIngredient } from './dish_ingredient.entity';
 import { PaginationDto } from './dto/pagination.dto';
 import { Personalize } from 'src/personalize/personalize.entity';
+import { Courses } from 'src/course/course.entity';
 
 @Injectable()
 export class DishService {
@@ -31,6 +32,8 @@ export class DishService {
     private cuisineRepository: Repository<Cuisine>,
     @InjectRepository(Diets)
     private dietRepository: Repository<Diets>,
+    @InjectRepository(Courses)
+    private courseRepository: Repository<Courses>,
     @InjectRepository(Personalize)
     private personalizeRepository: Repository<Personalize>,
     @InjectRepository(DishIngredient)
@@ -45,6 +48,7 @@ export class DishService {
     dietRepository: dietRepository;
     personalizeRepository: personalizeRepository;
     dishIngredientRepository: dishIngredientRepository;
+    courseRepository: courseRepository;
   }
 
   async findAll(
@@ -90,7 +94,7 @@ export class DishService {
   }
 
   async create(dishDto: DishDto, imageUrl: string): Promise<Dish> {
-    const { ingredients, cuisines, diets } = dishDto;
+    const { ingredients, cuisines, diets, courses } = dishDto;
     const newDish = this.dishRepository.create({
       cookingTime: dishDto.cookingTime,
       dishName: dishDto.dishName,
@@ -117,6 +121,16 @@ export class DishService {
 
       if (dietEntities) {
         newDish.diets = dietEntities;
+      }
+    }
+
+    if (courses) {
+      const courseEntities = await this.courseRepository.find({
+        where: { id: In(courses) },
+      });
+
+      if (courseEntities) {
+        newDish.courses = courseEntities;
       }
     }
     const savedDish = await this.dishRepository.save(newDish);
