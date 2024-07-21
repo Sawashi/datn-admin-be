@@ -21,9 +21,47 @@ export class DietsService {
     });
   }
 
+  async findAll1(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Diets[];
+    count: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    const [result, total] = await this.dietsRepository.findAndCount({
+      relations: {
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      data: result,
+      count: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   // get one Diets
   async findOne(id: number): Promise<Diets> {
-    return await this.dietsRepository.findOne({ where: { id } });
+    return await this.dietsRepository.findOne({
+      where: { id },
+      relations: {
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
   }
 
   //create Diets

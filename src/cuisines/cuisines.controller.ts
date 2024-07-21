@@ -9,10 +9,16 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CuisinesService } from './cuisines.service';
 import { Cuisine } from './cuisine.entity';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -29,11 +35,29 @@ export class CuisinesController {
     cuisinesService: cuisinesService;
   }
 
-  // Get all cuisines
+  //Get all cuisines
   @Get()
   async findAll(): Promise<Cuisine[]> {
     console.log('ccc');
     return await this.cuisinesService.findAll();
+  }
+  @Get('pagin')
+  @ApiOperation({
+    summary: 'Get all cuisines',
+    description: 'Retrieve all cuisines with their dishes and ingredients',
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async findAll1(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ): Promise<{
+    data: Cuisine[];
+    count: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    return await this.cuisinesService.findAll1(page, limit);
   }
   @ApiOperation({
     summary: 'Get cuisine',

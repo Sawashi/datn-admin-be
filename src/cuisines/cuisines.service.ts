@@ -11,15 +11,19 @@ export class CuisinesService {
     private cuisinesRepository: Repository<Cuisine>,
     private readonly cloudinaryService: CloudinaryService,
   ) {
-    cuisinesRepository: cuisinesRepository;
-    cloudinaryService: cloudinaryService;
+    cuisinesRepository;
+    cloudinaryService;
   }
 
   // get all cuisines
   async findAll(): Promise<Cuisine[]> {
     return await this.cuisinesRepository.find({
       relations: {
-        dishes: true,
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
       },
       where: {
         dishes: {
@@ -28,13 +32,54 @@ export class CuisinesService {
       },
     });
   }
+  async findAll1(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Cuisine[];
+    count: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    const [result, total] = await this.cuisinesRepository.findAndCount({
+      relations: {
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+      where: {
+        dishes: {
+          deletedAt: null,
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
 
+    return {
+      data: result,
+      count: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
   // get one cuisine
   async findOne(id: number): Promise<Cuisine> {
-    return await this.cuisinesRepository.findOne({ where: { id } });
+    return await this.cuisinesRepository.findOne({
+      where: { id },
+      relations: {
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
   }
 
-  //create cuisine
+  // create cuisine
   async create(cuisine: Cuisine, image: Express.Multer.File): Promise<Cuisine> {
     if (!image) {
       throw new BadRequestException('Image file is required');
@@ -54,7 +99,16 @@ export class CuisinesService {
   // update cuisine
   async update(id: number, cuisine: Cuisine): Promise<Cuisine> {
     await this.cuisinesRepository.update(id, cuisine);
-    return await this.cuisinesRepository.findOne({ where: { id } });
+    return await this.cuisinesRepository.findOne({
+      where: { id },
+      relations: {
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
   }
 
   // delete cuisine

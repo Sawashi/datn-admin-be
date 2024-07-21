@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -31,6 +32,20 @@ export class CourseController {
   async findAll(): Promise<Courses[]> {
     return await this.coursesService.findAll();
   }
+
+  @Get('pagin')
+  async findAll1(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<{
+    data: Courses[];
+    count: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    return await this.coursesService.findAll1(page, limit);
+  }
+
   @ApiOperation({
     summary: 'Get course',
     description: 'Get course by id',

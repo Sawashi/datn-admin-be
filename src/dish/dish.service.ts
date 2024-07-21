@@ -374,9 +374,34 @@ export class DishService {
     return await queryBuilder.getMany();
   }
 
+  async findByCreated1(
+    sort: 'asc' | 'desc' = 'asc',
+    limit?: number, // Add the limit parameter
+  ): Promise<Dish[]> {
+    const queryBuilder = this.dishRepository
+      .createQueryBuilder('dish')
+      .leftJoinAndSelect('dish.dishToIngredients', 'dishIngredient') // Join with DishIngredient
+      .leftJoinAndSelect('dishIngredient.ingredient', 'ingredient') // Join with Ingredient
+      .where('dish.deletedAt IS NULL');
+
+    if (sort) {
+      queryBuilder.orderBy(
+        'dish.createdAt',
+        sort.toUpperCase() as 'ASC' | 'DESC',
+      );
+    }
+
+    if (limit !== undefined) {
+      queryBuilder.limit(limit); // Limit the number of results
+    }
+
+    return await queryBuilder.getMany();
+  }
+
   async findRelatedDishes(id: number): Promise<Dish[]> {
     const dish = await this.dishRepository.findOne({
       where: { id, deletedAt: null },
+      relations: ['dishToIngredients', 'dishToIngredients.ingredient'],
     });
     if (!dish) {
       throw new NotFoundException('Dish not found');
@@ -384,7 +409,10 @@ export class DishService {
     const inputDishName = dish.dishName.toLowerCase();
     const inputKeywords = inputDishName.split(' ');
 
-    const dishes = await this.dishRepository.find();
+    const dishes = await this.dishRepository.find({
+      where: { deletedAt: null },
+      relations: ['dishToIngredients', 'dishToIngredients.ingredient'],
+    });
     const relatedDishes = dishes.filter((d) => {
       const dishName = d.dishName.toLowerCase();
       return (

@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { DietsService } from './diets.service';
 import { Diets } from './diets.entity';
@@ -32,6 +33,20 @@ export class DietsController {
     console.log('ccc');
     return await this.dietsService.findAll();
   }
+
+  @Get('pagin')
+  async findAll1(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<{
+    data: Diets[];
+    count: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    return await this.dietsService.findAll1(page, limit);
+  }
+
   @ApiOperation({
     summary: 'Get diet',
     description: 'Get diet by id',
