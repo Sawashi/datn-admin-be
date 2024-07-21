@@ -58,6 +58,13 @@ export class DishController {
     return this.dishService.findByCreated(sort, limit);
   }
 
+  @Get('latest1')
+  async getLatest1(
+    @Query('sort') sort?: 'asc' | 'desc',
+    @Query('limit') limit?: number,
+  ): Promise<Dish[]> {
+    return this.dishService.findByCreated1(sort, limit);
+  }
   // get dish by search text
   @Get('search')
   async search(
