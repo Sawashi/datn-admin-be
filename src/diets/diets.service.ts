@@ -16,7 +16,16 @@ export class DietsService {
   async findAll(): Promise<Diets[]> {
     return await this.dietsRepository.find({
       relations: {
-        dishes: true,
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+      where: {
+        dishes: {
+          deletedAt: null,
+        },
       },
     });
   }
