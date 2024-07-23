@@ -20,7 +20,7 @@ dotenv.config();
     JwtModule.register({
       secret: process.env.SECRET_KEY,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: 360000,
       },
     }),
     TypeOrmModule.forFeature([User, Collection, Topic, MealPlan]),
