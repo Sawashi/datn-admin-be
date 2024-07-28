@@ -30,7 +30,7 @@ export class OpenaiService {
       'Content-Type': 'application/json',
     };
     const data = {
-      model: 'gpt-4o-mini',
+      model: 'gpt-3.5-turbo-0125',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1500,
     };
