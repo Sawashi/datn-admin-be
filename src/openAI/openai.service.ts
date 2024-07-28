@@ -71,7 +71,7 @@ export class OpenaiService {
     });
 
     const prefix =
-      'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 100% với tên món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác:\n';
+      'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 80% với tên món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác:\n';
     const queryName = '- Tên món ăn cần tìm: ' + name + '\n';
     const queryList = '- Danh sách: ' + JSON.stringify(dishList) + '\n';
     const suffix =
