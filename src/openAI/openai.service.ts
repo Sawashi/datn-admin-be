@@ -70,8 +70,10 @@ export class OpenaiService {
       return { id: dish.id, dishName: dish.dishName };
     });
 
+    // const prefix =
+    //   'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 80% với tên món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác:\n';
     const prefix =
-      'Lọc ra cho tôi các tên món ăn trong danh sách bên dưới giống trên 80% với tên món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác:\n';
+      'Lọc ra cho tôi các món ăn trong danh sách bên dưới giống 100% với món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác. Có thể bỏ qua các dấu ví dụ như bún bò = bun bo = Bún Bò:\n';
     const queryName = '- Tên món ăn cần tìm: ' + name + '\n';
     const queryList = '- Danh sách: ' + JSON.stringify(dishList) + '\n';
     const suffix =
