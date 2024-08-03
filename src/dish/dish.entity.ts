@@ -51,6 +51,9 @@ export class Dish {
   @ApiProperty()
   @Column({ nullable: true })
   directions: string;
+  @ApiProperty()
+  @Column({ nullable: true })
+  youtubeId: string;
   @OneToMany(() => Note, (note) => note.dish)
   notes: Note[];
   @OneToMany(() => Review, (review) => review.dish)
