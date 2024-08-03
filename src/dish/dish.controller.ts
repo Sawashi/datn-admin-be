@@ -75,6 +75,7 @@ export class DishController {
     @Query('cuisineIds') cuisineIds?: string[] | string,
     @Query('dietIds') dietIds?: string[] | string,
     @Query('ingredientNames') ingredientNames?: string[] | string,
+    @Query('limit') limit?: string,
   ): Promise<Dish[]> {
     return this.dishService.findDishBySearchText(
       text,
@@ -84,6 +85,7 @@ export class DishController {
       cuisineIds,
       dietIds,
       ingredientNames,
+      limit,
     );
   }
 
