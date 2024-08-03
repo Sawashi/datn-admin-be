@@ -267,6 +267,7 @@ export class DishService {
     cuisineIds?: string[] | string,
     dietIds?: string[] | string,
     ingredientNames?: string[] | string,
+    limit?: string,
   ): Promise<Dish[]> {
     if (typeof ingredientIds === 'string') {
       ingredientIds = [ingredientIds];
@@ -347,6 +348,10 @@ export class DishService {
         'dish.createdAt',
         sort.toUpperCase() as 'ASC' | 'DESC',
       );
+    }
+
+    if (limit) {
+      queryBuilder.take(parseInt(limit));
     }
 
     return await queryBuilder.getMany();
