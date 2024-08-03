@@ -34,7 +34,7 @@ export class ReportReviewsService {
     const existingReport = await this.reportReviewRepository.findOne({
       where: {
         review: { id: reviewId },
-        user: loginUser,
+        user: { id: loginUser.id },
       },
     });
 
