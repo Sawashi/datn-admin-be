@@ -13,6 +13,8 @@ import { Diets } from 'src/diets/diets.entity';
 import { Personalize } from 'src/personalize/personalize.entity';
 import { DishIngredient } from 'src/dish/dish_ingredient.entity';
 import { Courses } from 'src/course/course.entity';
+import { ReportReview } from 'src/report-reviews/entities/report-review.entity';
+import { ReportReviewsService } from 'src/report-reviews/report-reviews.service';
 
 @Module({
   imports: [
@@ -27,9 +29,10 @@ import { Courses } from 'src/course/course.entity';
       Diets,
       DishIngredient,
       Courses,
+      ReportReview,
     ]),
   ],
-  providers: [ReviewsService, DishService],
+  providers: [ReviewsService, DishService, ReportReviewsService],
   controllers: [ReviewsController],
 })
 export class ReviewsModule {}

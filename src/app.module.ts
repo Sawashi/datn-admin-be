@@ -35,6 +35,7 @@ import { ScheduleModule as ScheduleModule_Cron } from '@nestjs/schedule';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { FeedbackAppsModule } from './feedback-apps/feedback-apps.module';
 import { CourseModule } from './course/course.module';
+import { ReportReviewsModule } from './report-reviews/report-reviews.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -79,6 +80,7 @@ import { CourseModule } from './course/course.module';
     FeedbacksModule,
     FeedbackAppsModule,
     CourseModule,
+    ReportReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

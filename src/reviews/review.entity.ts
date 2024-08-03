@@ -9,7 +9,9 @@ import {
   JoinColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { ReportReview } from 'src/report-reviews/entities/report-review.entity';
 
 @Entity('Review')
 export class Review {
@@ -47,4 +49,7 @@ export class Review {
   @ManyToOne(() => Dish, (dish) => dish.reviews)
   @JoinColumn({ name: 'dish_id' })
   dish: Dish;
+
+  @OneToMany(() => ReportReview, (report) => report.review)
+  reportReviews: ReportReview[];
 }

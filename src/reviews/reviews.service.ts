@@ -26,6 +26,7 @@ export class ReviewsService {
       relations: {
         user: true,
         dish: true,
+        reportReviews: true,
       },
     });
   }
