@@ -28,7 +28,6 @@ import { User } from 'src/users/user.entity';
 @ApiTags('events')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth('JWT')
-@Roles(Role.Admin, Role.User)
 @Controller('events')
 export class EventsController {
   constructor(
@@ -40,6 +39,7 @@ export class EventsController {
   }
 
   @Post()
+  @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @UploadedFile() file: Express.Multer.File,
@@ -51,16 +51,19 @@ export class EventsController {
   }
 
   @Get()
+  @Roles(Role.Admin, Role.User)
   findAll() {
     return this.eventsService.findAll();
   }
 
   @Get(':id')
+  @Roles(Role.Admin, Role.User)
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(+id);
   }
 
   @Patch(':id')
+  @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('image'))
   async update(
     @UploadedFile() file: Express.Multer.File,
