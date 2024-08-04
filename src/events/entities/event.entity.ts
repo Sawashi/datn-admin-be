@@ -28,7 +28,7 @@ export class Event {
   endTime: Date;
 
   @ApiProperty({ type: () => [Dish] })
-  @ManyToMany(() => Dish, { eager: true })
+  @ManyToMany(() => Dish)
   @JoinTable()
   dishes: Dish[];
 

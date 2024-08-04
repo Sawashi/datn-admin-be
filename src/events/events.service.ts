@@ -5,15 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, In, Repository } from 'typeorm';
 import { Dish } from 'src/dish/dish.entity';
+import { DishService } from 'src/dish/dish.service';
+import { DishIngredient } from 'src/dish/dish_ingredient.entity';
+import { DishDto } from 'src/dish/dto/dishDto.dto';
+import { Ingredient } from 'src/ingredient/ingredient.entity';
+import { User } from 'src/users/user.entity';
+import { In, Repository } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
-import { DishService } from 'src/dish/dish.service';
-import { DishDto } from 'src/dish/dto/dishDto.dto';
-import { Ingredient } from 'src/ingredient/ingredient.entity';
-import { DishIngredient } from 'src/dish/dish_ingredient.entity';
 
 @Injectable()
 export class EventsService {
@@ -58,13 +59,33 @@ export class EventsService {
   }
 
   async findAll(): Promise<Event[]> {
-    return this.eventRepository.find({ relations: ['dishes'] });
+    return this.eventRepository.find({
+      relations: {
+        dishes: {
+          reviews: true,
+          notes: true,
+          collections: true,
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
   }
 
   async findOne(id: number): Promise<Event> {
     const event = await this.eventRepository.findOne({
       where: { id },
-      relations: ['dishes'],
+      relations: {
+        dishes: {
+          notes: true,
+          reviews: true,
+          collections: true,
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
     });
 
     if (!event) {
@@ -112,8 +133,12 @@ export class EventsService {
     eventId: number,
     dishDto: DishDto,
     imageUrl: string,
+    loginUser: User,
   ): Promise<Event> {
-    const { ingredients } = dishDto;
+    const newDishDto = {
+      ...dishDto,
+      author: loginUser.username,
+    };
     const event = await this.eventRepository.findOne({
       where: { id: eventId },
       relations: ['dishes'],
@@ -123,64 +148,18 @@ export class EventsService {
       throw new NotFoundException('Event not found');
     }
 
-    const dish = this.dishRepository.create({
-      cookingTime: dishDto.cookingTime,
-      dishName: dishDto.dishName,
-      imageUrl: imageUrl,
-      servings: dishDto.servings,
-      calories: dishDto.calories,
-      author: dishDto.author,
-      directions: dishDto.directions,
-    });
-
-    const ingredientPromises = ingredients.map(async (ingredientDto) => {
-      const existingIngredient = await this.ingredientRepository.findOne({
-        where: {
-          ingredientName: ILike(ingredientDto.ingredientName),
-        },
-      });
-
-      if (!existingIngredient) {
-        const newIngredient = this.ingredientRepository.create({
-          ingredientName: ingredientDto.ingredientName,
-          imageUrl: ingredientDto.imageUrl,
-          description: ingredientDto.description,
-        });
-
-        await this.ingredientRepository.save(newIngredient);
-
-        return {
-          ingredient: newIngredient,
-          mass: ingredientDto.mass,
-        };
-      } else {
-        return {
-          ingredient: existingIngredient,
-          mass: ingredientDto.mass,
-        };
-      }
-    });
-
-    const resolvedIngredients = await Promise.all(ingredientPromises);
-
-    const dishIngredientPromises = resolvedIngredients.map(
-      ({ ingredient, mass }) => {
-        const dishIngredient = this.dishIngredientRepository.create({
-          dish: dish,
-          ingredient,
-          mass,
-        });
-
-        return this.dishIngredientRepository.save(dishIngredient);
-      },
+    const existingDish = event.dishes.find(
+      (dish) => dish.author === loginUser.username,
     );
 
-    await Promise.all(dishIngredientPromises);
+    if (existingDish) {
+      throw new HttpException(
+        'You have already registered this dish for the event',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-    const newDish = await this.dishRepository.findOne({
-      where: { id: dish.id },
-      relations: ['dishToIngredients', 'dishToIngredients.ingredient'],
-    });
+    const newDish = await this.dishService.create(newDishDto, imageUrl);
 
     if (!newDish) {
       throw new HttpException('Failed to create dish', HttpStatus.BAD_REQUEST);
