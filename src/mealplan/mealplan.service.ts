@@ -162,13 +162,26 @@ export class MealplanService {
   }
 
   async updatePlanDate(mealPlanId: number, dishId: number, planDates: Date[]) {
+    const mpDishes = await this.mealplanDishRepository.find({
+      where: { mealPlanId, dishId },
+    });
+    const deletedMealplanDishes = mpDishes.map((mpdish) => {
+      return mpdish.id;
+    });
+
     await this.mealplanDishRepository.delete({ mealPlanId, dishId });
 
+    const newMealplanDishes = [];
     for (const planDate of planDates) {
-      await this.addDishToMealPlan(mealPlanId, dishId, planDate);
+      const { id } = await this.addDishToMealPlan(mealPlanId, dishId, planDate);
+      newMealplanDishes.push({ id, planDate });
     }
 
-    return { success: true, message: 'Plan dates updated successfully' };
+    return {
+      success: true,
+      message: 'Plan dates updated successfully',
+      result: { deletedMealplanDishes, newMealplanDishes },
+    };
   }
 
   async deleteDishFromMealPlan(
