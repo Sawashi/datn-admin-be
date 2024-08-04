@@ -40,8 +40,14 @@ export class EventsController {
   }
 
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createEventDto: CreateEventDto,
+  ) {
+    const uploadedImage = await this.cloudinaryService.uploadImage(file);
+
+    return this.eventsService.create(createEventDto, uploadedImage.secure_url);
   }
 
   @Get()
@@ -55,8 +61,18 @@ export class EventsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(+id, updateEventDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    const uploadedImage = await this.cloudinaryService.uploadImage(file);
+    return this.eventsService.update(
+      +id,
+      updateEventDto,
+      uploadedImage.secure_url,
+    );
   }
 
   @Patch('add-dish-to-event/:eventId')

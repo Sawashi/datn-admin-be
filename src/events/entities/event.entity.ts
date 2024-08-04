@@ -27,6 +27,10 @@ export class Event {
   @Column({ type: 'date' })
   endTime: Date;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @ApiProperty({ type: () => [Dish] })
   @ManyToMany(() => Dish)
   @JoinTable()
