@@ -36,6 +36,7 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { FeedbackAppsModule } from './feedback-apps/feedback-apps.module';
 import { CourseModule } from './course/course.module';
 import { ReportReviewsModule } from './report-reviews/report-reviews.module';
+import { EventsModule } from './events/events.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -81,6 +82,7 @@ import { ReportReviewsModule } from './report-reviews/report-reviews.module';
     FeedbackAppsModule,
     CourseModule,
     ReportReviewsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
