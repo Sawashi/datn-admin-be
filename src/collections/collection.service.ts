@@ -43,7 +43,11 @@ export class CollectionService {
         where: { user: { id: userId } },
         relations: {
           user: true,
-          dishes: true,
+          dishes: {
+            dishToIngredients: {
+              ingredient: true,
+            },
+          },
         },
         order: {
           collectionName: 'DESC',
@@ -55,7 +59,11 @@ export class CollectionService {
         where: { user: { id: userId } },
         relations: {
           user: true,
-          dishes: true,
+          dishes: {
+            dishToIngredients: {
+              ingredient: true,
+            },
+          },
         },
         order: {
           updatedAt: 'DESC',
@@ -66,7 +74,11 @@ export class CollectionService {
       where: { user: { id: userId } },
       relations: {
         user: true,
-        dishes: true,
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
       },
       order: {
         createdAt: sort,

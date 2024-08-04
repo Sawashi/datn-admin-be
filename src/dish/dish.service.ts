@@ -363,6 +363,8 @@ export class DishService {
   ): Promise<Dish[]> {
     const queryBuilder = this.dishRepository
       .createQueryBuilder('dish')
+      .leftJoinAndSelect('dish.dishToIngredients', 'dishIngredient')
+      .leftJoinAndSelect('dishIngredient.ingredient', 'ingredient')
       .where('dish.deletedAt IS NULL');
 
     if (sort) {
