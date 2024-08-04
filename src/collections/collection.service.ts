@@ -43,11 +43,7 @@ export class CollectionService {
         where: { user: { id: userId } },
         relations: {
           user: true,
-          dishes: {
-            dishToIngredients: {
-              ingredient: true,
-            },
-          },
+          dishes: true,
         },
         order: {
           collectionName: 'DESC',
@@ -59,11 +55,7 @@ export class CollectionService {
         where: { user: { id: userId } },
         relations: {
           user: true,
-          dishes: {
-            dishToIngredients: {
-              ingredient: true,
-            },
-          },
+          dishes: true,
         },
         order: {
           updatedAt: 'DESC',
@@ -74,11 +66,7 @@ export class CollectionService {
       where: { user: { id: userId } },
       relations: {
         user: true,
-        dishes: {
-          dishToIngredients: {
-            ingredient: true,
-          },
-        },
+        dishes: true,
       },
       order: {
         createdAt: sort,
@@ -242,7 +230,13 @@ export class CollectionService {
   async getDishesFromCollection(collectionId: number): Promise<Dish[]> {
     const collection = await this.collectionsRepository.findOne({
       where: { id: collectionId },
-      relations: ['dishes'],
+      relations: {
+        dishes: {
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
     });
 
     return collection.dishes;
