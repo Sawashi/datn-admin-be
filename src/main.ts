@@ -17,6 +17,7 @@ async function bootstrap() {
       'https://datn-admin-fe.vercel.app',
       'http://localhost:3000',
       'http://localhost:3001',
+      'https://intellitaste-admin.vercel.app/',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
