@@ -76,9 +76,14 @@ export class OpenaiService {
     //   'Lọc ra cho tôi các món ăn trong danh sách bên dưới trùng khớp với món ăn cần tìm. Ví dụ bún bò thì ra bún bò, bún bò huế, không được ra bún riêu, bún khác. Có thể bỏ qua các dấu và không phân biệt chữ hoa chữ thường:\n';
     // const prefix =
     //   'Lọc ra các món ăn trong danh sách bên dưới trùng khớp với món ăn cần tìm. Ví dụ: "bún bò" thì ra "bún bò", "bún bò Huế", không ra "bún riêu" hay "bún khác". Ví dụ khác: "bún chả cá" thì không ra "chả cá Lã Vọng". Bỏ qua dấu và không phân biệt chữ hoa chữ thường:\n';
-    const prefix =
-      'Lọc ra các món ăn trong danh sách bên dưới trùng khớp với món ăn cần tìm. Ví dụ: "bún bò" thì ra "bún bò", "bún bò Huế", không ra "bún riêu" hay "bún khác". Cần phân biệt các món khác nhau, ví dụ "bún chả cá" thì không ra "chả cá Lã Vọng". Cần phân biệt các loại khác nhau của một món tương tự, ví dụ "gỏi cuốn" khác với "gỏi cuốn chay". Bỏ qua dấu và không phân biệt chữ hoa chữ thường:\n';
-
+    const prefix = `Lọc ra các món ăn trong danh sách bên dưới trùng khớp với món ăn cần tìm.
+      Lưu ý: 
+      - Các tên món ăn phải liên quan trực tiếp đến từ khóa nhưng có thể khác nhau về cách viết và cách phát âm.
+      - Các tên món ăn có thể bao gồm tên gọi đặc trưng theo vùng miền hoặc biến thể của món ăn đó.
+      - Tránh liệt kê các món ăn khác không liên quan đến từ khóa.
+      Ví dụ:
+      - Bún bò -> bún bò, Bún bò, Bun bo, Bún bò Huế, bún bò viên, ...
+      - Phở bò -> phở bò, pho bo, Phở bò, Phở bò Nam Định, Phở bò Hà Nội, ...`;
     const queryName = '- Tên món ăn cần tìm: ' + name + '\n';
     const queryList = '- Danh sách: ' + JSON.stringify(dishList) + '\n';
     const suffix =

@@ -24,6 +24,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/auth/role.enum';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/users/user.entity';
+import { Dish } from 'src/dish/dish.entity';
 
 @ApiTags('events')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -60,6 +61,15 @@ export class EventsController {
   @Roles(Role.Admin, Role.User)
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(+id);
+  }
+
+  @Get(':id/top-dishes')
+  async getEventRanking(
+    @Param('id') id: number,
+  ): Promise<
+    { dish: Dish; filteredCollectionsCount: number; userImage: string | null }[]
+  > {
+    return this.eventsService.getEventRanking(id);
   }
 
   @Patch(':id')

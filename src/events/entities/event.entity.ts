@@ -47,10 +47,4 @@ export class Event {
   @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
-
-  getTopRankedDishes(): Dish[] {
-    return this.dishes
-      .sort((a, b) => b.collections.length - a.collections.length)
-      .slice(0, 3);
-  }
 }

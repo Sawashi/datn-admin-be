@@ -30,12 +30,15 @@ export class EventsService {
 
     @InjectRepository(DishIngredient)
     private readonly dishIngredientRepository: Repository<DishIngredient>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {
     eventRepository: eventRepository;
     dishRepository: dishRepository;
     dishService: dishService;
     ingredientRepository: ingredientRepository;
     dishIngredientRepository: dishIngredientRepository;
+    userRepository: userRepository;
   }
 
   async create(
@@ -176,5 +179,112 @@ export class EventsService {
 
     event.dishes.push(newDish);
     return this.eventRepository.save(event);
+  }
+
+  async getEventRanking(
+    id: number,
+  ): Promise<
+    { dish: Dish; filteredCollectionsCount: number; userImage: string | null }[]
+  > {
+    const event = await this.eventRepository.findOne({
+      where: { id },
+      relations: {
+        dishes: {
+          notes: true,
+          reviews: true,
+          collections: true,
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const topDishes = await this.getTopRankedDishes(event.dishes);
+
+    const result = await Promise.all(
+      topDishes.map(async ({ dish, filteredCollectionsCount }) => {
+        const user = await this.userRepository.findOne({
+          where: {
+            username: dish.author,
+          },
+        });
+        return {
+          dish,
+          filteredCollectionsCount,
+          userImage: user?.imgUrl || null,
+        };
+      }),
+    );
+
+    return result;
+  }
+
+  private async getTopRankedDishes(
+    dishes: Dish[],
+  ): Promise<{ dish: Dish; filteredCollectionsCount: number }[]> {
+    const dishesWithFilteredCollections = await Promise.all(
+      dishes.map(async (dish) => {
+        // Lấy danh sách các collection và user liên quan
+        const filteredCollections = await Promise.all(
+          dish.collections.map(async (collection) => {
+            const user = await this.userRepository.findOne({
+              where: { id: collection.userId },
+            });
+            return user && user.username !== dish.author ? collection : null;
+          }),
+        );
+
+        const validCollections = filteredCollections.filter(Boolean);
+
+        return {
+          dish,
+          filteredCollectionsCount: validCollections.length,
+        };
+      }),
+    );
+
+    // Sắp xếp theo filteredCollectionsCount, sau đó theo rating, cuối cùng theo thời gian cập nhật
+    return dishesWithFilteredCollections
+      .sort((a, b) => {
+        // Sắp xếp theo filteredCollectionsCount (số lượt thích)
+        if (b.filteredCollectionsCount !== a.filteredCollectionsCount) {
+          return b.filteredCollectionsCount - a.filteredCollectionsCount;
+        }
+
+        // Nếu trùng filteredCollectionsCount, sắp xếp theo rating trung bình
+        const aRating =
+          a.dish.reviews.reduce((sum, review) => sum + review.rating, 0) /
+          a.dish.reviews.length;
+        const bRating =
+          b.dish.reviews.reduce((sum, review) => sum + review.rating, 0) /
+          b.dish.reviews.length;
+
+        if (bRating !== aRating) {
+          return bRating - aRating;
+        }
+
+        // Nếu trùng rating, sắp xếp theo thời gian cập nhật (lấy timestamp mới nhất)
+        const aLatestUpdate = Math.max(
+          new Date(a.dish.updatedAt).getTime(),
+          ...a.dish.collections.map((collection) =>
+            new Date(collection.updatedAt).getTime(),
+          ),
+        );
+
+        const bLatestUpdate = Math.max(
+          new Date(b.dish.updatedAt).getTime(),
+          ...b.dish.collections.map((collection) =>
+            new Date(collection.updatedAt).getTime(),
+          ),
+        );
+
+        return bLatestUpdate - aLatestUpdate;
+      })
+      .slice(0, 3);
   }
 }
