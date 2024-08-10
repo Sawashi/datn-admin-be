@@ -66,6 +66,21 @@ export class EventsService {
   }
 
   async findAll(): Promise<Event[]> {
+    return this.eventRepository.find({
+      relations: {
+        dishes: {
+          reviews: true,
+          notes: true,
+          collections: true,
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findAllWithoutDishes(): Promise<Event[]> {
     return this.eventRepository.find();
   }
 

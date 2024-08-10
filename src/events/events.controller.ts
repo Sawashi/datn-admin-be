@@ -57,6 +57,12 @@ export class EventsController {
     return this.eventsService.findAll();
   }
 
+  @Get('/without-dishes')
+  @Roles(Role.Admin, Role.User)
+  findAllWithoutDishes() {
+    return this.eventsService.findAllWithoutDishes();
+  }
+
   @Get(':id')
   @Roles(Role.Admin, Role.User)
   findOne(@Param('id') id: string) {
