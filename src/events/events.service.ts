@@ -45,7 +45,8 @@ export class EventsService {
     createEventDto: CreateEventDto,
     imageUrl: string,
   ): Promise<Event> {
-    const { eventName, startTime, endTime, reward, dishes } = createEventDto;
+    const { eventName, startTime, endTime, reward, dishes, description } =
+      createEventDto;
 
     const event = this.eventRepository.create({
       eventName,
@@ -53,6 +54,7 @@ export class EventsService {
       endTime,
       reward,
       imageUrl,
+      description,
     });
 
     if (dishes && dishes.length > 0) {
@@ -111,7 +113,8 @@ export class EventsService {
     updateEventDto: UpdateEventDto,
     imageUrl: string,
   ): Promise<Event> {
-    const { eventName, startTime, endTime, reward, dishes } = updateEventDto;
+    const { eventName, startTime, endTime, reward, dishes, description } =
+      updateEventDto;
 
     const event = await this.eventRepository.findOne({
       where: { id },
@@ -127,6 +130,7 @@ export class EventsService {
     event.endTime = endTime ?? event.endTime;
     event.reward = reward ?? event.reward;
     event.imageUrl = imageUrl ?? event.imageUrl;
+    event.description = description ?? event.description;
 
     if (dishes && dishes.length > 0) {
       const dishEntities = await this.dishRepository.find({

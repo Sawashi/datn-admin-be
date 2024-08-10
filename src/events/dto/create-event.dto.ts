@@ -31,4 +31,9 @@ export class CreateEventDto {
   @IsNotEmpty()
   @IsString()
   reward: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 }

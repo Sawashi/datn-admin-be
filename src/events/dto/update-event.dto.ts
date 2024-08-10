@@ -25,4 +25,8 @@ export class UpdateEventDto {
   @IsOptional()
   @IsString()
   reward?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  description?: string;
 }

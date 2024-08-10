@@ -41,6 +41,10 @@ export class Event {
   reward: string;
 
   @ApiProperty()
+  @Column({ nullable: true })
+  description: string;
+
+  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
