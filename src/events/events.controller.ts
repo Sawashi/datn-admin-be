@@ -78,6 +78,16 @@ export class EventsController {
     return this.eventsService.getEventRanking(id);
   }
 
+  @Get(':id/my-ranking')
+  async getMyRankingByEventId(
+    @Param('id') id: number,
+    @GetUser() loginUser: User,
+  ): Promise<{
+    filteredCollectionsCount: number;
+  } | null> {
+    return this.eventsService.getMyRankingByEventId(id, loginUser);
+  }
+
   @Patch(':id')
   @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('image'))

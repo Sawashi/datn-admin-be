@@ -232,6 +232,55 @@ export class EventsService {
     return result;
   }
 
+  async getMyRankingByEventId(
+    eventId: number,
+    loginUser: User,
+  ): Promise<{
+    filteredCollectionsCount: number;
+  } | null> {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+      relations: {
+        dishes: {
+          notes: true,
+          reviews: true,
+          collections: true,
+          dishToIngredients: {
+            ingredient: true,
+          },
+        },
+      },
+    });
+
+    if (!event) {
+      throw new HttpException('Event Not Found', HttpStatus.BAD_REQUEST);
+    }
+
+    // Find the user's dish in the event
+    const myDish = event.dishes.find(
+      (dish) => dish.author === loginUser.username,
+    );
+
+    if (!myDish) {
+      return null;
+    }
+
+    // Get the top-ranked dishes
+    const topDishes = await this.getTopRankedDishes(event.dishes);
+
+    // Find the user's dish ranking
+    const myRanking =
+      topDishes.findIndex(({ dish }) => dish.id === myDish.id) + 1;
+
+    if (!myRanking) {
+      return null;
+    }
+
+    return {
+      filteredCollectionsCount: myRanking,
+    };
+  }
+
   private async getTopRankedDishes(
     dishes: Dish[],
   ): Promise<{ dish: Dish; filteredCollectionsCount: number }[]> {
