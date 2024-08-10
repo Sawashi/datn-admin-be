@@ -103,6 +103,7 @@ export class DishService {
       calories: dishDto.calories,
       author: dishDto.author,
       directions: dishDto.directions,
+      youtubeId: dishDto.youtubeId,
     });
 
     if (cuisines) {
