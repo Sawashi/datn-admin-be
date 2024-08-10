@@ -18,6 +18,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'https://intellitaste-admin.vercel.app/',
+      'https://intellitaste-admin.vercel.app',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
