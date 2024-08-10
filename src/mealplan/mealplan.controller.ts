@@ -95,7 +95,7 @@ export class MealplanController {
   @Patch('mealplanDish/:mpDishId')
   async updatePlanDateByMpDishId(
     @Param('mpDishId') mpDishId: number,
-    @Body() planDate: Date,
+    @Body('planDate') planDate: Date,
   ) {
     return await this.mealPlanService.updatePlanDateByMpDishId(
       mpDishId,
