@@ -57,4 +57,9 @@ export class DishDto {
   @ApiProperty()
   @IsOptional()
   courses?: number[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  youtubeId?: string;
 }
