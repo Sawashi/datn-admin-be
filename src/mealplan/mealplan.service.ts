@@ -162,11 +162,10 @@ export class MealplanService {
   }
 
   async updatePlanDateByMpDishId(id: number, planDate: Date) {
-    const mpDish = await this.mealplanDishRepository.findOne({
+    await this.mealplanDishRepository.update(id, { planDate });
+    return await this.mealplanDishRepository.findOne({
       where: { id },
     });
-    mpDish.planDate = planDate;
-    return await this.mealplanDishRepository.save(mpDish);
   }
 
   async updatePlanDate(mealPlanId: number, dishId: number, planDates: Date[]) {
