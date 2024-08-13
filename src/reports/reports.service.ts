@@ -15,7 +15,12 @@ export class ReportsService {
   }
   // get all reports
   async findAll(): Promise<Report[]> {
-    return await this.reportsRepository.find();
+    return await this.reportsRepository.find({
+      relations: {
+        user: true,
+        dish: true,
+      },
+    });
   }
 
   async getReportsForUser(user: User): Promise<Report[]> {
